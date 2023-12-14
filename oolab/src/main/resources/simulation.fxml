@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.layout.GridPane?>
+<?import javafx.scene.layout.StackPane?>
+
+<BorderPane xmlns="http://javafx.com/javafx"
+            xmlns:fx="http://javafx.com/fxml"
+            minHeight="550.0" minWidth="850.0"
+            fx:controller="agh.ics.oop.presenter.SimulationPresenter">
+
+    <center>
+        <StackPane>
+            <VBox spacing="10">
+                <HBox>
+                    <Label text="Movement List:" style="-fx-min-width: 100px;"/>
+                    <TextField fx:id="movementTextField" HBox.hgrow="ALWAYS"/>
+                </HBox>
+
+                <HBox spacing="10">
+                    <Label fx:id="descriptionLabel" text="[Movement Description]"/>
+                </HBox>
+            </VBox>
+
+            <Label fx:id="infoLabel" text="All animals will be living here!" textAlignment="CENTER"/>
+            <GridPane fx:id="mapGrid" alignment="CENTER" gridLinesVisible="true" managed="false" visible="false"/>
+
+        </StackPane>
+    </center>
+
+    <bottom>
+        <VBox spacing="10">
+            <HBox spacing="10" alignment="CENTER">
+                <Button text="Start" onAction="#onSimulationStartClicked" style="-fx-min-width: 100px;"/>
+            </HBox>
+        </VBox>
+    </bottom>
+</BorderPane>
