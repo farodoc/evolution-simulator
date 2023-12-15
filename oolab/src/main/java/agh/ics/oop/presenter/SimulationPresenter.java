@@ -44,10 +44,11 @@ public class SimulationPresenter implements MapChangeListener {
         mapGrid.getRowConstraints().clear();
     }
 
-    public void drawMap(){
+    private void drawGrid(){
         clearGrid();
-        int width = map.getCurrentBounds().topRightCorner().getX() - map.getCurrentBounds().bottomLeftCorner().getX() + 1;
-        int height = map.getCurrentBounds().topRightCorner().getY() - map.getCurrentBounds().bottomLeftCorner().getY() + 1;
+        Boundary boundaries = map.getCurrentBounds();
+        int width = boundaries.topRightCorner().getX() - boundaries.bottomLeftCorner().getX() + 1;
+        int height = boundaries.topRightCorner().getY() - boundaries.bottomLeftCorner().getY() + 1;
 
         for (int x = 0; x < width + 1; x++) {
             mapGrid.getColumnConstraints().add(new ColumnConstraints(CELL_SIZE));
@@ -62,19 +63,27 @@ public class SimulationPresenter implements MapChangeListener {
         GridPane.setHalignment(xyLabel, HPos.CENTER);
 
         for (int x = 1; x < width + 1; x++) {
-            Label columnLabel = new Label(String.valueOf(x - 1 + map.getCurrentBounds().bottomLeftCorner().getX()));
+            Label columnLabel = new Label(String.valueOf(x - 1 + boundaries.bottomLeftCorner().getX()));
             mapGrid.add(columnLabel, x, 0);
             GridPane.setHalignment(columnLabel, HPos.CENTER);
         }
 
         for (int y = height; y >= 1; y--) {
-            Label rowLabel = new Label(String.valueOf(y - 1 + map.getCurrentBounds().bottomLeftCorner().getY()));
+            Label rowLabel = new Label(String.valueOf(y - 1 + boundaries.bottomLeftCorner().getY()));
             mapGrid.add(rowLabel, 0, height - y + 1);
             GridPane.setHalignment(rowLabel, HPos.CENTER);
+        }
+    }
 
+    private void fillMap(){
+        Boundary boundaries = map.getCurrentBounds();
+        int width = boundaries.topRightCorner().getX() - boundaries.bottomLeftCorner().getX() + 1;
+        int height = boundaries.topRightCorner().getY() - boundaries.bottomLeftCorner().getY() + 1;
+
+        for (int y = height; y >= 1; y--) {
             for (int x = 1; x < width + 1; x++) {
                 Label cellLabel = new Label();
-                Vector2d translatedPosition = new Vector2d(x - 1 + map.getCurrentBounds().bottomLeftCorner().getX(), y - 1 + map.getCurrentBounds().bottomLeftCorner().getY());
+                Vector2d translatedPosition = new Vector2d(x - 1 + boundaries.bottomLeftCorner().getX(), y - 1 + boundaries.bottomLeftCorner().getY());
 
                 if (map.objectAt(translatedPosition) != null) {
                     cellLabel.setText(map.objectAt(translatedPosition).toString());
@@ -84,6 +93,11 @@ public class SimulationPresenter implements MapChangeListener {
                 mapGrid.add(cellLabel, x, height - y + 1);
             }
         }
+    }
+
+    public void drawMap(){
+        drawGrid();
+        fillMap();
     }
 
     @Override
