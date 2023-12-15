@@ -7,10 +7,10 @@ import java.util.Map;
 
 import static java.lang.Math.sqrt;
 
-public class GrassField extends AbstractWorldMap{
-    private int mapSize = 10;
+public class DarvinsMap extends AbstractWorldMap{
+    private final int mapSize = 10;
     private int grassNumber;
-    public GrassField(int grassNumber) {
+    public DarvinsMap(int grassNumber) {
         super();
         this.grassNumber = grassNumber;
         generateGrassTiles();

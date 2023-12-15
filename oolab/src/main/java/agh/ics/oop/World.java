@@ -1,18 +1,12 @@
 package agh.ics.oop;
 
-import agh.ics.oop.model.*;
 import javafx.application.Application;
-
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-
 
 public class World {
     public static void main(String[] args)
     {
         Application.launch(SimulationApp.class, args);
-        //System.out.println("System zakończył działanie.");
+        System.out.println("System zakończył działanie.");
 
         /*GrassField map = new GrassField(10);
         String movementList = "0 4 0 0 0 0 0 0 0 0 0 0";

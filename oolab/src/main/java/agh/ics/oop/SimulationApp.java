@@ -19,7 +19,7 @@ public class SimulationApp extends Application {
         BorderPane viewRoot = loader.load();
         SimulationPresenter presenter = loader.getController();
 
-        GrassField map = new GrassField(10);
+        DarvinsMap map = new DarvinsMap(10);
         presenter.setMap(map);
 
         map.addObserver(presenter);

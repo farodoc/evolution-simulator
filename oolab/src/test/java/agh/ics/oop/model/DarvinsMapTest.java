@@ -5,11 +5,11 @@ import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-class GrassFieldTest {
+class DarvinsMapTest {
 
     @Test
     void canMoveTo() throws PositionAlreadyOccupiedException {
-        GrassField map = new GrassField(10);
+        DarvinsMap map = new DarvinsMap(10);
         Animal animal = new Animal(new Vector2d(4, 4));
         map.place(animal);
 
@@ -20,7 +20,7 @@ class GrassFieldTest {
 
     @Test
     void place() throws PositionAlreadyOccupiedException {
-        GrassField map = new GrassField(10);
+        DarvinsMap map = new DarvinsMap(10);
         Animal animal1 = new Animal(new Vector2d(4, 4));
         Animal animal2 = new Animal(new Vector2d(2, 4));
         Animal animal3 = new Animal(new Vector2d(4, 4));
@@ -35,7 +35,7 @@ class GrassFieldTest {
 
     @Test
     void isOccupied() throws PositionAlreadyOccupiedException {
-        GrassField map = new GrassField(0);
+        DarvinsMap map = new DarvinsMap(0);
         Animal animal = new Animal(new Vector2d(4, 4));
         map.place(animal);
 
@@ -45,7 +45,7 @@ class GrassFieldTest {
 
     @Test
     void objectAt() throws PositionAlreadyOccupiedException {
-        GrassField map = new GrassField(0);
+        DarvinsMap map = new DarvinsMap(0);
         Animal animal = new Animal(new Vector2d(4, 4));
         map.place(animal);
 
@@ -55,7 +55,7 @@ class GrassFieldTest {
 
     @Test
     void move() throws PositionAlreadyOccupiedException {
-        GrassField map = new GrassField(10);
+        DarvinsMap map = new DarvinsMap(10);
         Animal animal1 = new Animal(new Vector2d(4, 4));
         Vector2d newPosition1 = new Vector2d(4,5);
         Vector2d newPosition2 = new Vector2d(4,4);
