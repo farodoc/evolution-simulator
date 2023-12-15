@@ -4,8 +4,6 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
-
-import static java.lang.Math.abs;
 import static java.lang.Math.sqrt;
 
 public class DarvinsMap extends AbstractWorldMap{
@@ -69,42 +67,47 @@ public class DarvinsMap extends AbstractWorldMap{
     {
         int jungleTilesAmount = (int) (mapSize*mapSize*0.2);
         int jungleTilesCounter = 0;
-        int startingIndex= mapSize/2;
+        double probabilityForRow = 1.0;
+        int equator = mapSize/2;
+
         boolean generateUpper = true;
         int yModifier = 0;
-        int equator = startingIndex;
-        double propabilityForRow = 1.0;
 
-        while(jungleTilesCounter < jungleTilesAmount && equator+yModifier<mapSize && equator-yModifier>=0)
+        while(jungleTilesCounter < jungleTilesAmount && isInMap(equator, yModifier))
         {
-            for(int x=0; x < mapSize; x++)
+            int x=0;
+            while(x<mapSize && jungleTilesCounter<jungleTilesAmount)
             {
-                if(jungleTilesCounter>=jungleTilesAmount)
-                    break;
-
-                else if(Math.random() < propabilityForRow)
+                if(Math.random() < probabilityForRow)
                 {
                     jungleTilesCounter++;
                     tiles[equator+yModifier][x] = TileType.JUNG;
                 }
+                x++;
             }
 
             if(generateUpper)
             {
-                yModifier+=1;
+                yModifier +=1;
                 yModifier *= (-1);
-                generateUpper= false;
+                generateUpper = false;
             }
             else
             {
                 yModifier *= (-1);
-                generateUpper= true;
+                generateUpper = true;
             }
 
-            propabilityForRow/=1.25;
+            probabilityForRow/=1.25;
         }
 
     }
+
+    private boolean isInMap(int equator, int yModifier)
+    {
+        return equator + yModifier < mapSize && equator - yModifier >= 0;
+    }
+
 
     Map<Vector2d, Animal> getAnimals() {
         return Collections.unmodifiableMap(animals);
