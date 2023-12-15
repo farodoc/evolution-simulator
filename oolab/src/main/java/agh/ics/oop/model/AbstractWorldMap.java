@@ -42,7 +42,8 @@ public abstract class AbstractWorldMap implements WorldMap{
         animal.move(direction, this);
 
         if(oldPosition != animal.getPosition()){
-            animals.remove(oldPosition);
+            //animals.remove(oldPosition);
+            animals.remove(oldPosition, animal);
             animals.put(animal.getPosition(), animal);
             notifyObservers("Animal moved from " + oldPosition + " to " + animal.getPosition());
         }
@@ -59,7 +60,7 @@ public abstract class AbstractWorldMap implements WorldMap{
         return mapVisualizer.draw(boundaries.bottomLeftCorner(), boundaries.topRightCorner());
     }
     public boolean canMoveTo(Vector2d position) {
-        return !animals.containsKey(position);
+        return true;
     }
 
     public WorldElement objectAt(Vector2d position) {

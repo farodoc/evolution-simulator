@@ -22,14 +22,14 @@ public class Animal implements WorldElement{
     public MapDirection getOrientation(){
         return this.orientation;
     }
+
+    public void setOrientation(MapDirection orientation){
+        this.orientation = orientation;
+    }
+
     @Override
     public String toString() {
-        return switch (this.orientation){
-            case NORTH -> "^";
-            case SOUTH -> "v";
-            case EAST -> ">";
-            case WEST -> "<";
-        };
+        return "A";
     }
     @Override
     public boolean isAt(Vector2d position){
@@ -38,20 +38,16 @@ public class Animal implements WorldElement{
 
     public void move(MoveDirection direction, MoveValidator validator){
         switch (direction){
-            case LEFT -> this.orientation = this.orientation.previous();
-            case RIGHT -> this.orientation = this.orientation.next();
-            case FORWARD -> {
-                Vector2d newPosition = this.position.add(this.orientation.toUnitVector());
-                if(validator.canMoveTo(newPosition)){
-                    this.position = newPosition;
-                }
-            }
-            case BACKWARD -> {
-                Vector2d newPosition = this.position.subtract(this.orientation.toUnitVector());
-                if(validator.canMoveTo(newPosition)){
-                    this.position = newPosition;
-                }
-            }
+            case FORWARD -> {}
+            case FORWARD_RIGHT -> this.orientation = this.orientation.next();
+            case RIGHT -> this.orientation = this.orientation.next().next();
+            case BACKWARD_RIGHT -> this.orientation = this.orientation.reverse().previous();
+            case BACKWARD -> this.orientation = this.orientation.reverse();
+            case BACKWARD_LEFT -> this.orientation = this.orientation.reverse().next();
+            case LEFT -> this.orientation = this.orientation.previous().previous();
+            case FORWARD_LEFT -> this.orientation = this.orientation.previous();
         }
+
+        this.position = validator.getNewPositionForAnimal(this);
     }
 }

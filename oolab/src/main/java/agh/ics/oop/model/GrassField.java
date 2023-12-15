@@ -17,8 +17,8 @@ public class GrassField extends AbstractWorldMap{
     }
 
     private final Map<Vector2d, Grass> grassTiles = new HashMap<>();
-    private Vector2d BOTTOM_LEFT_MAP_BORDER = new Vector2d(0,0);
-    private Vector2d TOP_RIGHT_MAP_BORDER = new Vector2d(mapSize - 1,mapSize - 1);
+    private final Vector2d BOTTOM_LEFT_MAP_BORDER = new Vector2d(0,0);
+    private final Vector2d TOP_RIGHT_MAP_BORDER = new Vector2d(mapSize - 1,mapSize - 1);
 
     private void generateGrassTiles(){
         int cords = (int) sqrt(grassNumber * 10);
@@ -62,5 +62,32 @@ public class GrassField extends AbstractWorldMap{
     @Override
     public Boundary getCurrentBounds(){
         return new Boundary(BOTTOM_LEFT_MAP_BORDER, TOP_RIGHT_MAP_BORDER);
+    }
+
+    private boolean willAnimalBeOutOfBorder(Vector2d position){
+        return position.getX() < BOTTOM_LEFT_MAP_BORDER.getX() || position.getX() > TOP_RIGHT_MAP_BORDER.getX() ||
+                position.getY() < BOTTOM_LEFT_MAP_BORDER.getY() || position.getY() > TOP_RIGHT_MAP_BORDER.getY();
+    }
+    public Vector2d getNewPositionForAnimal(Animal animal){
+        Vector2d oldPosition = animal.getPosition();
+        MapDirection orientation = animal.getOrientation();
+
+        Vector2d newPosition = oldPosition.add(orientation.toUnitVector());
+
+        if(willAnimalBeOutOfBorder(newPosition)){
+            if(newPosition.getY() > TOP_RIGHT_MAP_BORDER.getY() || newPosition.getY() < BOTTOM_LEFT_MAP_BORDER.getY()){
+                animal.setOrientation(orientation.reverse());
+                return oldPosition;
+            }
+            else if(newPosition.getX() < BOTTOM_LEFT_MAP_BORDER.getX()){
+                return new Vector2d(TOP_RIGHT_MAP_BORDER.getX() ,oldPosition.getY());
+            }
+            else {
+                return new Vector2d(BOTTOM_LEFT_MAP_BORDER.getX(), oldPosition.getY());
+            }
+        }
+        else{
+            return newPosition;
+        }
     }
 }

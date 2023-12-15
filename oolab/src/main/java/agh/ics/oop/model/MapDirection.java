@@ -3,18 +3,26 @@ package agh.ics.oop.model;
 public enum MapDirection
 {
     NORTH,
-    SOUTH,
+    NORTH_EAST,
     EAST,
-    WEST;
+    SOUTH_EAST,
+    SOUTH,
+    SOUTH_WEST,
+    WEST,
+    NORTH_WEST;
 
     public String toString()
     {
         return switch(this)
         {
-            case EAST -> "Wschód";
-            case WEST -> "Zachód";
-            case NORTH -> "Północ";
-            case SOUTH -> "Południe";
+            case EAST -> "E";
+            case WEST -> "W";
+            case NORTH -> "N";
+            case SOUTH -> "S";
+            case NORTH_EAST -> "NE";
+            case NORTH_WEST -> "NW";
+            case SOUTH_EAST -> "SE";
+            case SOUTH_WEST -> "SW";
         };
     }
 
@@ -22,10 +30,14 @@ public enum MapDirection
     {
         return switch(this)
         {
-            case EAST -> SOUTH;
-            case WEST -> NORTH;
-            case NORTH -> EAST;
-            case SOUTH -> WEST;
+            case NORTH -> NORTH_EAST;
+            case NORTH_EAST -> EAST;
+            case EAST -> SOUTH_EAST;
+            case SOUTH_EAST -> SOUTH;
+            case SOUTH -> SOUTH_WEST;
+            case SOUTH_WEST -> WEST;
+            case WEST -> NORTH_WEST;
+            case NORTH_WEST -> NORTH;
         };
     }
 
@@ -33,10 +45,28 @@ public enum MapDirection
     {
         return switch(this)
         {
-            case EAST -> NORTH;
-            case WEST -> SOUTH;
-            case NORTH -> WEST;
-            case SOUTH -> EAST;
+            case NORTH_EAST -> NORTH;
+            case EAST -> NORTH_EAST;
+            case SOUTH_EAST -> EAST;
+            case SOUTH -> SOUTH_EAST;
+            case SOUTH_WEST -> SOUTH;
+            case WEST -> SOUTH_WEST;
+            case NORTH_WEST -> WEST;
+            case NORTH -> NORTH_WEST;
+        };
+    }
+
+    public MapDirection reverse(){
+        return switch(this)
+        {
+            case NORTH_EAST -> SOUTH_WEST;
+            case EAST -> WEST;
+            case SOUTH_EAST -> NORTH_WEST;
+            case SOUTH -> NORTH;
+            case SOUTH_WEST -> NORTH_EAST;
+            case WEST -> EAST;
+            case NORTH_WEST -> SOUTH_EAST;
+            case NORTH -> SOUTH;
         };
     }
 
@@ -48,6 +78,10 @@ public enum MapDirection
             case WEST -> new Vector2d(-1,0);
             case NORTH -> new Vector2d(0,1);
             case SOUTH -> new Vector2d(0,-1);
+            case NORTH_EAST -> new Vector2d(1,1);
+            case NORTH_WEST -> new Vector2d(-1,1);
+            case SOUTH_EAST -> new Vector2d(1,-1);
+            case SOUTH_WEST -> new Vector2d(-1,-1);
         };
     }
 }
