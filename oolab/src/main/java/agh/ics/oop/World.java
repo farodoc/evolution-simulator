@@ -1,5 +1,6 @@
 package agh.ics.oop;
 
+import agh.ics.oop.model.DarvinsMap;
 import javafx.application.Application;
 
 public class World {
@@ -18,5 +19,9 @@ public class World {
         List<Vector2d> initialPositions = Arrays.asList(new Vector2d(0, 0), new Vector2d(0, 1));
         Simulation simulation = new Simulation(initialPositions, directions, map);
         simulation.run();*/
+
+        //DarvinsMap darvinsMap = new DarvinsMap(10);
+        //darvinsMap.printMap();
+
     }
 }

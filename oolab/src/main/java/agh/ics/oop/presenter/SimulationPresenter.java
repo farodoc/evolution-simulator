@@ -7,6 +7,7 @@ import agh.ics.oop.model.*;
 import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.geometry.HPos;
+import javafx.scene.Node;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.ColumnConstraints;
@@ -91,8 +92,11 @@ public class SimulationPresenter implements MapChangeListener {
 
                 GridPane.setHalignment(cellLabel, HPos.CENTER);
                 mapGrid.add(cellLabel, x, height - y + 1);
+
+                cellLabel.setStyle("-fx-background-color: green;");
             }
         }
+
     }
 
     public void drawMap(){

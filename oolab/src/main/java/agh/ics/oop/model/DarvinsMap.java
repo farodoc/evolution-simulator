@@ -5,6 +5,7 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
+import static java.lang.Math.abs;
 import static java.lang.Math.sqrt;
 
 public class DarvinsMap extends AbstractWorldMap{
@@ -13,14 +14,18 @@ public class DarvinsMap extends AbstractWorldMap{
     public DarvinsMap(int grassNumber) {
         super();
         this.grassNumber = grassNumber;
-        generateGrassTiles();
+        generateTiles();
+        generateGrass();
     }
 
     private final Map<Vector2d, Grass> grassTiles = new HashMap<>();
     private final Vector2d BOTTOM_LEFT_MAP_BORDER = new Vector2d(0,0);
     private final Vector2d TOP_RIGHT_MAP_BORDER = new Vector2d(mapSize - 1,mapSize - 1);
 
-    private void generateGrassTiles(){
+    private final TileType[][] tiles = new TileType[mapSize][mapSize];
+
+    private void generateGrass()
+    {
         int cords = (int) sqrt(grassNumber * 10);
         int cnt = 0;
         while(cnt < grassNumber){
@@ -29,10 +34,76 @@ public class DarvinsMap extends AbstractWorldMap{
             Vector2d newGrassPosition = new Vector2d(x,y);
             Grass newGrass = new Grass(newGrassPosition);
             if(!grassTiles.containsKey(newGrassPosition)){
-                grassTiles.put(newGrassPosition,newGrass);
-                cnt++;
+                if(tiles[y][x] == TileType.JUNG && Math.random() < 0.8 || tiles[y][x] == TileType.DIRT && Math.random() < 0.2)
+                {
+                    grassTiles.put(newGrassPosition,newGrass);
+                    cnt++;
+                }
             }
         }
+    }
+
+    public void printMap() {
+        for (int i = 0; i < mapSize; i++) {
+            for (int j = 0; j < mapSize; j++) {
+                System.out.print(tiles[i][j] + " ");
+            }
+            System.out.println();
+        }
+    }
+    private void generateTiles()
+    {
+        generateJungleTiles();
+
+        for(int x=0; x<mapSize; x++)
+        {
+            for(int y=0; y<mapSize; y++)
+            {
+                if(tiles[x][y]!=TileType.JUNG)
+                    tiles[x][y] = TileType.DIRT;
+            }
+        }
+    }
+
+    private void generateJungleTiles()
+    {
+        int jungleTilesAmount = (int) (mapSize*mapSize*0.2);
+        int jungleTilesCounter = 0;
+        int startingIndex= mapSize/2;
+        boolean generateUpper = true;
+        int yModifier = 0;
+        int equator = startingIndex;
+        double propabilityForRow = 1.0;
+
+        while(jungleTilesCounter < jungleTilesAmount && equator+yModifier<mapSize && equator-yModifier>=0)
+        {
+            for(int x=0; x < mapSize; x++)
+            {
+                if(jungleTilesCounter>=jungleTilesAmount)
+                    break;
+
+                else if(Math.random() < propabilityForRow)
+                {
+                    jungleTilesCounter++;
+                    tiles[equator+yModifier][x] = TileType.JUNG;
+                }
+            }
+
+            if(generateUpper)
+            {
+                yModifier+=1;
+                yModifier *= (-1);
+                generateUpper= false;
+            }
+            else
+            {
+                yModifier *= (-1);
+                generateUpper= true;
+            }
+
+            propabilityForRow/=1.25;
+        }
+
     }
 
     Map<Vector2d, Animal> getAnimals() {
