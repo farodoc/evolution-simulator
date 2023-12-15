@@ -4,7 +4,6 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
-import static java.lang.Math.sqrt;
 
 public class DarvinsMap extends AbstractWorldMap{
     private final int mapSize = 10;
@@ -13,42 +12,43 @@ public class DarvinsMap extends AbstractWorldMap{
         super();
         this.grassNumber = grassNumber;
         generateTiles();
-        generateGrass();
+        generatePoisonedTiles();
+        generateFood();
     }
 
-    private final Map<Vector2d, Grass> grassTiles = new HashMap<>();
+    private final Map<Vector2d, AbstractFood> foodTiles = new HashMap<>();
     private final Vector2d BOTTOM_LEFT_MAP_BORDER = new Vector2d(0,0);
     private final Vector2d TOP_RIGHT_MAP_BORDER = new Vector2d(mapSize - 1,mapSize - 1);
-
     private final TileType[][] tiles = new TileType[mapSize][mapSize];
+    private final boolean[][]isMaybePoisonedTile  = new boolean[mapSize][mapSize];
+    private static final double POISON_PROBABILITY = 0.2;
 
-    private void generateGrass()
+    private void generateFood()
     {
-        int cords = (int) sqrt(grassNumber * 10);
         int cnt = 0;
         while(cnt < grassNumber){
-            int x = (int) (Math.random() * cords);
-            int y = (int) (Math.random() * cords);
-            Vector2d newGrassPosition = new Vector2d(x,y);
-            Grass newGrass = new Grass(newGrassPosition);
-            if(!grassTiles.containsKey(newGrassPosition)){
-                if(tiles[y][x] == TileType.JUNG && Math.random() < 0.8 || tiles[y][x] == TileType.DIRT && Math.random() < 0.2)
+            int x = (int) (Math.random() * mapSize);
+            int y = (int) (Math.random() * mapSize);
+            Vector2d newFoodPosition = new Vector2d(x,y);
+
+            if(!foodTiles.containsKey(newFoodPosition)){
+                if(isFoodSpawnedAtYX(y, x))
                 {
-                    grassTiles.put(newGrassPosition,newGrass);
+                    if(isMaybePoisonedTile[y][x] && Math.random() < POISON_PROBABILITY) //generate poisonedFruit
+                        foodTiles.put(newFoodPosition, new PoisonedFruit(newFoodPosition));
+
+                    else foodTiles.put(newFoodPosition,new Grass(newFoodPosition));
+
                     cnt++;
                 }
             }
         }
     }
 
-    public void printMap() {
-        for (int i = 0; i < mapSize; i++) {
-            for (int j = 0; j < mapSize; j++) {
-                System.out.print(tiles[i][j] + " ");
-            }
-            System.out.println();
-        }
+    private boolean isFoodSpawnedAtYX(int y, int x) {
+        return tiles[y][x] == TileType.JUNG && Math.random() < 0.8 || tiles[y][x] == TileType.DIRT && Math.random() < 0.2;
     }
+
     private void generateTiles()
     {
         generateJungleTiles();
@@ -103,11 +103,34 @@ public class DarvinsMap extends AbstractWorldMap{
 
     }
 
+    private void generatePoisonedTiles()
+    {
+        double poisonedTilesAmount =mapSize*mapSize*0.2;
+        int a = (int) Math.sqrt(poisonedTilesAmount); //a = lengthOfSquare
+        int startingIndex = (mapSize - a)/2;
+
+        for(int x=startingIndex; x<startingIndex+a; x++)
+        {
+            for(int y=startingIndex; y<startingIndex+a; y++)
+            {
+                isMaybePoisonedTile[y][x]=true;
+            }
+        }
+    }
     private boolean isInMap(int equator, int yModifier)
     {
         return equator + yModifier < mapSize && equator - yModifier >= 0;
     }
 
+
+    public void printMap() {
+        for (int i = 0; i < mapSize; i++) {
+            for (int j = 0; j < mapSize; j++) {
+                System.out.print(isMaybePoisonedTile[i][j] + " ");
+            }
+            System.out.println();
+        }
+    }
 
     Map<Vector2d, Animal> getAnimals() {
         return Collections.unmodifiableMap(animals);
@@ -115,7 +138,7 @@ public class DarvinsMap extends AbstractWorldMap{
 
     @Override
     public boolean isOccupied(Vector2d position) {
-        return super.isOccupied(position) || grassTiles.containsKey(position);
+        return super.isOccupied(position) || foodTiles.containsKey(position);
     }
 
     @Override
@@ -123,13 +146,13 @@ public class DarvinsMap extends AbstractWorldMap{
         if(super.objectAt(position) != null){
             return super.objectAt(position);
         }
-        return grassTiles.getOrDefault(position, null);
+        return foodTiles.getOrDefault(position, null);
     }
 
     @Override
     public ArrayList<WorldElement> getElements(){
         ArrayList<WorldElement> result = super.getElements();
-        result.addAll(grassTiles.values());
+        result.addAll(foodTiles.values());
         return result;
     }
 

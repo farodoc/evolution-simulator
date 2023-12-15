@@ -92,8 +92,6 @@ public class SimulationPresenter implements MapChangeListener {
 
                 GridPane.setHalignment(cellLabel, HPos.CENTER);
                 mapGrid.add(cellLabel, x, height - y + 1);
-
-                cellLabel.setStyle("-fx-background-color: green;");
             }
         }
 

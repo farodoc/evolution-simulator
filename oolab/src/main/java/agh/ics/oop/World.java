@@ -20,7 +20,7 @@ public class World {
         Simulation simulation = new Simulation(initialPositions, directions, map);
         simulation.run();*/
 
-        //DarvinsMap darvinsMap = new DarvinsMap(10);
+        //DarvinsMap darvinsMap = new DarvinsMap(7);
         //darvinsMap.printMap();
 
     }

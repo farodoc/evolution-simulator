@@ -1,7 +1,7 @@
 package agh.ics.oop.model;
 
-public class ForbiddenFruit extends AbstractFood{
-    public ForbiddenFruit(Vector2d position){
+public class PoisonedFruit extends AbstractFood{
+    public PoisonedFruit(Vector2d position){
         super(position);
     }
 
