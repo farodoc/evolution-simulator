@@ -124,7 +124,7 @@ public class SimulationPresenter implements MapChangeListener {
 
         setMap(map);
 
-        SimulationEngine engine = new SimulationEngine(simulations, 1);
+        SimulationEngine engine = new SimulationEngine(simulations, 2);
         engine.runAsync();
     }
 }
