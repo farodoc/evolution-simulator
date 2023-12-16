@@ -12,6 +12,7 @@ import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
+import javafx.stage.Screen;
 
 import java.util.ArrayList;
 
@@ -20,7 +21,6 @@ import java.util.List;
 
 public class SimulationPresenter implements MapChangeListener {
     DarvinsMap map;
-    private static final int CELL_SIZE = 40;
 
     @FXML
     private Label infoLabel;
@@ -45,17 +45,18 @@ public class SimulationPresenter implements MapChangeListener {
     }
 
     private void drawGrid(){
+        int cellSize = (int)(Screen.getPrimary().getVisualBounds().getHeight()/map.getMapSize() * 0.8);
         clearGrid();
         Boundary boundaries = map.getCurrentBounds();
         int width = boundaries.topRightCorner().getX() - boundaries.bottomLeftCorner().getX() + 1;
         int height = boundaries.topRightCorner().getY() - boundaries.bottomLeftCorner().getY() + 1;
 
         for (int x = 0; x < width + 1; x++) {
-            mapGrid.getColumnConstraints().add(new ColumnConstraints(CELL_SIZE));
+            mapGrid.getColumnConstraints().add(new ColumnConstraints(cellSize));
         }
 
         for (int y = 0; y < height + 1; y++) {
-            mapGrid.getRowConstraints().add(new RowConstraints(CELL_SIZE));
+            mapGrid.getRowConstraints().add(new RowConstraints(cellSize));
         }
 
         Label xyLabel = new Label("y/x");
@@ -76,6 +77,8 @@ public class SimulationPresenter implements MapChangeListener {
     }
 
     private void fillMap(){
+        int cellSize = (int)(Screen.getPrimary().getVisualBounds().getHeight()/map.getMapSize() * 0.8);
+        int fontSize = (int)(0.75*cellSize);
         Boundary boundaries = map.getCurrentBounds();
         int width = boundaries.topRightCorner().getX() - boundaries.bottomLeftCorner().getX() + 1;
         int height = boundaries.topRightCorner().getY() - boundaries.bottomLeftCorner().getY() + 1;
@@ -84,10 +87,11 @@ public class SimulationPresenter implements MapChangeListener {
         for (int y = height; y >= 1; y--) {
             for (int x = 1; x < width + 1; x++) {
                 Label cellLabel = new Label();
-                cellLabel.setMinWidth(CELL_SIZE);
-                cellLabel.setMinHeight(CELL_SIZE);
+                cellLabel.setMinWidth(cellSize);
+                cellLabel.setMinHeight(cellSize);
                 cellLabel.setBorder(new Border(new BorderStroke(Color.BLACK, BorderStrokeStyle.SOLID, null, new BorderWidths(0.4))));
-                cellLabel.setStyle("-fx-alignment: CENTER;-fx-font-weight: bold;-fx-font-size: 30px;");
+                //cellLabel.setStyle("-fx-alignment: CENTER;-fx-font-weight: bold;-fx-font-size: 30px;");
+                cellLabel.setStyle("-fx-alignment: CENTER;-fx-font-weight: bold;-fx-font-size: " + fontSize + "px;");
                 Vector2d translatedPosition = new Vector2d(x - 1 + boundaries.bottomLeftCorner().getX(), y - 1 + boundaries.bottomLeftCorner().getY());
 
                 if(tiles[translatedPosition.getY()][translatedPosition.getX()] == TileType.JUNG){

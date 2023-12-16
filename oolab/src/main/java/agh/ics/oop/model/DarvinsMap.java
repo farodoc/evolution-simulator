@@ -6,7 +6,11 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class DarvinsMap extends AbstractWorldMap{
-    private final int mapSize = 30;
+    public int getMapSize() {
+        return mapSize;
+    }
+
+    private final int mapSize = 10;
     private int grassNumber;
     public DarvinsMap(int grassNumber) {
         super();
