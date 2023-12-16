@@ -7,12 +7,11 @@ import agh.ics.oop.model.*;
 import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.geometry.HPos;
-import javafx.scene.Node;
+import javafx.geometry.Insets;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
-import javafx.scene.layout.ColumnConstraints;
-import javafx.scene.layout.GridPane;
-import javafx.scene.layout.RowConstraints;
+import javafx.scene.layout.*;
+import javafx.scene.paint.Color;
 
 import java.util.ArrayList;
 
@@ -20,7 +19,7 @@ import java.util.Arrays;
 import java.util.List;
 
 public class SimulationPresenter implements MapChangeListener {
-    WorldMap map;
+    DarvinsMap map;
     private static final int CELL_SIZE = 40;
 
     @FXML
@@ -35,7 +34,7 @@ public class SimulationPresenter implements MapChangeListener {
     @FXML
     private GridPane mapGrid;
 
-    public void setMap(WorldMap map) {
+    public void setMap(DarvinsMap map) {
         this.map = map;
     }
 
@@ -80,11 +79,23 @@ public class SimulationPresenter implements MapChangeListener {
         Boundary boundaries = map.getCurrentBounds();
         int width = boundaries.topRightCorner().getX() - boundaries.bottomLeftCorner().getX() + 1;
         int height = boundaries.topRightCorner().getY() - boundaries.bottomLeftCorner().getY() + 1;
+        TileType[][] tiles = map.getTiles();
 
         for (int y = height; y >= 1; y--) {
             for (int x = 1; x < width + 1; x++) {
                 Label cellLabel = new Label();
+                cellLabel.setMinWidth(CELL_SIZE);
+                cellLabel.setMinHeight(CELL_SIZE);
+                cellLabel.setBorder(new Border(new BorderStroke(Color.BLACK, BorderStrokeStyle.SOLID, null, new BorderWidths(0.4))));
+                cellLabel.setStyle("-fx-alignment: CENTER;-fx-font-weight: bold;-fx-font-size: 30px;");
                 Vector2d translatedPosition = new Vector2d(x - 1 + boundaries.bottomLeftCorner().getX(), y - 1 + boundaries.bottomLeftCorner().getY());
+
+                if(tiles[translatedPosition.getY()][translatedPosition.getX()] == TileType.JUNG){
+                    cellLabel.setBackground(new Background(new BackgroundFill(Color.rgb(18, 74, 13), CornerRadii.EMPTY, Insets.EMPTY)));
+                }
+                else{
+                    cellLabel.setBackground(new Background(new BackgroundFill(Color.rgb(135, 65, 4), CornerRadii.EMPTY, Insets.EMPTY)));
+                }
 
                 if (map.objectAt(translatedPosition) != null) {
                     cellLabel.setText(map.objectAt(translatedPosition).toString());
@@ -94,7 +105,6 @@ public class SimulationPresenter implements MapChangeListener {
                 mapGrid.add(cellLabel, x, height - y + 1);
             }
         }
-
     }
 
     public void drawMap(){

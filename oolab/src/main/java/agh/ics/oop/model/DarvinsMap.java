@@ -6,11 +6,12 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class DarvinsMap extends AbstractWorldMap{
-    private final int mapSize = 10;
+    private final int mapSize = 30;
     private int grassNumber;
     public DarvinsMap(int grassNumber) {
         super();
-        this.grassNumber = grassNumber;
+        //this.grassNumber = grassNumber;
+        this.grassNumber = mapSize;
         generateTiles();
         generatePoisonedTiles();
         generateFood();
@@ -122,6 +123,10 @@ public class DarvinsMap extends AbstractWorldMap{
         return equator + yModifier < mapSize && equator - yModifier >= 0;
     }
 
+
+    public TileType[][] getTiles(){
+        return tiles;
+    }
 
     public void printMap() {
         for (int i = 0; i < mapSize; i++) {
