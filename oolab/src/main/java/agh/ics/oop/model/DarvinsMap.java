@@ -8,14 +8,16 @@ public class DarvinsMap extends AbstractWorldMap{
     }
 
     private final int mapSize = 20;
-    private int grassNumber;
+    private static final int STARTING_FOOD_AMOUNT = 10;
+    private static final int FOOD_GROWTH_AMOUNT_PER_DAY = 4;
+    private static final double POISON_PROBABILITY = 0.2;
+
     public DarvinsMap(int grassNumber) {
         super();
         //this.grassNumber = grassNumber;
-        this.grassNumber = mapSize;
         generateTiles();
         generatePoisonedTiles();
-        generateFood();
+        generateFood(STARTING_FOOD_AMOUNT);
     }
 
     private final Map<Vector2d, AbstractFood> foodTiles = new HashMap<>();
@@ -24,26 +26,34 @@ public class DarvinsMap extends AbstractWorldMap{
     private final TileType[][] tiles = new TileType[mapSize][mapSize];
     private final List<Vector2d> dirtTilesPositions = new ArrayList<>();
     private int dirtTilesPositionsIndex = 0;
+    private int dirtFoodAmount = 0;
     private final List<Vector2d> jungleTilesPositions = new ArrayList<>();
     private int jungleTilesPositionsIndex = 0;
+    private int jungleFoodAmount = 0;
     private final boolean[][]isMaybePoisonedTile  = new boolean[mapSize][mapSize];
-    private static final double POISON_PROBABILITY = 0.2;
 
-    private void generateFood()
+
+    private void generateFood(int howManyFoodToGenerate)
     {
         int cnt = 0;
-        while(cnt < grassNumber){
+        while(cnt < howManyFoodToGenerate){
             Vector2d newFoodPosition;
-            if(Math.random() < 0.8){//wylosowala sie jungla
-                newFoodPosition = jungleTilesPositions.get(jungleTilesPositionsIndex);
-                jungleTilesPositionsIndex = (jungleTilesPositionsIndex + 1) % jungleTilesPositions.size();
-            }
-            else{
-                newFoodPosition = dirtTilesPositions.get(dirtTilesPositionsIndex);
-                dirtTilesPositionsIndex = (dirtTilesPositionsIndex + 1) % dirtTilesPositions.size();
-            }
+            if(jungleFoodAmount<jungleTilesPositions.size() && Math.random() < 0.8){//wylosowala sie jungla
 
-            if(!foodTiles.containsKey(newFoodPosition)){
+                newFoodPosition = getFreeTile(jungleTilesPositions);
+                jungleTilesPositionsIndex = (jungleTilesPositionsIndex + 1) % jungleTilesPositions.size();
+                jungleFoodAmount++;
+            }
+            else if(dirtFoodAmount<dirtTilesPositions.size())
+            {
+                newFoodPosition = getFreeTile(dirtTilesPositions);
+                dirtTilesPositionsIndex = (dirtTilesPositionsIndex + 1) % dirtTilesPositions.size();
+                dirtFoodAmount++;
+            }
+            else break;
+
+            if(!foodTiles.containsKey(newFoodPosition))
+            {
                 if(isMaybePoisonedTile[newFoodPosition.getY()][newFoodPosition.getX()] && Math.random() < POISON_PROBABILITY) //generate poisonedFruit
                     foodTiles.put(newFoodPosition, new PoisonedFruit(newFoodPosition));
 
@@ -53,6 +63,16 @@ public class DarvinsMap extends AbstractWorldMap{
             }
         }
     }
+
+    private Vector2d getFreeTile(List<Vector2d> tilesPositions)
+    {
+        for(Vector2d position: tilesPositions)
+            if(!foodTiles.containsKey(position))
+                return position;
+
+        return null;
+    }
+
 
     private void generateTiles()
     {
