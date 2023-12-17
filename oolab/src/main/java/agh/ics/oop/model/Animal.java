@@ -19,10 +19,16 @@ public class Animal implements WorldElement{
     public Animal(Vector2d position, int energy, int genesAmount)
     {
         this.position = position;
-        this.orientation = MapDirection.NORTH;
+        this.orientation = MapDirection.generateRandomMapDirection();
         this.energy = energy;
         this.genesAmount = genesAmount;
         generateGenesOnStart();
+    }
+
+    public Animal(Vector2d position, int energy, int genesAmount, List<Integer> genes)
+    {
+        this(position, energy, genesAmount);
+        this.genes = genes;
     }
 
     private void generateGenesOnStart(){
@@ -115,6 +121,7 @@ public class Animal implements WorldElement{
     public int getEnergy(){
         return this.energy;
     }
+    public void setEnergy(int energy){ this.energy = energy; }
     public int getAge() {return age;}
     public int getChildrenAmount() {return childrenAmount;}
 
@@ -124,5 +131,9 @@ public class Animal implements WorldElement{
 
     public void updateAge(){
         this.age++;
+    }
+
+    public List<Integer> getGenes(){
+        return this.genes;
     }
 }

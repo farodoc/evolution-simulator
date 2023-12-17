@@ -14,6 +14,8 @@ public class Simulation implements Runnable{
     private static final int ANIMAL_ENERGY_PER_MOVE = 1;
     private static final int ANIMAL_MIN_ENERGY_TO_REPRODUCE = 5;
     private static final int ANIMAL_ENERGY_TO_REPRODUCE = 2;
+    private static final int ANIMAL_MIN_MUTATIONS = 0;
+    private static final int ANIMAL_MAX_MUTATIONS = 2;
     private DarvinMap map;
     private List<Animal> animals;
 
@@ -49,7 +51,7 @@ public class Simulation implements Runnable{
             clearDeadAnimals();
             if(!animals.isEmpty()) moveAllAnimals(); else break;
             feedAnimals();
-            breedAnimals();
+            breedAnimals();//nie dziala
             try {
                 Thread.sleep(1000);
             } catch (InterruptedException e) {
@@ -65,7 +67,80 @@ public class Simulation implements Runnable{
         System.out.println("KONIEC SYMULACJI - ZWIERZETA WYGINELY!");
     }
 
-    private void breedAnimals() {
+    private void breedAnimals(Vector2d position) {
+        List<Animal> filteredAnimals = new ArrayList<>();
+
+        for (Animal animal : animals) {
+            if (animal.getPosition().equals(position) && animal.getEnergy() >= ANIMAL_MIN_ENERGY_TO_REPRODUCE) {
+                filteredAnimals.add(animal);
+            }
+        }
+
+        Comparator<Animal> animalComparator = Comparator
+                .comparingInt(Animal::getEnergy)
+                .thenComparingInt(Animal::getAge)
+                .thenComparingInt(Animal::getChildrenAmount);
+
+        Collections.sort(filteredAnimals, animalComparator);
+
+        int pairs = filteredAnimals.size() / 2;
+        int animalIndex = 0;
+
+        for(int i = 0; i < pairs; i++){
+            combineAnimals(filteredAnimals.get(animalIndex), filteredAnimals.get(animalIndex + 1));
+            animalIndex += 2;
+        }
+    }
+
+    private Animal combineAnimals(Animal animal1, Animal animal2){
+        List<Integer> newGenes = combineGenes(animal1, animal2);
+        animal1.setEnergy(animal1.getEnergy() - ANIMAL_ENERGY_TO_REPRODUCE);
+        animal2.setEnergy(animal1.getEnergy() - ANIMAL_ENERGY_TO_REPRODUCE);
+        Animal child = new Animal(animal1.getPosition(), ANIMAL_ENERGY_TO_REPRODUCE, ANIMAL_GENES_AMOUNT, newGenes);
+        map.place(child);
+        animals.add(child);
+        return child;
+    }
+
+    private List<Integer> combineGenes(Animal strongerAnimal, Animal weakerAnimal){
+        List<Integer> newGenes = new ArrayList<>();
+        int strongerGenesAmount = (int)(strongerAnimal.getEnergy()/(double)(strongerAnimal.getEnergy() + weakerAnimal.getEnergy())) * ANIMAL_GENES_AMOUNT;
+        int weakerGenesAmount = ANIMAL_GENES_AMOUNT - strongerGenesAmount;
+        boolean drawnLeftSide = Math.random() < 0.5;
+        if(drawnLeftSide){
+            for(int i = 0; i < strongerGenesAmount; i++){
+                newGenes.add(strongerAnimal.getGenes().get(i));
+            }
+            for(int i = strongerGenesAmount; i < ANIMAL_GENES_AMOUNT; i++){
+                newGenes.add(weakerAnimal.getGenes().get(i));
+            }
+        }
+        else{
+            for(int i = 0; i < weakerGenesAmount; i++){
+                newGenes.add(weakerAnimal.getGenes().get(i));
+            }
+            for(int i = weakerGenesAmount; i < ANIMAL_GENES_AMOUNT; i++){
+                newGenes.add(strongerAnimal.getGenes().get(i));
+            }
+        }
+        switchRandomGenes(newGenes);
+        return newGenes;
+    }
+
+    private void switchRandomGenes(List<Integer> genes){
+        Random random = new Random();
+        int genesToSwitchAmount = ANIMAL_MIN_MUTATIONS + random.nextInt(ANIMAL_MAX_MUTATIONS - ANIMAL_MIN_MUTATIONS + 1);
+        List<Integer> genesPositions = new ArrayList<>();
+
+        for(int i = 0; i < ANIMAL_GENES_AMOUNT; i++){
+            genesPositions.add(i);
+        }
+
+        Collections.shuffle(genesPositions);
+
+        for(int i = 0; i < genesToSwitchAmount; i++){
+            genes.set(i, (genes.get(i) + random.nextInt(1, ANIMAL_GENES_AMOUNT)) % ANIMAL_GENES_AMOUNT);
+        }
     }
 
     private void feedAnimals()

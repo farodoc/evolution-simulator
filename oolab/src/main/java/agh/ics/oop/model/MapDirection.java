@@ -84,4 +84,20 @@ public enum MapDirection
             case SOUTH_WEST -> new Vector2d(-1,-1);
         };
     }
+
+    public static MapDirection generateRandomMapDirection(){
+        int number = (int)(Math.random()*8);
+        return switch(number)
+        {
+            case 0 -> EAST;
+            case 1 -> WEST;
+            case 2 -> NORTH;
+            case 3 -> SOUTH;
+            case 4 -> NORTH_EAST;
+            case 5 -> NORTH_WEST;
+            case 6 -> SOUTH_EAST;
+            case 7 -> SOUTH_WEST;
+            default -> NORTH;
+        };
+    }
 }
