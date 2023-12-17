@@ -8,22 +8,22 @@ import java.util.Collections;
 import java.util.List;
 
 public class Simulation implements Runnable{
-    private static final int STARTING_FOOD_AMOUNT = 10;
-    private static final int FOOD_GROWTH_PER_DAY = 2;
-    private static final int ENERGY_FROM_FOOD = 5;
+    private static final int FOOD_STARTING_AMOUNT = 10;
+    private static final int FOOD_GROWTH_PER_DAY = 7;
+    private static final int FOOD_ENERGY = 5;
     private static final int ANIMAL_STARTING_AMOUNT = 10;
-    private static final int ANIMAL_STARTING_ENERGY = 1;
+    private static final int ANIMAL_STARTING_ENERGY = 4;
     private static final int ANIMAL_GENES_AMOUNT = 1;
     private static final int ANIMAL_ENERGY_PER_MOVE = 1;
     private static final int ANIMAL_MIN_ENERGY_TO_REPRODUCE = 5;
     private static final int ANIMAL_ENERGY_TO_REPRODUCE = 2;
+    private DarvinsMap map;
     private List<Animal> animals;
-    private WorldMap map;
 
     List<Animal> getAnimals(){
         return Collections.unmodifiableList(this.animals);
     }
-    public Simulation(List<Vector2d> positions, WorldMap map) {
+    public Simulation(List<Vector2d> positions, DarvinsMap map) {
         this.animals = new ArrayList<>();
         this.map = map;
 
@@ -60,8 +60,18 @@ public class Simulation implements Runnable{
                 throw new RuntimeException(e);
             }
         }
+        System.out.println("KONIEC SYMULACJI - ZWIERZETA WYGINELY!");
     }
 
+    private void feedAnimals()
+    {
+
+    }
+
+    private void conflictManager()
+    {
+
+    }
     private void moveAllAnimals(){
         for(Animal animal : animals){
             map.move(animal, ANIMAL_ENERGY_PER_MOVE);
@@ -74,6 +84,11 @@ public class Simulation implements Runnable{
                 animals.remove(i);
             }
         }
+    }
+
+    private void spawnNewFood()
+    {
+        map.generateFood(FOOD_GROWTH_PER_DAY);
     }
 
 

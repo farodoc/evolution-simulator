@@ -33,7 +33,7 @@ public class DarvinsMap extends AbstractWorldMap{
     private final boolean[][]isMaybePoisonedTile  = new boolean[mapSize][mapSize];
 
 
-    private void generateFood(int howManyFoodToGenerate)
+    public void generateFood(int howManyFoodToGenerate)
     {
         int cnt = 0;
         while(cnt < howManyFoodToGenerate){
@@ -50,7 +50,7 @@ public class DarvinsMap extends AbstractWorldMap{
                 dirtTilesPositionsIndex = (dirtTilesPositionsIndex + 1) % dirtTilesPositions.size();
                 dirtFoodAmount++;
             }
-            else break;
+            else break; //cała mapa pokryta jedzeniem
 
             if(!foodTiles.containsKey(newFoodPosition))
             {
@@ -168,7 +168,7 @@ public class DarvinsMap extends AbstractWorldMap{
         }
     }
 
-    Map<Vector2d, Animal> getAnimals() {
+    public Map<Vector2d, Animal> getAnimals() {
         return Collections.unmodifiableMap(animals);
     }
 
