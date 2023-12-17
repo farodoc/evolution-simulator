@@ -1,6 +1,5 @@
 package agh.ics.oop.model;
 
-import agh.ics.oop.model.exceptions.PositionAlreadyOccupiedException;
 import agh.ics.oop.model.util.MapVisualizer;
 
 import java.util.*;
@@ -22,16 +21,14 @@ public class DarvinsMap implements WorldMap{
     protected final MapVisualizer mapVisualizer;
     protected final UUID id;
     private final int mapSize = 20;
-    private static final int STARTING_FOOD_AMOUNT = 10;
-    private static final int FOOD_GROWTH_AMOUNT_PER_DAY = 4;
     private static final double POISON_PROBABILITY = 0.2;
 
-    public DarvinsMap(int grassNumber) {
+    public DarvinsMap(int FOOD_STARTING_AMOUNT) {
         id = UUID.randomUUID();
         mapVisualizer = new MapVisualizer(this);
         generateTiles();
         generatePoisonedTiles();
-        generateFood(STARTING_FOOD_AMOUNT);
+        generateFood(FOOD_STARTING_AMOUNT);
     }
     public UUID getId() {
         return id;
@@ -184,7 +181,6 @@ public class DarvinsMap implements WorldMap{
         if(oldPosition != animal.getPosition()){
             animals.remove(oldPosition, animal);
             animals.put(animal.getPosition(), animal);
-            //notifyObservers("Animal moved from " + oldPosition + " to " + animal.getPosition());
             notifyObservers("Animal has " + animal.getEnergy() + " energy");
         }
         else if(oldOrientation != animal.getOrientation()){
@@ -276,5 +272,9 @@ public class DarvinsMap implements WorldMap{
     public String toString(){
         Boundary boundaries = getCurrentBounds();
         return mapVisualizer.draw(boundaries.bottomLeftCorner(), boundaries.topRightCorner());
+    }
+
+    public void removeAnimal(Animal animal){
+        animals.remove(animal.getPosition(), animal);
     }
 }

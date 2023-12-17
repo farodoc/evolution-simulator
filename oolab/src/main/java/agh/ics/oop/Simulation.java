@@ -5,11 +5,11 @@ import agh.ics.oop.model.*;
 import java.util.*;
 
 public class Simulation implements Runnable{
-    private static final int FOOD_STARTING_AMOUNT = 10;
-    private static final int FOOD_GROWTH_PER_DAY = 7;
+    //private static final int FOOD_STARTING_AMOUNT = 10;
+    private static final int FOOD_GROWTH_PER_DAY = 1;
     private static final int FOOD_ENERGY = 5;
-    private static final int ANIMAL_STARTING_AMOUNT = 10;
-    private static final int ANIMAL_STARTING_ENERGY = 9;
+    private static final int ANIMAL_STARTING_AMOUNT = 20;
+    private static final int ANIMAL_STARTING_ENERGY = 100;
     private static final int ANIMAL_GENES_AMOUNT = 10;
     private static final int ANIMAL_ENERGY_PER_MOVE = 1;
     private static final int ANIMAL_MIN_ENERGY_TO_REPRODUCE = 5;
@@ -21,12 +21,18 @@ public class Simulation implements Runnable{
     List<Animal> getAnimals(){
         return Collections.unmodifiableList(this.animals);
     }
-    public Simulation(List<Vector2d> positions, DarvinsMap map) {
+    public Simulation(DarvinsMap map) {
         this.animals = new ArrayList<>();
         this.map = map;
+        generateAnimals();
+    }
 
-        for(Vector2d position : positions){
-            Animal animal = new Animal(position, ANIMAL_STARTING_ENERGY, ANIMAL_GENES_AMOUNT);
+    private void generateAnimals(){
+        int mapSize = map.getMapSize();
+        for(int i = 0; i < ANIMAL_STARTING_AMOUNT; i++){
+            int x = (int)(Math.random() * mapSize);
+            int y = (int)(Math.random() * mapSize);
+            Animal animal = new Animal(new Vector2d(x, y), ANIMAL_STARTING_ENERGY, ANIMAL_GENES_AMOUNT);
             map.place(animal);
             animals.add(animal);
         }
@@ -41,13 +47,12 @@ public class Simulation implements Runnable{
 
         while (true){
             clearDeadAnimals();
-            if(!animals.isEmpty()) moveAllAnimals();
-            else break;
+            if(!animals.isEmpty()) moveAllAnimals(); else break;
             feedAnimals();
             breedAnimals();
             spawnNewFood();
             try {
-                Thread.sleep(2000);
+                Thread.sleep(1000);
             } catch (InterruptedException e) {
                 throw new RuntimeException(e);
             }
@@ -105,6 +110,7 @@ public class Simulation implements Runnable{
     private void clearDeadAnimals(){
         for(int i = 0; i < animals.size(); i++){
             if(animals.get(i).getEnergy() <= 0){
+                map.removeAnimal(animals.get(i));
                 animals.remove(i);
             }
         }

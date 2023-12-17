@@ -4,7 +4,6 @@
 <?import javafx.scene.layout.BorderPane?>
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.layout.HBox?>
-<?import javafx.scene.control.TextField?>
 <?import javafx.scene.control.Button?>
 <?import javafx.scene.layout.GridPane?>
 <?import javafx.scene.layout.StackPane?>
@@ -17,11 +16,6 @@
     <center>
         <StackPane>
             <VBox spacing="10">
-                <HBox>
-                    <Label text="Movement List:" style="-fx-min-width: 100px;"/>
-                    <TextField fx:id="movementTextField" HBox.hgrow="ALWAYS"/>
-                </HBox>
-
                 <HBox spacing="10">
                     <Label fx:id="descriptionLabel" text="[Movement Description]"/>
                 </HBox>

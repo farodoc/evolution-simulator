@@ -1,8 +1,5 @@
 package agh.ics.oop.model;
 
-import agh.ics.oop.model.exceptions.PositionAlreadyOccupiedException;
-
-import java.util.ArrayList;
 import java.util.UUID;
 
 /**
@@ -19,7 +16,7 @@ public interface WorldMap {
      * @param animal The animal to place on the map.
      * @return True if the animal was placed. The animal cannot be placed if the move is not valid.
      */
-    void place(Animal animal) throws PositionAlreadyOccupiedException;
+    void place(Animal animal);
 
     /**
      * Moves an animal (if it is present on the map) according to specified direction.

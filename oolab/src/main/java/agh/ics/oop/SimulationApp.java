@@ -11,6 +11,7 @@ import javafx.stage.Stage;
 import java.io.IOException;
 
 public class SimulationApp extends Application {
+    private static final int FOOD_STARTING_AMOUNT = 20;
     @Override
     public void start(Stage primaryStage) throws IOException {
         MapChangeListener observer = new ConsoleMapDisplay();
@@ -19,7 +20,7 @@ public class SimulationApp extends Application {
         BorderPane viewRoot = loader.load();
         SimulationPresenter presenter = loader.getController();
 
-        DarvinsMap map = new DarvinsMap(10);
+        DarvinsMap map = new DarvinsMap(FOOD_STARTING_AMOUNT);
         presenter.setMap(map);
 
         map.addObserver(presenter);

@@ -88,12 +88,11 @@ public class Animal implements WorldElement{
 
         Vector2d possiblePositionWithPoisonedFruit = map.getNewPositionForAnimal(this);
         AbstractFood food = foodTiles.getOrDefault(possiblePositionWithPoisonedFruit, new Grass(new Vector2d(-69,-69)));
-        if("X".equals(food.toString()) && Math.random()<=1)
+        if("X".equals(food.toString()) && Math.random()< 0.2)
         {
             int newDirection = (1 + (int)(Math.random()*7));
             changeOrientation(newDirection);
             possiblePositionWithPoisonedFruit = map.getNewPositionForAnimal(this);
-            System.out.println("DODGED");
         }
 
         this.position = possiblePositionWithPoisonedFruit;

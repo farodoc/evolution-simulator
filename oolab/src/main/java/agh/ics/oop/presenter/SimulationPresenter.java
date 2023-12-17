@@ -8,14 +8,12 @@ import javafx.fxml.FXML;
 import javafx.geometry.HPos;
 import javafx.geometry.Insets;
 import javafx.scene.control.Label;
-import javafx.scene.control.TextField;
 import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
 import javafx.stage.Screen;
 
 import java.util.ArrayList;
 
-import java.util.Arrays;
 import java.util.List;
 
 public class SimulationPresenter implements MapChangeListener {
@@ -23,9 +21,6 @@ public class SimulationPresenter implements MapChangeListener {
 
     @FXML
     private Label infoLabel;
-
-    @FXML
-    private TextField movementTextField;
 
     @FXML
     private Label descriptionLabel;
@@ -89,7 +84,6 @@ public class SimulationPresenter implements MapChangeListener {
                 cellLabel.setMinWidth(cellSize);
                 cellLabel.setMinHeight(cellSize);
                 cellLabel.setBorder(new Border(new BorderStroke(Color.BLACK, BorderStrokeStyle.SOLID, null, new BorderWidths(0.4))));
-                //cellLabel.setStyle("-fx-alignment: CENTER;-fx-font-weight: bold;-fx-font-size: 30px;");
                 cellLabel.setStyle("-fx-alignment: CENTER;-fx-font-weight: bold;-fx-font-size: " + fontSize + "px;");
                 Vector2d translatedPosition = new Vector2d(x - 1 + boundaries.bottomLeftCorner().getX(), y - 1 + boundaries.bottomLeftCorner().getY());
 
@@ -124,8 +118,7 @@ public class SimulationPresenter implements MapChangeListener {
     }
 
     public void onSimulationStartClicked(javafx.event.ActionEvent actionEvent){
-        List<Vector2d> initialPositions = Arrays.asList(new Vector2d(5, 5));
-        Simulation simulation = new Simulation(initialPositions, map);
+        Simulation simulation = new Simulation(map);
         List<Simulation> simulations = new ArrayList<>();
         simulations.add(simulation);
 

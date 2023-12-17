@@ -12,15 +12,14 @@ import java.util.List;
 public class World {
     public static void main(String[] args)
     {
-        //Application.launch(SimulationApp.class, args);
-        //System.out.println("System zakończył działanie.");
+        Application.launch(SimulationApp.class, args);
+        System.out.println("System zakończył działanie.");
 
-        DarvinsMap map = new DarvinsMap(10);
+        /*DarvinsMap map = new DarvinsMap(10);
         MapChangeListener observer = new ConsoleMapDisplay();
         map.addObserver(observer);
 
-        List<Vector2d> initialPositions = Arrays.asList(new Vector2d(10, 10), new Vector2d(10, 10));
-        Simulation simulation = new Simulation(initialPositions, map);
-        simulation.run();
+        Simulation simulation = new Simulation(map);
+        simulation.run();*/
     }
 }
