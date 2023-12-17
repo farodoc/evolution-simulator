@@ -80,6 +80,7 @@ public class DarvinsMap implements WorldMap{
                 cnt++;
             }
         }
+        notifyObservers("Food generated");
     }
 
     private Vector2d getFreeTile(List<Vector2d> tilesPositions)

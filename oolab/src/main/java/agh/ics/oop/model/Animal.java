@@ -123,4 +123,8 @@ public class Animal implements WorldElement{
     public void eat(int energy){
         this.energy = Math.min(MAX_ENERGY, this.energy + energy);
     }
+
+    public void updateAge(){
+        this.age++;
+    }
 }
