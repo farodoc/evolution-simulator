@@ -8,9 +8,16 @@ import java.util.Collections;
 import java.util.List;
 
 public class Simulation implements Runnable{
+    private static final int STARTING_FOOD_AMOUNT = 10;
+    private static final int FOOD_GROWTH_PER_DAY = 2;
+    private static final int ENERGY_FROM_FOOD = 5;
+    private static final int ANIMAL_STARTING_AMOUNT = 10;
+    private static final int ANIMAL_STARTING_ENERGY = 10;
+    private static final int ANIMAL_GENES_AMOUNT = 1;
+    private static final int ANIMAL_MIN_ENERGY_TO_REPRODUCE = 5;
+    private static final int ANIMAL_ENERGY_TO_REPRODUCE = 2;
     private List<Animal> animals;
     private List<MoveDirection> moves;
-    private int currentAnimalIndex;
     private WorldMap map;
 
     List<Animal> getAnimals(){
@@ -22,7 +29,7 @@ public class Simulation implements Runnable{
         this.map = map;
 
         for(Vector2d position : positions){
-            Animal animal = new Animal(position);
+            Animal animal = new Animal(position, ANIMAL_STARTING_ENERGY, ANIMAL_GENES_AMOUNT);
             try {
                 map.place(animal);
                 animals.add(animal);
@@ -39,15 +46,19 @@ public class Simulation implements Runnable{
         } catch (InterruptedException e) {
             throw new RuntimeException(e);
         }
-        for(MoveDirection move : moves){
+        while (true){
+            moveAllAnimals();
             try {
-                Thread.sleep(500);
+                Thread.sleep(2000);
             } catch (InterruptedException e) {
                 throw new RuntimeException(e);
             }
-            Animal currentAnimal = animals.get(currentAnimalIndex);
-            map.move(currentAnimal, move);
-            currentAnimalIndex = (currentAnimalIndex + 1) % animals.size();
+        }
+    }
+
+    private void moveAllAnimals(){
+        for(Animal animal : animals){
+            map.move(animal);
         }
     }
 }

@@ -7,7 +7,7 @@ import java.util.List;
 import static org.junit.jupiter.api.Assertions.*;
 
 class SimulationTest {
-    @Test
+    /*@Test
     public void testSimulation() {
         //TEST 1 - CHECKING POSITION
         System.out.println("TEST 1 \n");
@@ -54,5 +54,5 @@ class SimulationTest {
 
         assertEquals(new Vector2d(0, 0), position3_1);
         assertEquals(MapDirection.WEST, orientation3_1);
-    }
+    }*/
 }

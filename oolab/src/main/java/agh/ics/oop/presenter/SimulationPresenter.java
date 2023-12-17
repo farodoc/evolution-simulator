@@ -129,7 +129,7 @@ public class SimulationPresenter implements MapChangeListener {
         String[] inputArray = movementList.split(" ");
         List<MoveDirection> directions = OptionsParser.parse(inputArray);
 
-        List<Vector2d> initialPositions = Arrays.asList(new Vector2d(0, 0), new Vector2d(0, 3));
+        List<Vector2d> initialPositions = Arrays.asList(new Vector2d(5, 5));
         Simulation simulation = new Simulation(initialPositions, directions, map);
         List<Simulation> simulations = new ArrayList<>();
         simulations.add(simulation);

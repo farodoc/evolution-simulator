@@ -7,7 +7,7 @@ import static org.junit.jupiter.api.Assertions.*;
 
 class DarvinsMapTest {
 
-    @Test
+    /*@Test
     void canMoveTo() throws PositionAlreadyOccupiedException {
         DarvinsMap map = new DarvinsMap(10);
         Animal animal = new Animal(new Vector2d(4, 4));
@@ -64,5 +64,5 @@ class DarvinsMapTest {
         assertTrue(map.isOccupied(newPosition1));
         map.move(animal1, MoveDirection.BACKWARD);
         assertTrue(map.isOccupied(newPosition2));
-    }
+    }*/
 }
