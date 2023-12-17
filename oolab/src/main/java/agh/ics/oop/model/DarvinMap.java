@@ -40,7 +40,7 @@ public class DarvinMap implements WorldMap{
     private final List<Vector2d> jungleTilesPositions = new ArrayList<>();
     private int jungleFoodAmount = 0;
     private final boolean[][]isMaybePoisonedTile  = new boolean[mapSize][mapSize];
-    private int index = 0;
+    private int lastIndex = 0;
     public void place(Animal animal) {
         animals.put(animal.getPosition(), animal);
         notifyObservers("Animal placed at " + animal.getPosition());
@@ -77,21 +77,28 @@ public class DarvinMap implements WorldMap{
 
     private Vector2d getFreeTile(List<Vector2d> tilesPositions)
     {
+
         int listSize = tilesPositions.size();
-        int localIndex = (index + 1)%listSize;
-        while(localIndex!=index)
+        int localIndex = (lastIndex + 1)%listSize;
+        int cntr=0;
+        while(cntr<listSize)
         {
             Vector2d position = tilesPositions.get(localIndex);
             if(!foodTiles.containsKey(position))
             {
-                index = localIndex;
+                lastIndex = localIndex;
                 return position;
             }
 
+            cntr++;
             localIndex = (localIndex + 1)%listSize;
         }
 
+
+
+
         return null;
+
     }
 
 
