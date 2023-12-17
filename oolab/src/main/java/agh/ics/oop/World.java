@@ -19,7 +19,7 @@ public class World {
         MapChangeListener observer = new ConsoleMapDisplay();
         map.addObserver(observer);
 
-        List<Vector2d> initialPositions = Arrays.asList(new Vector2d(10, 10));
+        List<Vector2d> initialPositions = Arrays.asList(new Vector2d(10, 10), new Vector2d(10, 10));
         Simulation simulation = new Simulation(initialPositions, map);
         simulation.run();
     }

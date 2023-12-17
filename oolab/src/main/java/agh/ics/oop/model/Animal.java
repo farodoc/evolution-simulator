@@ -74,7 +74,7 @@ public class Animal implements WorldElement{
         return this.position.equals(position);
     }
 
-    public void move(MoveValidator validator, int ANIMAL_ENERGY_PER_MOVE, Map<Vector2d, AbstractFood> foodTiles){
+    public void move(DarvinsMap map, int ANIMAL_ENERGY_PER_MOVE, Map<Vector2d, AbstractFood> foodTiles){
         if(this.energy - ANIMAL_ENERGY_PER_MOVE >= 0){
             this.energy -= ANIMAL_ENERGY_PER_MOVE;
         }
@@ -86,13 +86,13 @@ public class Animal implements WorldElement{
         int direction = genes.get(geneIndex);
         changeOrientation(direction);
 
-        Vector2d possiblePositionWithPoisonedFruit = validator.getNewPositionForAnimal(this);
+        Vector2d possiblePositionWithPoisonedFruit = map.getNewPositionForAnimal(this);
         AbstractFood food = foodTiles.getOrDefault(possiblePositionWithPoisonedFruit, new Grass(new Vector2d(-69,-69)));
         if("X".equals(food.toString()) && Math.random()<=1)
         {
             int newDirection = (1 + (int)(Math.random()*7));
             changeOrientation(newDirection);
-            possiblePositionWithPoisonedFruit = validator.getNewPositionForAnimal(this);
+            possiblePositionWithPoisonedFruit = map.getNewPositionForAnimal(this);
             System.out.println("DODGED");
         }
 

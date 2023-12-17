@@ -28,13 +28,8 @@ public class Simulation implements Runnable{
 
         for(Vector2d position : positions){
             Animal animal = new Animal(position, ANIMAL_STARTING_ENERGY, ANIMAL_GENES_AMOUNT);
-            try {
-                map.place(animal);
-                animals.add(animal);
-            }
-            catch (PositionAlreadyOccupiedException ex){
-                System.out.println(ex.getMessage());
-            }
+            map.place(animal);
+            animals.add(animal);
         }
     }
 
@@ -120,6 +115,4 @@ public class Simulation implements Runnable{
     {
         map.generateFood(FOOD_GROWTH_PER_DAY);
     }
-
-
 }

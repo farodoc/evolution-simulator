@@ -11,8 +11,8 @@ import java.util.UUID;
  *
  * @author apohllo, idzik
  */
-public interface WorldMap extends MoveValidator {
-
+public interface WorldMap {
+    public Vector2d getNewPositionForAnimal(Animal animal);
     /**
      * Place an animal on the map.
      *
@@ -44,8 +44,6 @@ public interface WorldMap extends MoveValidator {
      * @return animal or null if the position is not occupied.
      */
     WorldElement objectAt(Vector2d position);
-
-    ArrayList<WorldElement> getElements();
 
     abstract Boundary getCurrentBounds();
 

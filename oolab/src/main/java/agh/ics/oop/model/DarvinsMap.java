@@ -1,23 +1,40 @@
 package agh.ics.oop.model;
 
+import agh.ics.oop.model.exceptions.PositionAlreadyOccupiedException;
+import agh.ics.oop.model.util.MapVisualizer;
+
 import java.util.*;
 
-public class DarvinsMap extends AbstractWorldMap{
-    public int getMapSize() {
-        return mapSize;
+public class DarvinsMap implements WorldMap{
+    private final List<MapChangeListener> observers = new ArrayList<>();
+    public void addObserver(MapChangeListener observer) {
+        observers.add(observer);
     }
-
+    public void removeObserver(MapChangeListener observer) {
+        observers.remove(observer);
+    }
+    protected void notifyObservers(String message) {
+        for (MapChangeListener observer : observers) {
+            observer.mapChanged(this, message);
+        }
+    }
+    protected final Map<Vector2d, Animal> animals = new HashMap<>();
+    protected final MapVisualizer mapVisualizer;
+    protected final UUID id;
     private final int mapSize = 20;
     private static final int STARTING_FOOD_AMOUNT = 10;
     private static final int FOOD_GROWTH_AMOUNT_PER_DAY = 4;
     private static final double POISON_PROBABILITY = 0.2;
 
     public DarvinsMap(int grassNumber) {
-        super();
-        //this.grassNumber = grassNumber;
+        id = UUID.randomUUID();
+        mapVisualizer = new MapVisualizer(this);
         generateTiles();
         generatePoisonedTiles();
         generateFood(STARTING_FOOD_AMOUNT);
+    }
+    public UUID getId() {
+        return id;
     }
 
     private final Map<Vector2d, AbstractFood> foodTiles = new HashMap<>();
@@ -32,6 +49,10 @@ public class DarvinsMap extends AbstractWorldMap{
     private int jungleFoodAmount = 0;
     private final boolean[][]isMaybePoisonedTile  = new boolean[mapSize][mapSize];
 
+    public void place(Animal animal) {
+        animals.put(animal.getPosition(), animal);
+        notifyObservers("Animal placed at " + animal.getPosition());
+    }
 
     public void generateFood(int howManyFoodToGenerate)
     {
@@ -194,22 +215,15 @@ public class DarvinsMap extends AbstractWorldMap{
 
     @Override
     public boolean isOccupied(Vector2d position) {
-        return super.isOccupied(position) || foodTiles.containsKey(position);
+        return animals.containsKey(position) || foodTiles.containsKey(position);
     }
 
     @Override
     public WorldElement objectAt(Vector2d position) {
-        if(super.objectAt(position) != null){
-            return super.objectAt(position);
+        if(animals.getOrDefault(position, null) != null){
+            return animals.getOrDefault(position, null);
         }
         return foodTiles.getOrDefault(position, null);
-    }
-
-    @Override
-    public ArrayList<WorldElement> getElements(){
-        ArrayList<WorldElement> result = super.getElements();
-        result.addAll(foodTiles.values());
-        return result;
     }
 
     @Override
@@ -252,5 +266,15 @@ public class DarvinsMap extends AbstractWorldMap{
     {
         foodTiles.remove(animalThatEats.getPosition());
         animalThatEats.eat(foodEnergy);
+    }
+
+    public int getMapSize() {
+        return mapSize;
+    }
+
+    @Override
+    public String toString(){
+        Boundary boundaries = getCurrentBounds();
+        return mapVisualizer.draw(boundaries.bottomLeftCorner(), boundaries.topRightCorner());
     }
 }
