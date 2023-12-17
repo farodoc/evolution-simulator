@@ -36,15 +36,16 @@ public abstract class AbstractWorldMap implements WorldMap{
         return id;
     }
 
-    public void move(Animal animal) {
+    public void move(Animal animal, int ANIMAL_ENERGY_PER_MOVE) {
         Vector2d oldPosition = animal.getPosition();
         MapDirection oldOrientation = animal.getOrientation();
-        animal.move(this);
+        animal.move(this, ANIMAL_ENERGY_PER_MOVE);
 
         if(oldPosition != animal.getPosition()){
             animals.remove(oldPosition, animal);
             animals.put(animal.getPosition(), animal);
-            notifyObservers("Animal moved from " + oldPosition + " to " + animal.getPosition());
+            //notifyObservers("Animal moved from " + oldPosition + " to " + animal.getPosition());
+            notifyObservers("Animal has " + animal.getEnergy() + " energy");
         }
         else if(oldOrientation != animal.getOrientation()){
             notifyObservers("Animal changed direction from [" + oldOrientation + "] to [" + animal.getOrientation() + "]");

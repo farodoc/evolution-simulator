@@ -12,19 +12,18 @@ public class Simulation implements Runnable{
     private static final int FOOD_GROWTH_PER_DAY = 2;
     private static final int ENERGY_FROM_FOOD = 5;
     private static final int ANIMAL_STARTING_AMOUNT = 10;
-    private static final int ANIMAL_STARTING_ENERGY = 10;
+    private static final int ANIMAL_STARTING_ENERGY = 1;
     private static final int ANIMAL_GENES_AMOUNT = 1;
+    private static final int ANIMAL_ENERGY_PER_MOVE = 1;
     private static final int ANIMAL_MIN_ENERGY_TO_REPRODUCE = 5;
     private static final int ANIMAL_ENERGY_TO_REPRODUCE = 2;
     private List<Animal> animals;
-    private List<MoveDirection> moves;
     private WorldMap map;
 
     List<Animal> getAnimals(){
         return Collections.unmodifiableList(this.animals);
     }
-    public Simulation(List<Vector2d> positions, List<MoveDirection> moves, WorldMap map) {
-        this.moves = moves;
+    public Simulation(List<Vector2d> positions, WorldMap map) {
         this.animals = new ArrayList<>();
         this.map = map;
 
@@ -46,8 +45,15 @@ public class Simulation implements Runnable{
         } catch (InterruptedException e) {
             throw new RuntimeException(e);
         }
+
         while (true){
-            moveAllAnimals();
+            clearDeadAnimals();
+            if(!animals.isEmpty()){
+                moveAllAnimals();
+            }
+            else {
+                break;
+            }
             try {
                 Thread.sleep(2000);
             } catch (InterruptedException e) {
@@ -58,7 +64,17 @@ public class Simulation implements Runnable{
 
     private void moveAllAnimals(){
         for(Animal animal : animals){
-            map.move(animal);
+            map.move(animal, ANIMAL_ENERGY_PER_MOVE);
         }
     }
+
+    private void clearDeadAnimals(){
+        for(int i = 0; i < animals.size(); i++){
+            if(animals.get(i).getEnergy() <= 0){
+                animals.remove(i);
+            }
+        }
+    }
+
+
 }

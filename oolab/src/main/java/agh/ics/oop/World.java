@@ -1,27 +1,26 @@
 package agh.ics.oop;
 
+import agh.ics.oop.model.ConsoleMapDisplay;
 import agh.ics.oop.model.DarvinsMap;
+import agh.ics.oop.model.MapChangeListener;
+import agh.ics.oop.model.Vector2d;
 import javafx.application.Application;
+
+import java.util.Arrays;
+import java.util.List;
 
 public class World {
     public static void main(String[] args)
     {
-        Application.launch(SimulationApp.class, args);
-        System.out.println("System zakończył działanie.");
+        //Application.launch(SimulationApp.class, args);
+        //System.out.println("System zakończył działanie.");
 
-        /*GrassField map = new GrassField(10);
-        String movementList = "0 4 0 0 0 0 0 0 0 0 0 0";
-        String[] inputArray = movementList.split(" ");
-        List<MoveDirection> directions = OptionsParser.parse(inputArray);
+        DarvinsMap map = new DarvinsMap(10);
         MapChangeListener observer = new ConsoleMapDisplay();
         map.addObserver(observer);
 
-        List<Vector2d> initialPositions = Arrays.asList(new Vector2d(0, 0), new Vector2d(0, 1));
-        Simulation simulation = new Simulation(initialPositions, directions, map);
-        simulation.run();*/
-
-        //DarvinsMap darvinsMap = new DarvinsMap(7);
-        //darvinsMap.printMap();
-
+        List<Vector2d> initialPositions = Arrays.asList(new Vector2d(10, 10));
+        Simulation simulation = new Simulation(initialPositions, map);
+        simulation.run();
     }
 }

@@ -7,6 +7,7 @@ public class Animal implements WorldElement{
     private MapDirection orientation;
     private Vector2d position;
     private int energy;
+    private int MAX_ENERGY;
     private List<Integer> genes = new ArrayList<>();
     private int geneIndex = 0;
     private boolean leftToRightGenes = true;
@@ -69,7 +70,15 @@ public class Animal implements WorldElement{
         return this.position.equals(position);
     }
 
-    public void move(MoveValidator validator){
+    public void move(MoveValidator validator, int ANIMAL_ENERGY_PER_MOVE){
+        if(this.energy - ANIMAL_ENERGY_PER_MOVE >= 0){
+            this.energy -= ANIMAL_ENERGY_PER_MOVE;
+        }
+        else{
+            this.energy = 0;
+            return;
+        }
+
         int direction = genes.get(geneIndex);
         switch (direction){
             case 0 -> {}
@@ -84,5 +93,13 @@ public class Animal implements WorldElement{
 
         this.position = validator.getNewPositionForAnimal(this);
         updateGeneIndex();
+    }
+
+    public int getEnergy(){
+        return this.energy;
+    }
+
+    public void eat(int energy){
+        this.energy = Math.min(MAX_ENERGY, this.energy + energy);
     }
 }
