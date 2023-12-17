@@ -20,7 +20,7 @@ public class SimulationApp extends Application {
         BorderPane viewRoot = loader.load();
         SimulationPresenter presenter = loader.getController();
 
-        DarvinsMap map = new DarvinsMap(FOOD_STARTING_AMOUNT);
+        DarvinMap map = new DarvinMap(FOOD_STARTING_AMOUNT);
         presenter.setMap(map);
 
         map.addObserver(presenter);

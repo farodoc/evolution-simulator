@@ -1,13 +1,6 @@
 package agh.ics.oop;
 
-import agh.ics.oop.model.ConsoleMapDisplay;
-import agh.ics.oop.model.DarvinsMap;
-import agh.ics.oop.model.MapChangeListener;
-import agh.ics.oop.model.Vector2d;
 import javafx.application.Application;
-
-import java.util.Arrays;
-import java.util.List;
 
 public class World {
     public static void main(String[] args)

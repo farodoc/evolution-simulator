@@ -4,13 +4,10 @@ import agh.ics.oop.model.util.MapVisualizer;
 
 import java.util.*;
 
-public class DarvinsMap implements WorldMap{
+public class DarvinMap implements WorldMap{
     private final List<MapChangeListener> observers = new ArrayList<>();
     public void addObserver(MapChangeListener observer) {
         observers.add(observer);
-    }
-    public void removeObserver(MapChangeListener observer) {
-        observers.remove(observer);
     }
     protected void notifyObservers(String message) {
         for (MapChangeListener observer : observers) {
@@ -20,10 +17,10 @@ public class DarvinsMap implements WorldMap{
     protected final Map<Vector2d, Animal> animals = new HashMap<>();
     protected final MapVisualizer mapVisualizer;
     protected final UUID id;
-    private final int mapSize = 20;
+    private final int mapSize = 30;
     private static final double POISON_PROBABILITY = 0.2;
 
-    public DarvinsMap(int FOOD_STARTING_AMOUNT) {
+    public DarvinMap(int FOOD_STARTING_AMOUNT) {
         id = UUID.randomUUID();
         mapVisualizer = new MapVisualizer(this);
         generateTiles();
@@ -39,10 +36,8 @@ public class DarvinsMap implements WorldMap{
     private final Vector2d TOP_RIGHT_MAP_BORDER = new Vector2d(mapSize - 1,mapSize - 1);
     private final TileType[][] tiles = new TileType[mapSize][mapSize];
     private final List<Vector2d> dirtTilesPositions = new ArrayList<>();
-    private int dirtTilesPositionsIndex = 0;
     private int dirtFoodAmount = 0;
     private final List<Vector2d> jungleTilesPositions = new ArrayList<>();
-    private int jungleTilesPositionsIndex = 0;
     private int jungleFoodAmount = 0;
     private final boolean[][]isMaybePoisonedTile  = new boolean[mapSize][mapSize];
 
@@ -59,13 +54,11 @@ public class DarvinsMap implements WorldMap{
             if(jungleFoodAmount<jungleTilesPositions.size() && Math.random() < 0.8){//wylosowala sie jungla
 
                 newFoodPosition = getFreeTile(jungleTilesPositions);
-                jungleTilesPositionsIndex = (jungleTilesPositionsIndex + 1) % jungleTilesPositions.size();
                 jungleFoodAmount++;
             }
             else if(dirtFoodAmount<dirtTilesPositions.size())
             {
                 newFoodPosition = getFreeTile(dirtTilesPositions);
-                dirtTilesPositionsIndex = (dirtTilesPositionsIndex + 1) % dirtTilesPositions.size();
                 dirtFoodAmount++;
             }
             else break; //cała mapa pokryta jedzeniem
@@ -76,11 +69,10 @@ public class DarvinsMap implements WorldMap{
                     foodTiles.put(newFoodPosition, new PoisonedFruit(newFoodPosition));
 
                 else foodTiles.put(newFoodPosition,new Grass(newFoodPosition));
-
+                notifyObservers("Food generated at " + newFoodPosition);
                 cnt++;
             }
         }
-        notifyObservers("Food generated");
     }
 
     private Vector2d getFreeTile(List<Vector2d> tilesPositions)
@@ -175,39 +167,19 @@ public class DarvinsMap implements WorldMap{
 
     public void move(Animal animal, int ANIMAL_ENERGY_PER_MOVE) {
         Vector2d oldPosition = animal.getPosition();
-        MapDirection oldOrientation = animal.getOrientation();
 
         animal.move(this, ANIMAL_ENERGY_PER_MOVE, Collections.unmodifiableMap(foodTiles));
 
         if(oldPosition != animal.getPosition()){
             animals.remove(oldPosition, animal);
             animals.put(animal.getPosition(), animal);
-            notifyObservers("Animal has " + animal.getEnergy() + " energy");
         }
-        else if(oldOrientation != animal.getOrientation()){
-            notifyObservers("Animal changed direction from [" + oldOrientation + "] to [" + animal.getOrientation() + "]");
-        }
-        else{
-            notifyObservers("No move has been made");
-        }
+        notifyObservers("Animal has " + animal.getEnergy() + " energy");
     }
 
 
     public TileType[][] getTiles(){
         return tiles;
-    }
-
-    public void printMap() {
-        for (int i = 0; i < mapSize; i++) {
-            for (int j = 0; j < mapSize; j++) {
-                System.out.print(isMaybePoisonedTile[i][j] + " ");
-            }
-            System.out.println();
-        }
-    }
-
-    public Map<Vector2d, Animal> getAnimals() {
-        return Collections.unmodifiableMap(animals);
     }
 
     @Override
@@ -261,6 +233,13 @@ public class DarvinsMap implements WorldMap{
 
     public void feedAnimal(Animal animalThatEats, int foodEnergy)
     {
+        Vector2d position = animalThatEats.getPosition();
+        if(tiles[position.getY()][position.getX()] == TileType.DIRT){
+            dirtFoodAmount--;
+        }
+        else {
+            jungleFoodAmount--;
+        }
         foodTiles.remove(animalThatEats.getPosition());
         animalThatEats.eat(foodEnergy);
     }

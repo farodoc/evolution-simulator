@@ -8,20 +8,20 @@ public class Simulation implements Runnable{
     //private static final int FOOD_STARTING_AMOUNT = 10;
     private static final int FOOD_GROWTH_PER_DAY = 1;
     private static final int FOOD_ENERGY = 5;
-    private static final int ANIMAL_STARTING_AMOUNT = 20;
+    private static final int ANIMAL_STARTING_AMOUNT = 10;
     private static final int ANIMAL_STARTING_ENERGY = 100;
     private static final int ANIMAL_GENES_AMOUNT = 10;
     private static final int ANIMAL_ENERGY_PER_MOVE = 1;
     private static final int ANIMAL_MIN_ENERGY_TO_REPRODUCE = 5;
     private static final int ANIMAL_ENERGY_TO_REPRODUCE = 2;
-    private DarvinsMap map;
+    private DarvinMap map;
     private List<Animal> animals;
 
 
     List<Animal> getAnimals(){
         return Collections.unmodifiableList(this.animals);
     }
-    public Simulation(DarvinsMap map) {
+    public Simulation(DarvinMap map) {
         this.animals = new ArrayList<>();
         this.map = map;
         generateAnimals();
@@ -50,6 +50,11 @@ public class Simulation implements Runnable{
             if(!animals.isEmpty()) moveAllAnimals(); else break;
             feedAnimals();
             breedAnimals();
+            try {
+                Thread.sleep(1000);
+            } catch (InterruptedException e) {
+                throw new RuntimeException(e);
+            }
             spawnNewFood();
             try {
                 Thread.sleep(1000);

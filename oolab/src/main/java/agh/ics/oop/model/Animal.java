@@ -3,7 +3,6 @@ package agh.ics.oop.model;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-import java.util.Vector;
 
 public class Animal implements WorldElement{
     private MapDirection orientation;
@@ -74,7 +73,7 @@ public class Animal implements WorldElement{
         return this.position.equals(position);
     }
 
-    public void move(DarvinsMap map, int ANIMAL_ENERGY_PER_MOVE, Map<Vector2d, AbstractFood> foodTiles){
+    public void move(DarvinMap map, int ANIMAL_ENERGY_PER_MOVE, Map<Vector2d, AbstractFood> foodTiles){
         if(this.energy - ANIMAL_ENERGY_PER_MOVE >= 0){
             this.energy -= ANIMAL_ENERGY_PER_MOVE;
         }
@@ -117,7 +116,6 @@ public class Animal implements WorldElement{
         return this.energy;
     }
     public int getAge() {return age;}
-
     public int getChildrenAmount() {return childrenAmount;}
 
     public void eat(int energy){
