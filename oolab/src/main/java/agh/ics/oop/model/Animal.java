@@ -2,12 +2,16 @@ package agh.ics.oop.model;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
+import java.util.Vector;
 
 public class Animal implements WorldElement{
     private MapDirection orientation;
     private Vector2d position;
     private int energy;
-    private int MAX_ENERGY;
+    private int age;
+    private int childrenAmount;
+    private int MAX_ENERGY = 100;
     private List<Integer> genes = new ArrayList<>();
     private int geneIndex = 0;
     private boolean leftToRightGenes = true;
@@ -70,7 +74,7 @@ public class Animal implements WorldElement{
         return this.position.equals(position);
     }
 
-    public void move(MoveValidator validator, int ANIMAL_ENERGY_PER_MOVE){
+    public void move(MoveValidator validator, int ANIMAL_ENERGY_PER_MOVE, Map<Vector2d, AbstractFood> foodTiles){
         if(this.energy - ANIMAL_ENERGY_PER_MOVE >= 0){
             this.energy -= ANIMAL_ENERGY_PER_MOVE;
         }
@@ -80,6 +84,23 @@ public class Animal implements WorldElement{
         }
 
         int direction = genes.get(geneIndex);
+        changeOrientation(direction);
+
+        Vector2d possiblePositionWithPoisonedFruit = validator.getNewPositionForAnimal(this);
+        AbstractFood food = foodTiles.getOrDefault(possiblePositionWithPoisonedFruit, new Grass(new Vector2d(-69,-69)));
+        if("X".equals(food.toString()) && Math.random()<=1)
+        {
+            int newDirection = (1 + (int)(Math.random()*7));
+            changeOrientation(newDirection);
+            possiblePositionWithPoisonedFruit = validator.getNewPositionForAnimal(this);
+            System.out.println("DODGED");
+        }
+
+        this.position = possiblePositionWithPoisonedFruit;
+        updateGeneIndex();
+    }
+
+    private void changeOrientation(int direction) {
         switch (direction){
             case 0 -> {}
             case 1 -> this.orientation = this.orientation.next();
@@ -90,14 +111,15 @@ public class Animal implements WorldElement{
             case 6 -> this.orientation = this.orientation.previous().previous();
             case 7 -> this.orientation = this.orientation.previous();
         }
-
-        this.position = validator.getNewPositionForAnimal(this);
-        updateGeneIndex();
     }
+
 
     public int getEnergy(){
         return this.energy;
     }
+    public int getAge() {return age;}
+
+    public int getChildrenAmount() {return childrenAmount;}
 
     public void eat(int energy){
         this.energy = Math.min(MAX_ENERGY, this.energy + energy);

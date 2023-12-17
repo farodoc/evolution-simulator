@@ -154,6 +154,26 @@ public class DarvinsMap extends AbstractWorldMap{
         return equator + yModifier < mapSize && equator - yModifier >= 0;
     }
 
+    public void move(Animal animal, int ANIMAL_ENERGY_PER_MOVE) {
+        Vector2d oldPosition = animal.getPosition();
+        MapDirection oldOrientation = animal.getOrientation();
+
+        animal.move(this, ANIMAL_ENERGY_PER_MOVE, Collections.unmodifiableMap(foodTiles));
+
+        if(oldPosition != animal.getPosition()){
+            animals.remove(oldPosition, animal);
+            animals.put(animal.getPosition(), animal);
+            //notifyObservers("Animal moved from " + oldPosition + " to " + animal.getPosition());
+            notifyObservers("Animal has " + animal.getEnergy() + " energy");
+        }
+        else if(oldOrientation != animal.getOrientation()){
+            notifyObservers("Animal changed direction from [" + oldOrientation + "] to [" + animal.getOrientation() + "]");
+        }
+        else{
+            notifyObservers("No move has been made");
+        }
+    }
+
 
     public TileType[][] getTiles(){
         return tiles;
@@ -222,5 +242,15 @@ public class DarvinsMap extends AbstractWorldMap{
         else{
             return newPosition;
         }
+    }
+
+    public Map<Vector2d, AbstractFood> getFoodTiles() {
+        return Collections.unmodifiableMap(foodTiles);
+    }
+
+    public void feedAnimal(Animal animalThatEats, int foodEnergy)
+    {
+        foodTiles.remove(animalThatEats.getPosition());
+        animalThatEats.eat(foodEnergy);
     }
 }
