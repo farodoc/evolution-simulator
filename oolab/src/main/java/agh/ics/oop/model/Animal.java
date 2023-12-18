@@ -7,7 +7,7 @@ import java.util.Map;
 public class Animal implements WorldElement{
     private MapDirection orientation;
     private Vector2d position;
-    private Genes genes;
+    private AbstractGenes genes;
     private int energy;
     private int age = 0;
     private int childrenAmount = 0;
@@ -15,21 +15,26 @@ public class Animal implements WorldElement{
     private final static int MAX_ENERGY = 100;
     private final int genesAmount;
     private final List<Animal> parents = new ArrayList<>(2);
-    public Animal(Vector2d position, int startingEnergy, int genesAmount)
+    public Animal(Vector2d position, int startingEnergy, int genesAmount, boolean loopedGenesActive)
     {
         this.position = position;
         this.genesAmount = genesAmount;
         orientation = MapDirection.generateRandomMapDirection();
         energy = startingEnergy;
-        genes = new Genes(genesAmount);
+
+        if(loopedGenesActive) genes = new LoopedGenes(genesAmount);
+        else                  genes = new StandardGenes(genesAmount);
     }
 
-    public Animal(Vector2d position, int energy, int genesAmount, Animal parent1, Animal parent2, int animalMinMutations, int animalMaxMutations)
+    public Animal(Vector2d position, int energy, int genesAmount, boolean loopedGenesActive, Animal parent1, Animal parent2, int animalMinMutations, int animalMaxMutations)
     {
-        this(position, energy, genesAmount);
+        this(position, energy, genesAmount, loopedGenesActive);
         parents.add(0, parent1);
         parents.add(1, parent2);
-        genes = new Genes(parent1, parent2, animalMinMutations, animalMaxMutations);
+
+        if(loopedGenesActive) genes = new LoopedGenes(parent1, parent2, animalMinMutations, animalMaxMutations);
+        else                  genes = new StandardGenes(parent1, parent2, animalMinMutations, animalMaxMutations);
+
         updateParentsRecursion(new ArrayList<>());
     }
 
@@ -100,7 +105,7 @@ public class Animal implements WorldElement{
     public int getChildrenAmount() {return childrenAmount;}
     public int getDescendantAmount() {return descendantAmount;}
     public int getGenesAmount() {return genesAmount;}
-    public Genes getGenes() {return genes;}
+    public AbstractGenes getGenes() {return genes;}
     public void eat(int energy){
         this.energy = Math.min(MAX_ENERGY, this.energy + energy);
     }

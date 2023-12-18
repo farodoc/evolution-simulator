@@ -5,44 +5,28 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Random;
 
-public class Genes {
-    private List<Integer> genes = new ArrayList<>();
-    private int geneIndex = 0;
-    private boolean leftToRightGenes = true;
+public abstract class AbstractGenes {
+    protected List<Integer> genes = new ArrayList<>();
+    protected int geneIndex = 0;
 
-    public Genes(int genesAmount){
+    public AbstractGenes(int genesAmount){
         generateGenesOnStart(genesAmount);
     }
 
-    public Genes(Animal strongerAnimal, Animal weakerAnimal, int ANIMAL_MIN_MUTATIONS, int ANIMAL_MAX_MUTATIONS){
+    public AbstractGenes(Animal strongerAnimal, Animal weakerAnimal, int ANIMAL_MIN_MUTATIONS, int ANIMAL_MAX_MUTATIONS){
         this.genes = combineGenes(strongerAnimal, weakerAnimal);
         switchRandomGenes(genes, ANIMAL_MIN_MUTATIONS, ANIMAL_MAX_MUTATIONS);
     }
 
-    private void generateGenesOnStart(int genesAmount){
+    protected void generateGenesOnStart(int genesAmount){
         for(int i = 0; i < genesAmount; i++){
             int newGene = (int)(Math.random() * 8);
             genes.add(newGene);
         }
     }
 
-    private void updateGeneIndex(){
-        if(leftToRightGenes){
-            if(geneIndex == genes.size() - 1){
-                leftToRightGenes = false;
-            }
-            else{
-                geneIndex++;
-            }
-        }
-        else{
-            if(geneIndex == 0){
-                leftToRightGenes = true;
-            }
-            else{
-                geneIndex--;
-            }
-        }
+    protected void updateGeneIndex(){
+        geneIndex = (geneIndex + 1) % genes.size();
     }
 
     public int getActiveGene(){
@@ -55,7 +39,7 @@ public class Genes {
         return genes;
     }
 
-    private List<Integer> combineGenes(Animal strongerAnimal, Animal weakerAnimal){
+    protected List<Integer> combineGenes(Animal strongerAnimal, Animal weakerAnimal){
         List<Integer> strongerGenes = strongerAnimal.getGenes().getGenesList();
         List<Integer> weakerGenes = weakerAnimal.getGenes().getGenesList();
         List<Integer> newGenes = new ArrayList<>();
@@ -84,7 +68,7 @@ public class Genes {
         return newGenes;
     }
 
-    private void switchRandomGenes(List<Integer> genes, int ANIMAL_MIN_MUTATIONS, int ANIMAL_MAX_MUTATIONS){
+    protected void switchRandomGenes(List<Integer> genes, int ANIMAL_MIN_MUTATIONS, int ANIMAL_MAX_MUTATIONS){
         int genesAmount = genes.size();
         Random random = new Random();
         int genesToSwitchAmount = ANIMAL_MIN_MUTATIONS + random.nextInt(ANIMAL_MAX_MUTATIONS - ANIMAL_MIN_MUTATIONS + 1);

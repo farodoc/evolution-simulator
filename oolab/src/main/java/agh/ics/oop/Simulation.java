@@ -5,7 +5,7 @@ import agh.ics.oop.model.*;
 import java.util.*;
 
 public class Simulation implements Runnable{
-    //private static final int FOOD_STARTING_AMOUNT = 10;
+    private static final boolean LOOPED_GENES_ACTIVE = false;
     private static final int FOOD_GROWTH_PER_DAY = 5;
     private static final int FOOD_ENERGY = 5;
     private static final int ANIMAL_STARTING_AMOUNT = 6;
@@ -32,7 +32,7 @@ public class Simulation implements Runnable{
         for(int i = 0; i < ANIMAL_STARTING_AMOUNT; i++){
             int x = (int)(Math.random() * mapWidth);
             int y = (int)(Math.random() * mapHeight);
-            Animal animal = new Animal(new Vector2d(x, y), ANIMAL_STARTING_ENERGY, ANIMAL_GENES_AMOUNT);
+            Animal animal = new Animal(new Vector2d(x, y), ANIMAL_STARTING_ENERGY, ANIMAL_GENES_AMOUNT, LOOPED_GENES_ACTIVE);
             map.place(animal);
             animals.add(animal);
         }
@@ -102,7 +102,7 @@ public class Simulation implements Runnable{
         strongerAnimal.updateAnimalAfterBreeding(ANIMAL_ENERGY_TO_REPRODUCE);
         weakerAnimal.updateAnimalAfterBreeding(ANIMAL_ENERGY_TO_REPRODUCE);
 
-        Animal child = new Animal(strongerAnimal.getPosition(), 2 * ANIMAL_ENERGY_TO_REPRODUCE, ANIMAL_GENES_AMOUNT,
+        Animal child = new Animal(strongerAnimal.getPosition(), 2 * ANIMAL_ENERGY_TO_REPRODUCE, ANIMAL_GENES_AMOUNT, LOOPED_GENES_ACTIVE,
                 strongerAnimal, weakerAnimal, ANIMAL_MIN_MUTATIONS, ANIMAL_MAX_MUTATIONS);
         map.place(child);
         animals.add(child);
