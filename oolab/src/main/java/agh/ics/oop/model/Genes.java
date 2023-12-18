@@ -14,8 +14,8 @@ public class Genes {
         generateGenesOnStart(genesAmount);
     }
 
-    public Genes(Animal animal1, Animal animal2, int ANIMAL_MIN_MUTATIONS, int ANIMAL_MAX_MUTATIONS){
-        this.genes = combineGenes(animal1, animal2);
+    public Genes(Animal strongerAnimal, Animal weakerAnimal, int ANIMAL_MIN_MUTATIONS, int ANIMAL_MAX_MUTATIONS){
+        this.genes = combineGenes(strongerAnimal, weakerAnimal);
         switchRandomGenes(genes, ANIMAL_MIN_MUTATIONS, ANIMAL_MAX_MUTATIONS);
     }
 

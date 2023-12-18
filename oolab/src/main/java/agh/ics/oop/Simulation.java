@@ -16,8 +16,8 @@ public class Simulation implements Runnable{
     private static final int ANIMAL_ENERGY_TO_REPRODUCE = 5;
     private static final int ANIMAL_MIN_MUTATIONS = 0;
     private static final int ANIMAL_MAX_MUTATIONS = 2;
-    private DarvinMap map;
-    private List<Animal> animals;
+    private final DarvinMap map;
+    private final List<Animal> animals;
 
     public Simulation(DarvinMap map) {
         this.animals = new ArrayList<>();
@@ -46,7 +46,7 @@ public class Simulation implements Runnable{
             spawnNewFood();
             freezeSimulation();
         }
-        System.out.println("KONIEC SYMULACJI - ZWIERZETA WYGINELY!");
+        System.out.println("END OF SIMULATION - EVERY ANIMAL IS DEAD!");
     }
 
     private void freezeSimulation(){
@@ -68,7 +68,7 @@ public class Simulation implements Runnable{
                 int animalIndex = 0;
 
                 for (int i = 0; i < pairs; i++) {
-                    combineAnimals(filteredAnimals.get(animalIndex), filteredAnimals.get(animalIndex + 1));
+                    combineAnimalsAndSpawnChild(filteredAnimals.get(animalIndex), filteredAnimals.get(animalIndex + 1));
                     animalIndex += 2;
                 }
                 bredPositions.add(animal.getPosition());
@@ -88,18 +88,20 @@ public class Simulation implements Runnable{
         Comparator<Animal> animalComparator = Comparator
                 .comparingInt(Animal::getEnergy)
                 .thenComparingInt(Animal::getAge)
-                .thenComparingInt(Animal::getChildrenAmount);
+                .thenComparingInt(Animal::getChildrenAmount)
+                .reversed();
 
         filteredAnimals.sort(animalComparator);
 
         return filteredAnimals;
     }
 
-    private void combineAnimals(Animal animal1, Animal animal2){
-        animal1.setEnergy(animal1.getEnergy() - ANIMAL_ENERGY_TO_REPRODUCE);
-        animal2.setEnergy(animal2.getEnergy() - ANIMAL_ENERGY_TO_REPRODUCE);
-        Animal child = new Animal(animal1.getPosition(), 2 * ANIMAL_ENERGY_TO_REPRODUCE, ANIMAL_GENES_AMOUNT,
-                animal1, animal2, ANIMAL_MIN_MUTATIONS, ANIMAL_MAX_MUTATIONS);
+    private void combineAnimalsAndSpawnChild(Animal strongerAnimal, Animal weakerAnimal){
+        strongerAnimal.updateAnimalAfterBreeding(ANIMAL_ENERGY_TO_REPRODUCE);
+        weakerAnimal.updateAnimalAfterBreeding(ANIMAL_ENERGY_TO_REPRODUCE);
+
+        Animal child = new Animal(strongerAnimal.getPosition(), 2 * ANIMAL_ENERGY_TO_REPRODUCE, ANIMAL_GENES_AMOUNT,
+                strongerAnimal, weakerAnimal, ANIMAL_MIN_MUTATIONS, ANIMAL_MAX_MUTATIONS);
         map.place(child);
         animals.add(child);
     }
@@ -136,20 +138,22 @@ public class Simulation implements Runnable{
         Comparator<Animal> animalComparator = Comparator
                 .comparingInt(Animal::getEnergy)
                 .thenComparingInt(Animal::getAge)
-                .thenComparingInt(Animal::getChildrenAmount);
+                .thenComparingInt(Animal::getChildrenAmount)
+                .reversed();
 
-        Collections.sort(filteredAnimals, animalComparator);
+        filteredAnimals.sort(animalComparator);
 
         return filteredAnimals.get(0);
     }
     private void moveAllAnimals(){
         for(Animal animal : animals){
             map.move(animal, ANIMAL_ENERGY_PER_MOVE);
+            animal.updateAge();
         }
     }
 
     private void clearDeadAnimals(){
-        for(int i = 0; i < animals.size(); i++){
+        for(int i = animals.size()-1; i >= 0; i--){
             if(animals.get(i).getEnergy() <= 0){
                 map.removeAnimal(animals.get(i));
                 animals.remove(i);

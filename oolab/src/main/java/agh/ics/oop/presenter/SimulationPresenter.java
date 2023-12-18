@@ -42,8 +42,8 @@ public class SimulationPresenter implements MapChangeListener {
         int cellSize = (int)(Screen.getPrimary().getVisualBounds().getHeight()/map.getMapSize() * 0.8);
         clearGrid();
         Boundary boundaries = map.getCurrentBounds();
-        int width = boundaries.topRightCorner().getX() - boundaries.bottomLeftCorner().getX() + 1;
-        int height = boundaries.topRightCorner().getY() - boundaries.bottomLeftCorner().getY() + 1;
+        int width = boundaries.topRightCorner().x() - boundaries.bottomLeftCorner().x() + 1;
+        int height = boundaries.topRightCorner().y() - boundaries.bottomLeftCorner().y() + 1;
 
         for (int x = 0; x < width + 1; x++) {
             mapGrid.getColumnConstraints().add(new ColumnConstraints(cellSize));
@@ -58,13 +58,13 @@ public class SimulationPresenter implements MapChangeListener {
         GridPane.setHalignment(xyLabel, HPos.CENTER);
 
         for (int x = 1; x < width + 1; x++) {
-            Label columnLabel = new Label(String.valueOf(x - 1 + boundaries.bottomLeftCorner().getX()));
+            Label columnLabel = new Label(String.valueOf(x - 1 + boundaries.bottomLeftCorner().x()));
             mapGrid.add(columnLabel, x, 0);
             GridPane.setHalignment(columnLabel, HPos.CENTER);
         }
 
         for (int y = height; y >= 1; y--) {
-            Label rowLabel = new Label(String.valueOf(y - 1 + boundaries.bottomLeftCorner().getY()));
+            Label rowLabel = new Label(String.valueOf(y - 1 + boundaries.bottomLeftCorner().y()));
             mapGrid.add(rowLabel, 0, height - y + 1);
             GridPane.setHalignment(rowLabel, HPos.CENTER);
         }
@@ -74,8 +74,8 @@ public class SimulationPresenter implements MapChangeListener {
         int cellSize = (int)(Screen.getPrimary().getVisualBounds().getHeight()/map.getMapSize() * 0.8);
         int fontSize = (int)(0.75*cellSize);
         Boundary boundaries = map.getCurrentBounds();
-        int width = boundaries.topRightCorner().getX() - boundaries.bottomLeftCorner().getX() + 1;
-        int height = boundaries.topRightCorner().getY() - boundaries.bottomLeftCorner().getY() + 1;
+        int width = boundaries.topRightCorner().x() - boundaries.bottomLeftCorner().x() + 1;
+        int height = boundaries.topRightCorner().y() - boundaries.bottomLeftCorner().y() + 1;
         TileType[][] tiles = map.getTiles();
 
         for (int y = height; y >= 1; y--) {
@@ -85,9 +85,9 @@ public class SimulationPresenter implements MapChangeListener {
                 cellLabel.setMinHeight(cellSize);
                 cellLabel.setBorder(new Border(new BorderStroke(Color.BLACK, BorderStrokeStyle.SOLID, null, new BorderWidths(0.4))));
                 cellLabel.setStyle("-fx-alignment: CENTER;-fx-font-weight: bold;-fx-font-size: " + fontSize + "px;");
-                Vector2d translatedPosition = new Vector2d(x - 1 + boundaries.bottomLeftCorner().getX(), y - 1 + boundaries.bottomLeftCorner().getY());
+                Vector2d translatedPosition = new Vector2d(x - 1 + boundaries.bottomLeftCorner().x(), y - 1 + boundaries.bottomLeftCorner().y());
 
-                if(tiles[translatedPosition.getY()][translatedPosition.getX()] == TileType.JUNG){
+                if(tiles[translatedPosition.y()][translatedPosition.x()] == TileType.JUNG){
                     cellLabel.setBackground(new Background(new BackgroundFill(Color.rgb(18, 74, 13), CornerRadii.EMPTY, Insets.EMPTY)));
                 }
                 else{
@@ -113,7 +113,8 @@ public class SimulationPresenter implements MapChangeListener {
     public void mapChanged(WorldMap map, String message) {
         Platform.runLater(() -> {
             drawMap();
-            descriptionLabel.setText(message);
+            if(message.startsWith("X"))
+                descriptionLabel.setText(message);
         });
     }
 

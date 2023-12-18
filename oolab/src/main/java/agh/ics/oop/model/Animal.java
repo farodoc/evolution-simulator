@@ -1,5 +1,6 @@
 package agh.ics.oop.model;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -8,24 +9,28 @@ public class Animal implements WorldElement{
     private Vector2d position;
     private Genes genes;
     private int energy;
-    private int age;
-    private int childrenAmount;
-    private int MAX_ENERGY = 100;
-    private int genesAmount;
-
-    public Animal(Vector2d position, int energy, int genesAmount)
+    private int age = 0;
+    private int childrenAmount = 0;
+    private int descendantAmount = 0;
+    private final static int MAX_ENERGY = 100;
+    private final int genesAmount;
+    private final List<Animal> parents = new ArrayList<>(2);
+    public Animal(Vector2d position, int startingEnergy, int genesAmount)
     {
         this.position = position;
-        this.orientation = MapDirection.generateRandomMapDirection();
-        this.energy = energy;
         this.genesAmount = genesAmount;
+        orientation = MapDirection.generateRandomMapDirection();
+        energy = startingEnergy;
         genes = new Genes(genesAmount);
     }
 
     public Animal(Vector2d position, int energy, int genesAmount, Animal parent1, Animal parent2, int animalMinMutations, int animalMaxMutations)
     {
         this(position, energy, genesAmount);
-        this.genes = new Genes(parent1, parent2, animalMinMutations, animalMaxMutations);
+        parents.add(0, parent1);
+        parents.add(1, parent2);
+        genes = new Genes(parent1, parent2, animalMinMutations, animalMaxMutations);
+        updateParentsRecursion(new ArrayList<>());
     }
 
     @Override
@@ -91,9 +96,9 @@ public class Animal implements WorldElement{
     public int getEnergy(){
         return this.energy;
     }
-    public void setEnergy(int energy){ this.energy = energy; }
     public int getAge() {return age;}
     public int getChildrenAmount() {return childrenAmount;}
+    public int getDescendantAmount() {return descendantAmount;}
     public int getGenesAmount() {return genesAmount;}
     public Genes getGenes() {return genes;}
     public void eat(int energy){
@@ -102,4 +107,36 @@ public class Animal implements WorldElement{
     public void updateAge(){
         this.age++;
     }
+    public void updateDescendantAmount(){this.descendantAmount++;}
+
+    private void updateParentsRecursion(List<Animal> visitedAnimals)
+    {
+        if(parents.isEmpty())
+            return;
+
+        Animal parent1 = parents.get(0);
+        if(!visitedAnimals.contains(parent1))
+        {
+            parent1.updateDescendantAmount();
+            visitedAnimals.add(parent1);
+            parent1.updateParentsRecursion(visitedAnimals);
+        }
+
+        Animal parent2 = parents.get(1);
+        if(!visitedAnimals.contains(parent2))
+        {
+            parent2.updateDescendantAmount();
+            visitedAnimals.add(parent2);
+            parent2.updateParentsRecursion(visitedAnimals);
+        }
+
+    }
+    public void updateAnimalAfterBreeding(int ANIMAL_ENERGY_TO_REPRODUCE)
+    {
+        this.childrenAmount++;
+        this.energy -= ANIMAL_ENERGY_TO_REPRODUCE;
+        updateParentsRecursion(new ArrayList<>());
+
+    }
+
 }
