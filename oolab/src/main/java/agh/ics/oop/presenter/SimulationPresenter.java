@@ -17,7 +17,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class SimulationPresenter implements MapChangeListener {
-    DarvinMap map;
+    AbstractWorldMap map;
 
     @FXML
     private Label infoLabel;
@@ -28,7 +28,7 @@ public class SimulationPresenter implements MapChangeListener {
     @FXML
     private GridPane mapGrid;
 
-    public void setMap(DarvinMap map) {
+    public void setMap(AbstractWorldMap map) {
         this.map = map;
     }
 

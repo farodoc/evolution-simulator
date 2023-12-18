@@ -4,79 +4,62 @@ import agh.ics.oop.model.util.MapVisualizer;
 
 import java.util.*;
 
-public class DarvinMap implements WorldMap{
-    private final int mapWidth = 25;
-    private final int mapHeight = 20;
+public abstract class AbstractWorldMap implements WorldMap{
+    protected final int mapWidth = 25;
+    protected final int mapHeight = 20;
     private final List<MapChangeListener> observers = new ArrayList<>();
-    public void addObserver(MapChangeListener observer) {
-        observers.add(observer);
-    }
-    protected void notifyObservers(String message) {
-        for (MapChangeListener observer : observers) {
-            observer.mapChanged(this, message);
-        }
-    }
     protected final Map<Vector2d, Animal> animals = new HashMap<>();
     protected final MapVisualizer mapVisualizer;
     protected final UUID id;
-    private static final double POISON_PROBABILITY = 0.2;
+    protected final Map<Vector2d, AbstractFood> foodTiles = new HashMap<>();
+    protected final Vector2d BOTTOM_LEFT_MAP_BORDER = new Vector2d(0,0);
+    protected final Vector2d TOP_RIGHT_MAP_BORDER = new Vector2d(mapWidth - 1,mapHeight - 1);
+    protected final TileType[][] tiles = new TileType[mapHeight][mapWidth];
+    protected final List<Vector2d> dirtTilesPositions = new ArrayList<>();
+    protected int dirtFoodAmount = 0;
+    protected final List<Vector2d> jungleTilesPositions = new ArrayList<>();
+    protected int jungleFoodAmount = 0;
+    protected int lastIndex = 0;
 
-    public DarvinMap(int FOOD_STARTING_AMOUNT) {
+    public AbstractWorldMap() {
         id = UUID.randomUUID();
         mapVisualizer = new MapVisualizer(this);
-        generateTiles();
-        generatePoisonedTiles();
-        generateFood(FOOD_STARTING_AMOUNT);
-    }
-    public UUID getId() {
-        return id;
     }
 
-    private final Map<Vector2d, AbstractFood> foodTiles = new HashMap<>();
-    private final Vector2d BOTTOM_LEFT_MAP_BORDER = new Vector2d(0,0);
-    private final Vector2d TOP_RIGHT_MAP_BORDER = new Vector2d(mapWidth - 1,mapHeight - 1);
-    private final TileType[][] tiles = new TileType[mapHeight][mapWidth];
-    private final List<Vector2d> dirtTilesPositions = new ArrayList<>();
-    private int dirtFoodAmount = 0;
-    private final List<Vector2d> jungleTilesPositions = new ArrayList<>();
-    private int jungleFoodAmount = 0;
-    private final boolean[][]isMaybePoisonedTile  = new boolean[mapHeight][mapWidth];
-    private int lastIndex = 0;
     public void place(Animal animal) {
         animals.put(animal.getPosition(), animal);
         notifyObservers("Animal placed at " + animal.getPosition());
     }
-
     public void generateFood(int howManyFoodToGenerate)
     {
         int cnt = 0;
         while(cnt < howManyFoodToGenerate){
-            Vector2d newFoodPosition;
-            if(jungleFoodAmount<jungleTilesPositions.size() && Math.random() < 0.8){//jungle drawn
-
-                newFoodPosition = getFreeTile(jungleTilesPositions);
-                jungleFoodAmount++;
-            }
-            else if(dirtFoodAmount<dirtTilesPositions.size())
-            {
-                newFoodPosition = getFreeTile(dirtTilesPositions);
-                dirtFoodAmount++;
-            }
-            else break; //whole map in food
+            Vector2d newFoodPosition = generateNewFoodPosition();
+            if(newFoodPosition == null) break;
 
             if(!foodTiles.containsKey(newFoodPosition))
             {
-                if(isMaybePoisonedTile[newFoodPosition.y()][newFoodPosition.x()] && Math.random() < POISON_PROBABILITY) //generate poisonedFruit
-                    foodTiles.put(newFoodPosition, new PoisonedFruit(newFoodPosition));
-
-                else foodTiles.put(newFoodPosition,new Grass(newFoodPosition));
+                foodTiles.put(newFoodPosition,new Grass(newFoodPosition));
                 notifyObservers("Food generated at " + newFoodPosition);
                 cnt++;
             }
         }
     }
 
-    private Vector2d getFreeTile(List<Vector2d> tilesPositions)
+    protected Vector2d generateNewFoodPosition(){
+        if(jungleFoodAmount<jungleTilesPositions.size() && Math.random() < 0.8){//jungle drawn
+            jungleFoodAmount++;
+            return getFreeTile(jungleTilesPositions);
+        }
+        else if(dirtFoodAmount<dirtTilesPositions.size())
+        {
+            dirtFoodAmount++;
+            return getFreeTile(dirtTilesPositions);
+        }
+        return null;
+    }
+
+    protected Vector2d getFreeTile(List<Vector2d> tilesPositions)
     {
 
         int listSize = tilesPositions.size();
@@ -98,7 +81,7 @@ public class DarvinMap implements WorldMap{
     }
 
 
-    private void generateTiles()
+    protected void generateTiles()
     {
         generateJungleTiles();
 
@@ -119,7 +102,7 @@ public class DarvinMap implements WorldMap{
         Collections.shuffle(jungleTilesPositions);
     }
 
-    private void generateJungleTiles()
+    protected void generateJungleTiles()
     {
         int jungleTilesAmount = (int) (mapHeight*mapWidth*0.2);
         int jungleTilesCounter = 0;
@@ -156,26 +139,9 @@ public class DarvinMap implements WorldMap{
 
             probabilityForRow/=1.25;
         }
-
     }
 
-    private void generatePoisonedTiles()
-    {
-        double poisonedTilesAmount = mapHeight*mapWidth*0.2;
-        int a = (int) Math.sqrt(poisonedTilesAmount); //a = lengthOfSquare
-        Random random = new Random();
-        int startingY = random.nextInt(mapHeight-a+1);
-        int startingX = random.nextInt(mapWidth-a+1);
-
-        for(int y=startingY; y<startingY+a; y++)
-        {
-            for(int x=startingX; x<startingX+a; x++)
-            {
-                isMaybePoisonedTile[y][x]=true;
-            }
-        }
-    }
-    private boolean isInMap(int equator, int yModifier)
+    protected boolean isInMap(int equator, int yModifier)
     {
         return equator + yModifier < mapHeight && equator - yModifier >= 0;
     }
@@ -215,7 +181,7 @@ public class DarvinMap implements WorldMap{
         return new Boundary(BOTTOM_LEFT_MAP_BORDER, TOP_RIGHT_MAP_BORDER);
     }
 
-    private boolean willAnimalBeOutOfBorder(Vector2d position){
+    protected boolean willAnimalBeOutOfBorder(Vector2d position){
         return position.x() < BOTTOM_LEFT_MAP_BORDER.x() || position.x() > TOP_RIGHT_MAP_BORDER.x() ||
                 position.y() < BOTTOM_LEFT_MAP_BORDER.y() || position.y() > TOP_RIGHT_MAP_BORDER.y();
     }
@@ -269,4 +235,16 @@ public class DarvinMap implements WorldMap{
     }
     public int getMapHeight() {return mapHeight;}
     public int getMapWidth() {return mapWidth;}
+    public UUID getId() {
+        return id;
+    }
+
+    public void addObserver(MapChangeListener observer) {
+        observers.add(observer);
+    }
+    protected void notifyObservers(String message) {
+        for (MapChangeListener observer : observers) {
+            observer.mapChanged(this, message);
+        }
+    }
 }

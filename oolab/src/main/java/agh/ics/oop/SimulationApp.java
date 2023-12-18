@@ -12,6 +12,7 @@ import java.io.IOException;
 
 public class SimulationApp extends Application {
     private static final int FOOD_STARTING_AMOUNT = 20;
+    private static final boolean EQUATOR_MAP_ACTIVE = false;
     @Override
     public void start(Stage primaryStage) throws IOException {
         MapChangeListener observer = new ConsoleMapDisplay();
@@ -20,7 +21,10 @@ public class SimulationApp extends Application {
         BorderPane viewRoot = loader.load();
         SimulationPresenter presenter = loader.getController();
 
-        DarvinMap map = new DarvinMap(FOOD_STARTING_AMOUNT);
+        AbstractWorldMap map;
+        if(EQUATOR_MAP_ACTIVE) map = new EquatorMap(FOOD_STARTING_AMOUNT);
+        else                   map = new PoisonMap(FOOD_STARTING_AMOUNT);
+
         presenter.setMap(map);
 
         map.addObserver(presenter);

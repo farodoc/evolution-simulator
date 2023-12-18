@@ -60,7 +60,7 @@ public class Animal implements WorldElement{
         return this.position.equals(position);
     }
 
-    public void move(DarvinMap map, int ANIMAL_ENERGY_PER_MOVE, Map<Vector2d, AbstractFood> foodTiles){
+    public void move(AbstractWorldMap map, int ANIMAL_ENERGY_PER_MOVE, Map<Vector2d, AbstractFood> foodTiles){
         if(this.energy - ANIMAL_ENERGY_PER_MOVE >= 0){
             this.energy -= ANIMAL_ENERGY_PER_MOVE;
         }

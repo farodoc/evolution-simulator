@@ -1,8 +1,5 @@
 package agh.ics.oop;
 
-import agh.ics.oop.model.ConsoleMapDisplay;
-import agh.ics.oop.model.DarvinMap;
-import agh.ics.oop.model.MapChangeListener;
 import javafx.application.Application;
 
 public class World {

@@ -16,10 +16,10 @@ public class Simulation implements Runnable{
     private static final int ANIMAL_ENERGY_TO_REPRODUCE = 5;
     private static final int ANIMAL_MIN_MUTATIONS = 0;
     private static final int ANIMAL_MAX_MUTATIONS = 2;
-    private final DarvinMap map;
+    private final AbstractWorldMap map;
     private final List<Animal> animals;
 
-    public Simulation(DarvinMap map) {
+    public Simulation(AbstractWorldMap map) {
         this.animals = new ArrayList<>();
         this.map = map;
         generateAnimals();
