@@ -8,21 +8,17 @@ public class Simulation implements Runnable{
     //private static final int FOOD_STARTING_AMOUNT = 10;
     private static final int FOOD_GROWTH_PER_DAY = 1;
     private static final int FOOD_ENERGY = 5;
-    private static final int ANIMAL_STARTING_AMOUNT = 1;
-    private static final int ANIMAL_STARTING_ENERGY = 35;
+    private static final int ANIMAL_STARTING_AMOUNT = 2;
+    private static final int ANIMAL_STARTING_ENERGY = 100;
     private static final int ANIMAL_GENES_AMOUNT = 10;
     private static final int ANIMAL_ENERGY_PER_MOVE = 1;
-    private static final int ANIMAL_MIN_ENERGY_TO_REPRODUCE = 5;
-    private static final int ANIMAL_ENERGY_TO_REPRODUCE = 2;
+    private static final int ANIMAL_MIN_ENERGY_TO_REPRODUCE = 15;
+    private static final int ANIMAL_ENERGY_TO_REPRODUCE = 5;
     private static final int ANIMAL_MIN_MUTATIONS = 0;
     private static final int ANIMAL_MAX_MUTATIONS = 2;
     private DarvinMap map;
     private List<Animal> animals;
 
-
-    List<Animal> getAnimals(){
-        return Collections.unmodifiableList(this.animals);
-    }
     public Simulation(DarvinMap map) {
         this.animals = new ArrayList<>();
         this.map = map;
@@ -41,33 +37,46 @@ public class Simulation implements Runnable{
     }
 
     public void run(){
+        freezeSimulation();
+        while (true){
+            clearDeadAnimals();
+            if(!animals.isEmpty()) moveAllAnimals(); else break;
+            feedAnimals();
+            breedAnimals();
+            spawnNewFood();
+            freezeSimulation();
+        }
+        System.out.println("KONIEC SYMULACJI - ZWIERZETA WYGINELY!");
+    }
+
+    private void freezeSimulation(){
         try {
             Thread.sleep(1000);
         } catch (InterruptedException e) {
             throw new RuntimeException(e);
         }
-
-        while (true){
-            clearDeadAnimals();
-            if(!animals.isEmpty()) moveAllAnimals(); else break;
-            feedAnimals();
-            breedAnimals();//nie dziala
-            try {
-                Thread.sleep(1000);
-            } catch (InterruptedException e) {
-                throw new RuntimeException(e);
-            }
-            spawnNewFood();
-            try {
-                Thread.sleep(1000);
-            } catch (InterruptedException e) {
-                throw new RuntimeException(e);
-            }
-        }
-        System.out.println("KONIEC SYMULACJI - ZWIERZETA WYGINELY!");
     }
 
-    private void breedAnimals(Vector2d position) {
+    private void breedAnimals() {
+        HashSet<Vector2d> bredPositions = new HashSet<>();
+        List<Animal> animalsCopy = new ArrayList<>(animals);
+
+        for(Animal animal: animalsCopy){
+            if(!bredPositions.contains(animal.getPosition())) {
+                List<Animal> filteredAnimals = findAnimalsToBreed(animal.getPosition());
+                int pairs = filteredAnimals.size() / 2;
+                int animalIndex = 0;
+
+                for (int i = 0; i < pairs; i++) {
+                    combineAnimals(filteredAnimals.get(animalIndex), filteredAnimals.get(animalIndex + 1));
+                    animalIndex += 2;
+                }
+                bredPositions.add(animal.getPosition());
+            }
+        }
+    }
+
+    private List<Animal> findAnimalsToBreed(Vector2d position){
         List<Animal> filteredAnimals = new ArrayList<>();
 
         for (Animal animal : animals) {
@@ -81,66 +90,18 @@ public class Simulation implements Runnable{
                 .thenComparingInt(Animal::getAge)
                 .thenComparingInt(Animal::getChildrenAmount);
 
-        Collections.sort(filteredAnimals, animalComparator);
+        filteredAnimals.sort(animalComparator);
 
-        int pairs = filteredAnimals.size() / 2;
-        int animalIndex = 0;
-
-        for(int i = 0; i < pairs; i++){
-            combineAnimals(filteredAnimals.get(animalIndex), filteredAnimals.get(animalIndex + 1));
-            animalIndex += 2;
-        }
+        return filteredAnimals;
     }
 
-    private Animal combineAnimals(Animal animal1, Animal animal2){
-        List<Integer> newGenes = combineGenes(animal1, animal2);
+    private void combineAnimals(Animal animal1, Animal animal2){
         animal1.setEnergy(animal1.getEnergy() - ANIMAL_ENERGY_TO_REPRODUCE);
-        animal2.setEnergy(animal1.getEnergy() - ANIMAL_ENERGY_TO_REPRODUCE);
-        Animal child = new Animal(animal1.getPosition(), ANIMAL_ENERGY_TO_REPRODUCE, ANIMAL_GENES_AMOUNT, newGenes);
+        animal2.setEnergy(animal2.getEnergy() - ANIMAL_ENERGY_TO_REPRODUCE);
+        Animal child = new Animal(animal1.getPosition(), 2 * ANIMAL_ENERGY_TO_REPRODUCE, ANIMAL_GENES_AMOUNT,
+                animal1, animal2, ANIMAL_MIN_MUTATIONS, ANIMAL_MAX_MUTATIONS);
         map.place(child);
         animals.add(child);
-        return child;
-    }
-
-    private List<Integer> combineGenes(Animal strongerAnimal, Animal weakerAnimal){
-        List<Integer> newGenes = new ArrayList<>();
-        int strongerGenesAmount = (int)(strongerAnimal.getEnergy()/(double)(strongerAnimal.getEnergy() + weakerAnimal.getEnergy())) * ANIMAL_GENES_AMOUNT;
-        int weakerGenesAmount = ANIMAL_GENES_AMOUNT - strongerGenesAmount;
-        boolean drawnLeftSide = Math.random() < 0.5;
-        if(drawnLeftSide){
-            for(int i = 0; i < strongerGenesAmount; i++){
-                newGenes.add(strongerAnimal.getGenes().get(i));
-            }
-            for(int i = strongerGenesAmount; i < ANIMAL_GENES_AMOUNT; i++){
-                newGenes.add(weakerAnimal.getGenes().get(i));
-            }
-        }
-        else{
-            for(int i = 0; i < weakerGenesAmount; i++){
-                newGenes.add(weakerAnimal.getGenes().get(i));
-            }
-            for(int i = weakerGenesAmount; i < ANIMAL_GENES_AMOUNT; i++){
-                newGenes.add(strongerAnimal.getGenes().get(i));
-            }
-        }
-        switchRandomGenes(newGenes);
-        return newGenes;
-    }
-
-    private void switchRandomGenes(List<Integer> genes){
-        Random random = new Random();
-        int genesToSwitchAmount = ANIMAL_MIN_MUTATIONS + random.nextInt(ANIMAL_MAX_MUTATIONS - ANIMAL_MIN_MUTATIONS + 1);
-        List<Integer> genesPositions = new ArrayList<>();
-
-        for(int i = 0; i < ANIMAL_GENES_AMOUNT; i++){
-            genesPositions.add(i);
-        }
-
-        Collections.shuffle(genesPositions);
-
-        for(int i = 0; i < genesToSwitchAmount; i++){
-            genes.set(i, (genes.get(i) + random.nextInt(1, ANIMAL_GENES_AMOUNT)) % ANIMAL_GENES_AMOUNT);
-        }
     }
 
     private void feedAnimals()

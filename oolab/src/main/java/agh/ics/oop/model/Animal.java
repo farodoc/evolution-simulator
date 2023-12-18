@@ -1,19 +1,16 @@
 package agh.ics.oop.model;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
 public class Animal implements WorldElement{
     private MapDirection orientation;
     private Vector2d position;
+    private Genes genes;
     private int energy;
     private int age;
     private int childrenAmount;
     private int MAX_ENERGY = 100;
-    private List<Integer> genes = new ArrayList<>();
-    private int geneIndex = 0;
-    private boolean leftToRightGenes = true;
     private int genesAmount;
 
     public Animal(Vector2d position, int energy, int genesAmount)
@@ -22,39 +19,13 @@ public class Animal implements WorldElement{
         this.orientation = MapDirection.generateRandomMapDirection();
         this.energy = energy;
         this.genesAmount = genesAmount;
-        generateGenesOnStart();
+        genes = new Genes(genesAmount);
     }
 
-    public Animal(Vector2d position, int energy, int genesAmount, List<Integer> genes)
+    public Animal(Vector2d position, int energy, int genesAmount, Animal parent1, Animal parent2, int animalMinMutations, int animalMaxMutations)
     {
         this(position, energy, genesAmount);
-        this.genes = genes;
-    }
-
-    private void generateGenesOnStart(){
-        for(int i = 0; i < genesAmount; i++){
-            int newGene = (int)(Math.random() * 8);
-            genes.add(newGene);
-        }
-    }
-
-    private void updateGeneIndex(){
-        if(leftToRightGenes){
-            if(geneIndex == genesAmount - 1){
-                leftToRightGenes = false;
-            }
-            else{
-                geneIndex++;
-            }
-        }
-        else{
-            if(geneIndex == 0){
-                leftToRightGenes = true;
-            }
-            else{
-                geneIndex--;
-            }
-        }
+        this.genes = new Genes(parent1, parent2, animalMinMutations, animalMaxMutations);
     }
 
     @Override
@@ -88,7 +59,7 @@ public class Animal implements WorldElement{
             return;
         }
 
-        int direction = genes.get(geneIndex);
+        int direction = genes.getActiveGene();
         changeOrientation(direction);
 
         Vector2d possiblePositionWithPoisonedFruit = map.getNewPositionForAnimal(this);
@@ -101,7 +72,6 @@ public class Animal implements WorldElement{
         }
 
         this.position = possiblePositionWithPoisonedFruit;
-        updateGeneIndex();
     }
 
     private void changeOrientation(int direction) {
@@ -124,16 +94,12 @@ public class Animal implements WorldElement{
     public void setEnergy(int energy){ this.energy = energy; }
     public int getAge() {return age;}
     public int getChildrenAmount() {return childrenAmount;}
-
+    public int getGenesAmount() {return genesAmount;}
+    public Genes getGenes() {return genes;}
     public void eat(int energy){
         this.energy = Math.min(MAX_ENERGY, this.energy + energy);
     }
-
     public void updateAge(){
         this.age++;
-    }
-
-    public List<Integer> getGenes(){
-        return this.genes;
     }
 }

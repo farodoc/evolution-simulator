@@ -17,7 +17,7 @@ public class DarvinMap implements WorldMap{
     protected final Map<Vector2d, Animal> animals = new HashMap<>();
     protected final MapVisualizer mapVisualizer;
     protected final UUID id;
-    private final int mapSize = 7;
+    private final int mapSize = 5;
     private static final double POISON_PROBABILITY = 0.2;
 
     public DarvinMap(int FOOD_STARTING_AMOUNT) {
