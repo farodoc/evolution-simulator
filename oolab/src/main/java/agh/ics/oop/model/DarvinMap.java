@@ -5,7 +5,8 @@ import agh.ics.oop.model.util.MapVisualizer;
 import java.util.*;
 
 public class DarvinMap implements WorldMap{
-    private final int mapSize = 2;
+    private final int mapWidth = 25;
+    private final int mapHeight = 20;
     private final List<MapChangeListener> observers = new ArrayList<>();
     public void addObserver(MapChangeListener observer) {
         observers.add(observer);
@@ -33,13 +34,13 @@ public class DarvinMap implements WorldMap{
 
     private final Map<Vector2d, AbstractFood> foodTiles = new HashMap<>();
     private final Vector2d BOTTOM_LEFT_MAP_BORDER = new Vector2d(0,0);
-    private final Vector2d TOP_RIGHT_MAP_BORDER = new Vector2d(mapSize - 1,mapSize - 1);
-    private final TileType[][] tiles = new TileType[mapSize][mapSize];
+    private final Vector2d TOP_RIGHT_MAP_BORDER = new Vector2d(mapWidth - 1,mapHeight - 1);
+    private final TileType[][] tiles = new TileType[mapHeight][mapWidth];
     private final List<Vector2d> dirtTilesPositions = new ArrayList<>();
     private int dirtFoodAmount = 0;
     private final List<Vector2d> jungleTilesPositions = new ArrayList<>();
     private int jungleFoodAmount = 0;
-    private final boolean[][]isMaybePoisonedTile  = new boolean[mapSize][mapSize];
+    private final boolean[][]isMaybePoisonedTile  = new boolean[mapHeight][mapWidth];
     private int lastIndex = 0;
     public void place(Animal animal) {
         animals.put(animal.getPosition(), animal);
@@ -101,16 +102,16 @@ public class DarvinMap implements WorldMap{
     {
         generateJungleTiles();
 
-        for(int x=0; x<mapSize; x++)
+        for(int x=0; x<mapWidth; x++)
         {
-            for(int y=0; y<mapSize; y++)
+            for(int y=0; y<mapHeight; y++)
             {
-                if(tiles[x][y]!=TileType.JUNG){
-                    tiles[x][y] = TileType.DIRT;
-                    dirtTilesPositions.add(new Vector2d(y,x));
+                if(tiles[y][x]!=TileType.JUNG){
+                    tiles[y][x] = TileType.DIRT;
+                    dirtTilesPositions.add(new Vector2d(x,y));
                 }
                 else {
-                    jungleTilesPositions.add(new Vector2d(y,x));
+                    jungleTilesPositions.add(new Vector2d(x,y));
                 }
             }
         }
@@ -120,10 +121,10 @@ public class DarvinMap implements WorldMap{
 
     private void generateJungleTiles()
     {
-        int jungleTilesAmount = (int) (mapSize*mapSize*0.2);
+        int jungleTilesAmount = (int) (mapHeight*mapWidth*0.2);
         int jungleTilesCounter = 0;
         double probabilityForRow = 1.0;
-        int equator = mapSize/2;
+        int equator = mapHeight/2;
 
         boolean generateUpper = true;
         int yModifier = 0;
@@ -131,7 +132,7 @@ public class DarvinMap implements WorldMap{
         while(jungleTilesCounter < jungleTilesAmount && isInMap(equator, yModifier))
         {
             int x=0;
-            while(x<mapSize && jungleTilesCounter<jungleTilesAmount)
+            while(x<mapWidth && jungleTilesCounter<jungleTilesAmount)
             {
                 if(Math.random() < probabilityForRow)
                 {
@@ -160,13 +161,15 @@ public class DarvinMap implements WorldMap{
 
     private void generatePoisonedTiles()
     {
-        double poisonedTilesAmount =mapSize*mapSize*0.2;
+        double poisonedTilesAmount = mapHeight*mapWidth*0.2;
         int a = (int) Math.sqrt(poisonedTilesAmount); //a = lengthOfSquare
-        int startingIndex = (mapSize - a)/2;
+        Random random = new Random();
+        int startingY = random.nextInt(mapHeight-a+1);
+        int startingX = random.nextInt(mapWidth-a+1);
 
-        for(int x=startingIndex; x<startingIndex+a; x++)
+        for(int y=startingY; y<startingY+a; y++)
         {
-            for(int y=startingIndex; y<startingIndex+a; y++)
+            for(int x=startingX; x<startingX+a; x++)
             {
                 isMaybePoisonedTile[y][x]=true;
             }
@@ -174,7 +177,7 @@ public class DarvinMap implements WorldMap{
     }
     private boolean isInMap(int equator, int yModifier)
     {
-        return equator + yModifier < mapSize && equator - yModifier >= 0;
+        return equator + yModifier < mapHeight && equator - yModifier >= 0;
     }
 
     public void move(Animal animal, int ANIMAL_ENERGY_PER_MOVE) {
@@ -255,11 +258,6 @@ public class DarvinMap implements WorldMap{
         foodTiles.remove(animalThatEats.getPosition());
         animalThatEats.eat(foodEnergy);
     }
-
-    public int getMapSize() {
-        return mapSize;
-    }
-
     @Override
     public String toString(){
         Boundary boundaries = getCurrentBounds();
@@ -269,4 +267,6 @@ public class DarvinMap implements WorldMap{
     public void removeAnimal(Animal animal){
         animals.remove(animal.getPosition(), animal);
     }
+    public int getMapHeight() {return mapHeight;}
+    public int getMapWidth() {return mapWidth;}
 }

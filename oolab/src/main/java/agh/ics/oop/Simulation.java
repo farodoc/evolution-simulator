@@ -6,9 +6,9 @@ import java.util.*;
 
 public class Simulation implements Runnable{
     //private static final int FOOD_STARTING_AMOUNT = 10;
-    private static final int FOOD_GROWTH_PER_DAY = 1;
+    private static final int FOOD_GROWTH_PER_DAY = 5;
     private static final int FOOD_ENERGY = 5;
-    private static final int ANIMAL_STARTING_AMOUNT = 2;
+    private static final int ANIMAL_STARTING_AMOUNT = 6;
     private static final int ANIMAL_STARTING_ENERGY = 100;
     private static final int ANIMAL_GENES_AMOUNT = 10;
     private static final int ANIMAL_ENERGY_PER_MOVE = 1;
@@ -26,10 +26,12 @@ public class Simulation implements Runnable{
     }
 
     private void generateAnimals(){
-        int mapSize = map.getMapSize();
+        int mapWidth = map.getMapWidth();
+        int mapHeight = map.getMapHeight();
+
         for(int i = 0; i < ANIMAL_STARTING_AMOUNT; i++){
-            int x = (int)(Math.random() * mapSize);
-            int y = (int)(Math.random() * mapSize);
+            int x = (int)(Math.random() * mapWidth);
+            int y = (int)(Math.random() * mapHeight);
             Animal animal = new Animal(new Vector2d(x, y), ANIMAL_STARTING_ENERGY, ANIMAL_GENES_AMOUNT);
             map.place(animal);
             animals.add(animal);

@@ -39,7 +39,7 @@ public class SimulationPresenter implements MapChangeListener {
     }
 
     private void drawGrid(){
-        int cellSize = (int)(Screen.getPrimary().getVisualBounds().getHeight()/map.getMapSize() * 0.8);
+        int cellSize = (int)(Screen.getPrimary().getVisualBounds().getHeight()/map.getMapHeight() * 0.8);
         clearGrid();
         Boundary boundaries = map.getCurrentBounds();
         int width = boundaries.topRightCorner().x() - boundaries.bottomLeftCorner().x() + 1;
@@ -71,7 +71,7 @@ public class SimulationPresenter implements MapChangeListener {
     }
 
     private void fillMap(){
-        int cellSize = (int)(Screen.getPrimary().getVisualBounds().getHeight()/map.getMapSize() * 0.8);
+        int cellSize = (int)(Screen.getPrimary().getVisualBounds().getHeight()/map.getMapHeight() * 0.8);
         int fontSize = (int)(0.75*cellSize);
         Boundary boundaries = map.getCurrentBounds();
         int width = boundaries.topRightCorner().x() - boundaries.bottomLeftCorner().x() + 1;
