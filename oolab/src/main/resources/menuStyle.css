@@ -32,3 +32,8 @@ Button {
     -fx-font-weight: bold; /* Pogrubienie czcionki dla etykiet */
 }
 
+#infoLabel
+{
+    -fx-font-size: 30px;
+}
+

@@ -7,7 +7,6 @@ import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.geometry.HPos;
 import javafx.geometry.Insets;
-import javafx.scene.Node;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
@@ -16,9 +15,7 @@ import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
 import javafx.stage.Screen;
 
-import java.awt.*;
 import java.util.ArrayList;
-
 import java.util.List;
 
 public class SimulationPresenter implements MapChangeListener {
@@ -39,7 +36,7 @@ public class SimulationPresenter implements MapChangeListener {
     @FXML
     private TextField ANIMAL_MIN_ENERGY_TO_REPRODUCE;
     @FXML
-    private TextField ANIMAL_ENERGY_TO_REPRODUCE;
+    private TextField ANIMAL_ENERGY_TO_REPRODUCE_COST;
 
     @FXML
     private TextField ANIMAL_GENES_AMOUNT;
@@ -57,6 +54,22 @@ public class SimulationPresenter implements MapChangeListener {
     private TextField FOOD_GROWTH_PER_DAY;
     @FXML
     private TextField FOOD_ENERGY;
+
+    int mapWidth;
+    int mapHeight;
+    String selectedMap;
+    int animalStartingAmount;
+    int animalStartingEnergy;
+    int animalEnergyPerMove;
+    int animalMinEnergyToReproduce;
+    int animalEnergyToReproduceCost;
+    int animalGenesAmount;
+    String selectedGenes;
+    int animalMinMutations;
+    int animalMaxMutations;
+    int foodStartingAmount;
+    int foodGrowthPerDay;
+    int foodEnergy;
 
     AbstractWorldMap map;
     private int CELL_SIZE;
@@ -187,10 +200,16 @@ public class SimulationPresenter implements MapChangeListener {
     {
         if(!checkInputValues())
         {
+            infoLabel.setText("Wpisano bledne dane, wprowadz je ponownie!");
             return;
         }
         CELL_SIZE = (int)(Screen.getPrimary().getVisualBounds().getHeight()/map.getMapHeight() * 0.8);
-        Simulation simulation = new Simulation(map);
+        Simulation simulation = new Simulation(map, animalStartingAmount,
+                animalStartingEnergy, animalEnergyPerMove,
+                animalMinEnergyToReproduce, animalEnergyToReproduceCost,
+                animalGenesAmount, !selectedGenes.equals("Default"),
+                animalMinMutations, animalMaxMutations,
+                foodGrowthPerDay, foodEnergy);
         List<Simulation> simulations = new ArrayList<>();
         simulations.add(simulation);
 
@@ -207,32 +226,32 @@ public class SimulationPresenter implements MapChangeListener {
     private boolean checkInputValues()
     {
         try {
-            int mapWidth = Integer.parseInt(MAP_WIDTH.getText());
-            int mapHeight = Integer.parseInt(MAP_HEIGHT.getText());
-            String selectedMap = mapComboBox.getValue();
+            mapWidth = Integer.parseInt(MAP_WIDTH.getText());
+            mapHeight = Integer.parseInt(MAP_HEIGHT.getText());
+            selectedMap = mapComboBox.getValue();
             if(selectedMap == null) {mapComboBox.setValue("Domyslne");}
-            int animalStartingAmount = Integer.parseInt(ANIMAL_STARTING_AMOUNT.getText());
-            int animalStartingEnergy = Integer.parseInt(ANIMAL_STARTING_ENERGY.getText());
-            int animalEnergyPerMove = Integer.parseInt(ANIMAL_ENERGY_PER_MOVE.getText());
-            int animalMinEnergyToReproduce = Integer.parseInt(ANIMAL_MIN_ENERGY_TO_REPRODUCE.getText());
-            int animalEnergyToReproduce = Integer.parseInt(ANIMAL_ENERGY_TO_REPRODUCE.getText());
-            int animalGenesAmount = Integer.parseInt(ANIMAL_GENES_AMOUNT.getText());
-            String selectedGenes = genesComboBox.getValue();
+            animalStartingAmount = Integer.parseInt(ANIMAL_STARTING_AMOUNT.getText());
+            animalStartingEnergy = Integer.parseInt(ANIMAL_STARTING_ENERGY.getText());
+            animalEnergyPerMove = Integer.parseInt(ANIMAL_ENERGY_PER_MOVE.getText());
+            animalMinEnergyToReproduce = Integer.parseInt(ANIMAL_MIN_ENERGY_TO_REPRODUCE.getText());
+            animalEnergyToReproduceCost = Integer.parseInt(ANIMAL_ENERGY_TO_REPRODUCE_COST.getText());
+            animalGenesAmount = Integer.parseInt(ANIMAL_GENES_AMOUNT.getText());
+            selectedGenes = genesComboBox.getValue();
             if(selectedGenes == null){genesComboBox.setValue("Domyslne");}
-            int animalMinMutations = Integer.parseInt(ANIMAL_MIN_MUTATIONS.getText());
-            int animalMaxMutations = Integer.parseInt(ANIMAL_MAX_MUTATIONS.getText());
-            int foodStartingAmount = Integer.parseInt(FOOD_STARTING_AMOUNT.getText());
-            int foodGrowthPerDay = Integer.parseInt(FOOD_GROWTH_PER_DAY.getText());
-            int foodEnergy = Integer.parseInt(FOOD_ENERGY.getText());
+            animalMinMutations = Integer.parseInt(ANIMAL_MIN_MUTATIONS.getText());
+            animalMaxMutations = Integer.parseInt(ANIMAL_MAX_MUTATIONS.getText());
+            foodStartingAmount = Integer.parseInt(FOOD_STARTING_AMOUNT.getText());
+            foodGrowthPerDay = Integer.parseInt(FOOD_GROWTH_PER_DAY.getText());
+            foodEnergy = Integer.parseInt(FOOD_ENERGY.getText());
 
             if (mapWidth <= 0 || mapHeight <= 0 || animalStartingAmount<=0 || animalStartingEnergy<=0 || animalEnergyPerMove<0 ||
-               animalMinEnergyToReproduce<=0 || animalEnergyToReproduce<=0 || animalGenesAmount<=0 || animalMinMutations<0 ||
+               animalMinEnergyToReproduce<=0 || animalEnergyToReproduceCost<=0 || animalGenesAmount<=0 || animalMinMutations<0 ||
                animalMaxMutations<0 || foodStartingAmount<0 || foodGrowthPerDay<0 || foodEnergy<0)
             {
                 System.out.println("Blad: wartosci <=0");
                 return false;
             }
-            if(animalEnergyToReproduce > animalMinEnergyToReproduce)
+            if(animalEnergyToReproduceCost > animalMinEnergyToReproduce)
             {
                 System.out.println("Blad wartosci kosztu oraz minima energii do reprodukcji");
                 return false;

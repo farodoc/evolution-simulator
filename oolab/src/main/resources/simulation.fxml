@@ -52,7 +52,7 @@
                     <Label text="Minimalna energia potrzebna do rozmnazania:"/>
                     <TextField fx:id="ANIMAL_MIN_ENERGY_TO_REPRODUCE"/>
                     <Label text="Koszt energii na rozmnazanie:"/>
-                    <TextField fx:id="ANIMAL_ENERGY_TO_REPRODUCE"/>
+                    <TextField fx:id="ANIMAL_ENERGY_TO_REPRODUCE_COST"/>
                 </HBox>
                 <HBox>
                     <Label text="Liczba genow:"/>
@@ -84,11 +84,12 @@
                     <TextField fx:id="FOOD_ENERGY"/>
                 </HBox>
 
+                <Label fx:id="infoLabel" textAlignment="CENTER" text="Uzupelnij dane symulacji przed kliknieciem start!"/>
 
             </VBox>
 
 
-            <Label fx:id="infoLabel" textAlignment="CENTER"/>
+
 
 
 

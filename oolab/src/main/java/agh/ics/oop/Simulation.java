@@ -5,23 +5,49 @@ import agh.ics.oop.model.*;
 import java.util.*;
 
 public class Simulation implements Runnable{
-    private static final boolean LOOPED_GENES_ACTIVE = false;
-    private static final int FOOD_GROWTH_PER_DAY = 5;
-    private static final int FOOD_ENERGY = 20;
-    private static final int ANIMAL_STARTING_AMOUNT = 6;
-    private static final int ANIMAL_STARTING_ENERGY = 80;
-    private static final int ANIMAL_ENERGY_PER_MOVE = 5;
-    private static final int ANIMAL_GENES_AMOUNT = 10;
-    private static final int ANIMAL_MIN_ENERGY_TO_REPRODUCE = 15;
-    private static final int ANIMAL_ENERGY_TO_REPRODUCE = 5;
-    private static final int ANIMAL_MIN_MUTATIONS = 0;
-    private static final int ANIMAL_MAX_MUTATIONS = 2;
+
+    private final int ANIMAL_STARTING_AMOUNT;
+    private final int ANIMAL_STARTING_ENERGY;
+    private final int ANIMAL_ENERGY_PER_MOVE;
+
+    private final int ANIMAL_MIN_ENERGY_TO_REPRODUCE;
+    private final int ANIMAL_ENERGY_TO_REPRODUCE_COST;
+
+    private final int ANIMAL_GENES_AMOUNT;
+    private final boolean LOOPED_GENES_ACTIVE;
+
+    private final int ANIMAL_MIN_MUTATIONS;
+    private final int ANIMAL_MAX_MUTATIONS;
+
+    private final int FOOD_GROWTH_PER_DAY;
+    private final int FOOD_ENERGY;
+
+
+
+
     private final AbstractWorldMap map;
     private final List<Animal> animals;
 
-    public Simulation(AbstractWorldMap map) {
+    public Simulation(AbstractWorldMap map, int ANIMAL_STARTING_AMOUNT,
+                      int ANIMAL_STARTING_ENERGY, int ANIMAL_ENERGY_PER_MOVE,
+                      int ANIMAL_MIN_ENERGY_TO_REPRODUCE, int ANIMAL_ENERGY_TO_REPRODUCE_COST,
+                      int ANIMAL_GENES_AMOUNT, boolean LOOPED_GENES_ACTIVE,
+                      int ANIMAL_MIN_MUTATIONS, int ANIMAL_MAX_MUTATIONS,
+                      int FOOD_GROWTH_PER_DAY, int FOOD_ENERGY)
+    {
         this.animals = new ArrayList<>();
         this.map = map;
+        this.ANIMAL_STARTING_AMOUNT = ANIMAL_STARTING_AMOUNT;
+        this.ANIMAL_STARTING_ENERGY = ANIMAL_STARTING_ENERGY;
+        this.ANIMAL_ENERGY_PER_MOVE = ANIMAL_ENERGY_PER_MOVE;
+        this.ANIMAL_MIN_ENERGY_TO_REPRODUCE = ANIMAL_MIN_ENERGY_TO_REPRODUCE;
+        this.ANIMAL_ENERGY_TO_REPRODUCE_COST = ANIMAL_ENERGY_TO_REPRODUCE_COST;
+        this.ANIMAL_GENES_AMOUNT = ANIMAL_GENES_AMOUNT;
+        this.LOOPED_GENES_ACTIVE = LOOPED_GENES_ACTIVE;
+        this.ANIMAL_MIN_MUTATIONS = ANIMAL_MIN_MUTATIONS;
+        this.ANIMAL_MAX_MUTATIONS = ANIMAL_MAX_MUTATIONS;
+        this.FOOD_GROWTH_PER_DAY = FOOD_GROWTH_PER_DAY;
+        this.FOOD_ENERGY = FOOD_ENERGY;
         generateAnimals();
     }
 
@@ -99,10 +125,10 @@ public class Simulation implements Runnable{
     }
 
     private void combineAnimalsAndSpawnChild(Animal strongerAnimal, Animal weakerAnimal){
-        strongerAnimal.updateAnimalAfterBreeding(ANIMAL_ENERGY_TO_REPRODUCE);
-        weakerAnimal.updateAnimalAfterBreeding(ANIMAL_ENERGY_TO_REPRODUCE);
+        strongerAnimal.updateAnimalAfterBreeding(ANIMAL_ENERGY_TO_REPRODUCE_COST);
+        weakerAnimal.updateAnimalAfterBreeding(ANIMAL_ENERGY_TO_REPRODUCE_COST);
 
-        Animal child = new Animal(strongerAnimal.getPosition(), 2 * ANIMAL_ENERGY_TO_REPRODUCE, ANIMAL_GENES_AMOUNT, LOOPED_GENES_ACTIVE,
+        Animal child = new Animal(strongerAnimal.getPosition(), 2 * ANIMAL_ENERGY_TO_REPRODUCE_COST, ANIMAL_GENES_AMOUNT, LOOPED_GENES_ACTIVE,
                 strongerAnimal, weakerAnimal, ANIMAL_MIN_MUTATIONS, ANIMAL_MAX_MUTATIONS);
         map.place(child);
         animals.add(child);
