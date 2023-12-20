@@ -32,8 +32,8 @@
                     <ComboBox fx:id="mapComboBox">
                         <items>
                             <FXCollections fx:factory="observableArrayList">
-                                <String fx:value="Domyslna"/>
-                                <String fx:value="Zatrute owoce"/>
+                                <String fx:value="Equator map"/>
+                                <String fx:value="Poison map"/>
                             </FXCollections>
                         </items>
                     </ComboBox>
@@ -61,8 +61,8 @@
                     <ComboBox fx:id="genesComboBox">
                         <items>
                             <FXCollections fx:factory="observableArrayList">
-                                <String fx:value="Domyslne"/>
-                                <String fx:value="Tam i z powrotem"/>
+                                <String fx:value="Default"/>
+                                <String fx:value="Looped"/>
                             </FXCollections>
                         </items>
                     </ComboBox>
