@@ -5,8 +5,8 @@ import java.util.Random;
 public class PoisonMap extends AbstractWorldMap {
     private static final double POISON_PROBABILITY = 0.1;
 
-    public PoisonMap(int FOOD_STARTING_AMOUNT) {
-        super();
+    public PoisonMap(int FOOD_STARTING_AMOUNT, int mapWidth, int mapHeight) {
+        super(mapWidth, mapHeight);
         generateTiles();
         generateFood(FOOD_STARTING_AMOUNT);
     }

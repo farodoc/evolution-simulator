@@ -5,23 +5,27 @@ import agh.ics.oop.model.util.MapVisualizer;
 import java.util.*;
 
 public abstract class AbstractWorldMap implements WorldMap{
-    protected final int mapWidth = 20;
-    protected final int mapHeight = 10;
+    protected int mapWidth;
+    protected int mapHeight;
     private final List<MapChangeListener> observers = new ArrayList<>();
     protected final Map<Vector2d, Animal> animals = new HashMap<>();
     protected final MapVisualizer mapVisualizer;
     protected final UUID id;
     protected final Map<Vector2d, AbstractFood> foodTiles = new HashMap<>();
     protected final Vector2d BOTTOM_LEFT_MAP_BORDER = new Vector2d(0,0);
-    protected final Vector2d TOP_RIGHT_MAP_BORDER = new Vector2d(mapWidth - 1,mapHeight - 1);
-    protected final TileType[][] tiles = new TileType[mapHeight][mapWidth];
+    protected final Vector2d TOP_RIGHT_MAP_BORDER;
+    protected final TileType[][] tiles;
     protected final List<Vector2d> dirtTilesPositions = new ArrayList<>();
     protected int dirtFoodAmount = 0;
     protected final List<Vector2d> jungleTilesPositions = new ArrayList<>();
     protected int jungleFoodAmount = 0;
     protected int lastIndex = 0;
 
-    public AbstractWorldMap() {
+    public AbstractWorldMap(int mapWidth, int mapHeight) {
+        this.mapWidth = mapWidth;
+        this.mapHeight = mapHeight;
+        TOP_RIGHT_MAP_BORDER = new Vector2d(mapWidth - 1,mapHeight - 1);
+        tiles = new TileType[mapHeight][mapWidth];
         id = UUID.randomUUID();
         mapVisualizer = new MapVisualizer(this);
     }

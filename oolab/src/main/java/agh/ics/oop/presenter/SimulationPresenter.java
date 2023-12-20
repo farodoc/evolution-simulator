@@ -17,6 +17,7 @@ import javafx.stage.Screen;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 public class SimulationPresenter implements MapChangeListener {
     @FXML
@@ -203,8 +204,20 @@ public class SimulationPresenter implements MapChangeListener {
             infoLabel.setText("Wpisano bledne dane, wprowadz je ponownie!");
             return;
         }
+
+        AbstractWorldMap map;
+        if(Objects.equals(selectedMap, "Zatrute owoce")){
+            map = new PoisonMap(foodStartingAmount, mapWidth, mapHeight);
+        }
+        else{
+            map = new EquatorMap(foodStartingAmount, mapWidth, mapHeight);
+        }
+
+        map.addObserver(this);
+        setMap(map);
+
         CELL_SIZE = (int)(Screen.getPrimary().getVisualBounds().getHeight()/map.getMapHeight() * 0.8);
-        Simulation simulation = new Simulation(map, animalStartingAmount,
+        Simulation simulation = new Simulation(this.map, animalStartingAmount,
                 animalStartingEnergy, animalEnergyPerMove,
                 animalMinEnergyToReproduce, animalEnergyToReproduceCost,
                 animalGenesAmount, !selectedGenes.equals("Default"),
@@ -213,13 +226,12 @@ public class SimulationPresenter implements MapChangeListener {
         List<Simulation> simulations = new ArrayList<>();
         simulations.add(simulation);
 
-        infoLabel.setVisible(false);
         mapGrid.setManaged(true);
         mapGrid.setVisible(true);
 
         setMap(map);
 
-        SimulationEngine engine = new SimulationEngine(simulations, 2);
+        SimulationEngine engine = new SimulationEngine(simulations, 4);
         engine.runAsync();
     }
 
