@@ -65,7 +65,7 @@ public class SimulationPresenter implements MapChangeListener {
     private Label infoLabel;
     @FXML
     private GridPane mapGrid;
-    
+
     public void setMap(AbstractWorldMap map) {
         this.map = map;
     }
@@ -183,7 +183,12 @@ public class SimulationPresenter implements MapChangeListener {
         });
     }
 
-    public void onSimulationStartClicked(javafx.event.ActionEvent actionEvent){
+    public void onSimulationStartClicked(javafx.event.ActionEvent actionEvent)
+    {
+        if(!checkInputValues())
+        {
+            return;
+        }
         CELL_SIZE = (int)(Screen.getPrimary().getVisualBounds().getHeight()/map.getMapHeight() * 0.8);
         Simulation simulation = new Simulation(map);
         List<Simulation> simulations = new ArrayList<>();
@@ -197,5 +202,53 @@ public class SimulationPresenter implements MapChangeListener {
 
         SimulationEngine engine = new SimulationEngine(simulations, 2);
         engine.runAsync();
+    }
+
+    private boolean checkInputValues()
+    {
+        try {
+            int mapWidth = Integer.parseInt(MAP_WIDTH.getText());
+            int mapHeight = Integer.parseInt(MAP_HEIGHT.getText());
+            String selectedMap = mapComboBox.getValue();
+            if(selectedMap == null) {mapComboBox.setValue("Domyslne");}
+            int animalStartingAmount = Integer.parseInt(ANIMAL_STARTING_AMOUNT.getText());
+            int animalStartingEnergy = Integer.parseInt(ANIMAL_STARTING_ENERGY.getText());
+            int animalEnergyPerMove = Integer.parseInt(ANIMAL_ENERGY_PER_MOVE.getText());
+            int animalMinEnergyToReproduce = Integer.parseInt(ANIMAL_MIN_ENERGY_TO_REPRODUCE.getText());
+            int animalEnergyToReproduce = Integer.parseInt(ANIMAL_ENERGY_TO_REPRODUCE.getText());
+            int animalGenesAmount = Integer.parseInt(ANIMAL_GENES_AMOUNT.getText());
+            String selectedGenes = genesComboBox.getValue();
+            if(selectedGenes == null){genesComboBox.setValue("Domyslne");}
+            int animalMinMutations = Integer.parseInt(ANIMAL_MIN_MUTATIONS.getText());
+            int animalMaxMutations = Integer.parseInt(ANIMAL_MAX_MUTATIONS.getText());
+            int foodStartingAmount = Integer.parseInt(FOOD_STARTING_AMOUNT.getText());
+            int foodGrowthPerDay = Integer.parseInt(FOOD_GROWTH_PER_DAY.getText());
+            int foodEnergy = Integer.parseInt(FOOD_ENERGY.getText());
+
+            if (mapWidth <= 0 || mapHeight <= 0 || animalStartingAmount<=0 || animalStartingEnergy<=0 || animalEnergyPerMove<0 ||
+               animalMinEnergyToReproduce<=0 || animalEnergyToReproduce<=0 || animalGenesAmount<=0 || animalMinMutations<0 ||
+               animalMaxMutations<0 || foodStartingAmount<0 || foodGrowthPerDay<0 || foodEnergy<0)
+            {
+                System.out.println("Blad: wartosci <=0");
+                return false;
+            }
+            if(animalEnergyToReproduce > animalMinEnergyToReproduce)
+            {
+                System.out.println("Blad wartosci kosztu oraz minima energii do reprodukcji");
+                return false;
+            }
+            if(animalMinMutations>animalMaxMutations || animalMaxMutations>animalGenesAmount)
+            {
+                System.out.println("Blad wartosci minimalnych/maksymalnych mutacji");
+                return false;
+            }
+
+            System.out.println("Wprowadzone wartosci są poprawne!");
+            return true;
+
+        } catch (NumberFormatException e) {
+            System.out.println("Blad: Wprowadzone wartosci musza bycć liczbami naturalnymi!");
+            return false;
+        }
     }
 }
