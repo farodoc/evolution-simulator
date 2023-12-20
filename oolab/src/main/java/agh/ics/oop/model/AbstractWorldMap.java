@@ -5,8 +5,8 @@ import agh.ics.oop.model.util.MapVisualizer;
 import java.util.*;
 
 public abstract class AbstractWorldMap implements WorldMap{
-    protected final int mapWidth = 25;
-    protected final int mapHeight = 20;
+    protected final int mapWidth = 20;
+    protected final int mapHeight = 10;
     private final List<MapChangeListener> observers = new ArrayList<>();
     protected final Map<Vector2d, Animal> animals = new HashMap<>();
     protected final MapVisualizer mapVisualizer;

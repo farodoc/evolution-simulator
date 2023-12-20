@@ -98,9 +98,8 @@ public class Animal implements WorldElement{
     }
 
 
-    public int getEnergy(){
-        return this.energy;
-    }
+    public int getEnergy() {return energy;}
+    public int getMaxEnergy() {return MAX_ENERGY;}
     public int getAge() {return age;}
     public int getChildrenAmount() {return childrenAmount;}
     public int getDescendantAmount() {return descendantAmount;}

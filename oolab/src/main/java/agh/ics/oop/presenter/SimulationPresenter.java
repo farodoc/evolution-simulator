@@ -7,17 +7,21 @@ import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.geometry.HPos;
 import javafx.geometry.Insets;
+import javafx.scene.Node;
 import javafx.scene.control.Label;
 import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
+import javafx.scene.shape.Circle;
 import javafx.stage.Screen;
 
+import java.awt.*;
 import java.util.ArrayList;
 
 import java.util.List;
 
 public class SimulationPresenter implements MapChangeListener {
     AbstractWorldMap map;
+    private int CELL_SIZE;
 
     @FXML
     private Label infoLabel;
@@ -39,18 +43,17 @@ public class SimulationPresenter implements MapChangeListener {
     }
 
     private void drawGrid(){
-        int cellSize = (int)(Screen.getPrimary().getVisualBounds().getHeight()/map.getMapHeight() * 0.8);
         clearGrid();
         Boundary boundaries = map.getCurrentBounds();
         int width = boundaries.topRightCorner().x() - boundaries.bottomLeftCorner().x() + 1;
         int height = boundaries.topRightCorner().y() - boundaries.bottomLeftCorner().y() + 1;
 
         for (int x = 0; x < width + 1; x++) {
-            mapGrid.getColumnConstraints().add(new ColumnConstraints(cellSize));
+            mapGrid.getColumnConstraints().add(new ColumnConstraints(CELL_SIZE));
         }
 
         for (int y = 0; y < height + 1; y++) {
-            mapGrid.getRowConstraints().add(new RowConstraints(cellSize));
+            mapGrid.getRowConstraints().add(new RowConstraints(CELL_SIZE));
         }
 
         Label xyLabel = new Label("y/x");
@@ -71,8 +74,7 @@ public class SimulationPresenter implements MapChangeListener {
     }
 
     private void fillMap(){
-        int cellSize = (int)(Screen.getPrimary().getVisualBounds().getHeight()/map.getMapHeight() * 0.8);
-        int fontSize = (int)(0.75*cellSize);
+        int grassSize = (int)(1.75*CELL_SIZE);
         Boundary boundaries = map.getCurrentBounds();
         int width = boundaries.topRightCorner().x() - boundaries.bottomLeftCorner().x() + 1;
         int height = boundaries.topRightCorner().y() - boundaries.bottomLeftCorner().y() + 1;
@@ -81,27 +83,58 @@ public class SimulationPresenter implements MapChangeListener {
         for (int y = height; y >= 1; y--) {
             for (int x = 1; x < width + 1; x++) {
                 Label cellLabel = new Label();
-                cellLabel.setMinWidth(cellSize);
-                cellLabel.setMinHeight(cellSize);
-                cellLabel.setBorder(new Border(new BorderStroke(Color.BLACK, BorderStrokeStyle.SOLID, null, new BorderWidths(0.4))));
-                cellLabel.setStyle("-fx-alignment: CENTER;-fx-font-weight: bold;-fx-font-size: " + fontSize + "px;");
+                cellLabel.setMinWidth(CELL_SIZE);
+                cellLabel.setMinHeight(CELL_SIZE);
+                cellLabel.setBorder(new Border(new BorderStroke(Color.BLACK, BorderStrokeStyle.DOTTED, null, new BorderWidths(0.4))));
+                cellLabel.setStyle("-fx-alignment: CENTER;-fx-font-weight: bold;-fx-font-size: " + grassSize + "px;");
                 Vector2d translatedPosition = new Vector2d(x - 1 + boundaries.bottomLeftCorner().x(), y - 1 + boundaries.bottomLeftCorner().y());
 
                 if(tiles[translatedPosition.y()][translatedPosition.x()] == TileType.JUNG){
                     cellLabel.setBackground(new Background(new BackgroundFill(Color.rgb(18, 74, 13), CornerRadii.EMPTY, Insets.EMPTY)));
                 }
                 else{
-                    cellLabel.setBackground(new Background(new BackgroundFill(Color.rgb(135, 65, 4), CornerRadii.EMPTY, Insets.EMPTY)));
+                    cellLabel.setBackground(new Background(new BackgroundFill(Color.rgb(161, 92, 32), CornerRadii.EMPTY, Insets.EMPTY)));
                 }
 
-                if (map.objectAt(translatedPosition) != null) {
-                    cellLabel.setText(map.objectAt(translatedPosition).toString());
+                Object objectAtPosition = map.objectAt(translatedPosition);
+                if (objectAtPosition != null) {
+                    if (objectAtPosition instanceof Animal) {
+                        cellLabel.setGraphic(drawAnimal((Animal) objectAtPosition));
+                    }
+                    else {
+                        if (objectAtPosition instanceof Grass){
+                            cellLabel.setText(objectAtPosition.toString());
+                            cellLabel.setTextFill(Color.GREEN);
+                            cellLabel.setStyle("-fx-alignment: CENTER;-fx-font-weight: bold;-fx-font-size: " + grassSize + "px;");
+                        }
+                        else{
+                            cellLabel.setText("?");
+                            cellLabel.setTextFill(Color.rgb(149, 31, 255));
+                            cellLabel.setStyle("-fx-alignment: CENTER;-fx-font-weight: bold;-fx-font-size: " + grassSize/1.5 + "px;");
+                        }
+                    }
                 }
 
                 GridPane.setHalignment(cellLabel, HPos.CENTER);
                 mapGrid.add(cellLabel, x, height - y + 1);
             }
         }
+    }
+
+    private Circle drawAnimal(Animal animal) {
+        double healthPercentage = (double) animal.getEnergy() /animal.getMaxEnergy();
+        Circle redCircle = new Circle();
+        redCircle.setRadius(CELL_SIZE * 0.3);
+        redCircle.setFill(getColorForAnimal(healthPercentage));
+        return redCircle;
+    }
+
+    private Color getColorForAnimal(double healthPercentage){
+        double hue = 1;
+        double brightness = 0.9;
+        double opacity = 1.0;
+
+        return Color.hsb(hue * 360, healthPercentage, brightness, opacity);
     }
 
     public void drawMap(){
@@ -119,6 +152,7 @@ public class SimulationPresenter implements MapChangeListener {
     }
 
     public void onSimulationStartClicked(javafx.event.ActionEvent actionEvent){
+        CELL_SIZE = (int)(Screen.getPrimary().getVisualBounds().getHeight()/map.getMapHeight() * 0.8);
         Simulation simulation = new Simulation(map);
         List<Simulation> simulations = new ArrayList<>();
         simulations.add(simulation);
