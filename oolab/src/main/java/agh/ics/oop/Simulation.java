@@ -10,8 +10,8 @@ public class Simulation implements Runnable{
     private static final int FOOD_ENERGY = 20;
     private static final int ANIMAL_STARTING_AMOUNT = 6;
     private static final int ANIMAL_STARTING_ENERGY = 80;
-    private static final int ANIMAL_GENES_AMOUNT = 10;
     private static final int ANIMAL_ENERGY_PER_MOVE = 5;
+    private static final int ANIMAL_GENES_AMOUNT = 10;
     private static final int ANIMAL_MIN_ENERGY_TO_REPRODUCE = 15;
     private static final int ANIMAL_ENERGY_TO_REPRODUCE = 5;
     private static final int ANIMAL_MIN_MUTATIONS = 0;

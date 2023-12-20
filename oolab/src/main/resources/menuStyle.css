@@ -1,0 +1,34 @@
+/* menuStyle.css */
+
+#mapaComboBox,
+#genesComboBox {
+    -fx-pref-width: 150px; /* szerokość ComboBox */
+}
+
+TextField {
+    -fx-pref-width: 80px; /* szerokość TextField */
+}
+
+Label {
+    -fx-font-size: 14px; /* rozmiar czcionki dla Label */
+}
+
+VBox {
+    -fx-spacing: 15; /* odstęp pomiędzy elementami w VBox */
+}
+
+HBox {
+    -fx-spacing: 10; /* odstęp pomiędzy elementami w HBox */
+}
+
+Button {
+    -fx-min-width: 120px; /* minimalna szerokość przycisku */
+    -fx-font-size: 14px; /* rozmiar czcionki dla przycisku */
+}
+
+
+.labelOptions {
+    -fx-font-size: 16px; /* Rozmiar czcionki dla etykiet */
+    -fx-font-weight: bold; /* Pogrubienie czcionki dla etykiet */
+}
+

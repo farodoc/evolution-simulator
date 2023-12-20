@@ -8,6 +8,12 @@
 <?import javafx.scene.layout.GridPane?>
 <?import javafx.scene.layout.StackPane?>
 
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.control.RadioButton?>
+<?import javafx.scene.control.ComboBox?>
+<?import javafx.collections.FXCollections?>
+<?import java.lang.String?>
+<?import java.net.URL?>
 <BorderPane xmlns="http://javafx.com/javafx"
             xmlns:fx="http://javafx.com/fxml"
             minHeight="550.0" minWidth="850.0"
@@ -15,15 +21,79 @@
 
     <center>
         <StackPane>
-            <VBox spacing="10">
-                <HBox spacing="10">
-                    <Label fx:id="descriptionLabel" text="[Movement Description]"/>
+            <VBox spacing="10" >
+                <Label text="Opcje mapy" styleClass="labelOptions"/>
+                <HBox>
+                    <Label text="Szerokosc mapy:"/>
+                    <TextField fx:id="MAP_WIDTH"/>
+                    <Label text="Wysokosc mapy:"/>
+                    <TextField fx:id="MAP_HEIGHT"/>
+                    <Label text="Wariant mapy:"/>
+                    <ComboBox fx:id="mapComboBox">
+                        <items>
+                            <FXCollections fx:factory="observableArrayList">
+                                <String fx:value="Domyslna"/>
+                                <String fx:value="Zatrute owoce"/>
+                            </FXCollections>
+                        </items>
+                    </ComboBox>
                 </HBox>
+
+                <Label text="Opcje zwierzat" styleClass="labelOptions"/>
+                <HBox>
+                    <Label text="Startowa liczba zwierzat:"/>
+                    <TextField fx:id="ANIMAL_STARTING_AMOUNT"/>
+                    <Label text="Startowa energia zwierzat:"/>
+                    <TextField fx:id="ANIMAL_STARTING_ENERGY"/>
+                    <Label text="Energia na ruch zwierzat:"/>
+                    <TextField fx:id="ANIMAL_ENERGY_PER_MOVE"/>
+                </HBox>
+                <HBox>
+                    <Label text="Minimalna energia potrzebna do rozmnazania:"/>
+                    <TextField fx:id="ANIMAL_MIN_ENERGY_TO_REPRODUCE"/>
+                    <Label text="Koszt energii na rozmnazanie:"/>
+                    <TextField fx:id="ANIMAL_ENERGY_TO_REPRODUCE"/>
+                </HBox>
+                <HBox>
+                    <Label text="Liczba genow:"/>
+                    <TextField fx:id="ANIMAL_GENES_AMOUNT"/>
+                    <Label text="Wariant zachowania zwierzat:"/>
+                    <ComboBox fx:id="genesComboBox">
+                        <items>
+                            <FXCollections fx:factory="observableArrayList">
+                                <String fx:value="Domyslne"/>
+                                <String fx:value="Tam i z powrotem"/>
+                            </FXCollections>
+                        </items>
+                    </ComboBox>
+                </HBox>
+                <HBox>
+                    <Label text="Minimalne mutacje:"/>
+                    <TextField fx:id="ANIMAL_MIN_MUTATIONS"/>
+                    <Label text="Maksymalne mutacje:"/>
+                    <TextField fx:id="ANIMAL_MAX_MUTATIONS"/>
+                </HBox>
+
+                <Label text="Opcje roslinnosci" styleClass="labelOptions"/>
+                <HBox>
+                    <Label text="Startowa liczba roslin:"/>
+                    <TextField fx:id="FOOD_STARTING_AMOUNT"/>
+                    <Label text="Liczba roslin na dzien:"/>
+                    <TextField fx:id="FOOD_GROWTH_PER_DAY"/>
+                    <Label text="Energia za rosline:"/>
+                    <TextField fx:id="FOOD_ENERGY"/>
+                </HBox>
+
+
             </VBox>
 
-            <Label fx:id="infoLabel" text="All animals will be living here!" textAlignment="CENTER"/>
-            <GridPane fx:id="mapGrid" alignment="CENTER" gridLinesVisible="true" managed="false" visible="false"/>
 
+            <Label fx:id="infoLabel" textAlignment="CENTER"/>
+
+
+
+
+            <GridPane fx:id="mapGrid" alignment="CENTER" gridLinesVisible="true" managed="false" visible="false"/>
         </StackPane>
     </center>
 
@@ -34,4 +104,9 @@
             </HBox>
         </VBox>
     </bottom>
+
+
+    <stylesheets>
+        <URL value="@menuStyle.css" />
+    </stylesheets>
 </BorderPane>

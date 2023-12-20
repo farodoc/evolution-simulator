@@ -8,7 +8,9 @@ import javafx.fxml.FXML;
 import javafx.geometry.HPos;
 import javafx.geometry.Insets;
 import javafx.scene.Node;
+import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
+import javafx.scene.control.TextField;
 import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
@@ -20,18 +22,50 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class SimulationPresenter implements MapChangeListener {
+    @FXML
+    private TextField MAP_WIDTH;
+    @FXML
+    private TextField MAP_HEIGHT;
+    @FXML
+    private ComboBox<String> mapComboBox;
+
+    @FXML
+    private TextField ANIMAL_STARTING_AMOUNT;
+    @FXML
+    private TextField ANIMAL_STARTING_ENERGY;
+    @FXML
+    private TextField ANIMAL_ENERGY_PER_MOVE;
+
+    @FXML
+    private TextField ANIMAL_MIN_ENERGY_TO_REPRODUCE;
+    @FXML
+    private TextField ANIMAL_ENERGY_TO_REPRODUCE;
+
+    @FXML
+    private TextField ANIMAL_GENES_AMOUNT;
+    @FXML
+    private ComboBox<String> genesComboBox;
+
+    @FXML
+    private TextField ANIMAL_MIN_MUTATIONS;
+    @FXML
+    private TextField ANIMAL_MAX_MUTATIONS;
+
+    @FXML
+    private TextField FOOD_STARTING_AMOUNT;
+    @FXML
+    private TextField FOOD_GROWTH_PER_DAY;
+    @FXML
+    private TextField FOOD_ENERGY;
+
     AbstractWorldMap map;
     private int CELL_SIZE;
 
     @FXML
     private Label infoLabel;
-
-    @FXML
-    private Label descriptionLabel;
-
     @FXML
     private GridPane mapGrid;
-
+    
     public void setMap(AbstractWorldMap map) {
         this.map = map;
     }
@@ -146,8 +180,6 @@ public class SimulationPresenter implements MapChangeListener {
     public void mapChanged(WorldMap map, String message) {
         Platform.runLater(() -> {
             drawMap();
-            if(message.startsWith("X"))
-                descriptionLabel.setText(message);
         });
     }
 
