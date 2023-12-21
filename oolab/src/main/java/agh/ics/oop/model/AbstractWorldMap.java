@@ -44,10 +44,11 @@ public abstract class AbstractWorldMap implements WorldMap{
             if(!foodTiles.containsKey(newFoodPosition))
             {
                 foodTiles.put(newFoodPosition,new Grass(newFoodPosition));
-                notifyObservers("Food generated at " + newFoodPosition);
+                //notifyObservers("Food generated at " + newFoodPosition);
                 cnt++;
             }
         }
+        notifyObservers("Food generated");
     }
 
     protected Vector2d generateNewFoodPosition(){
@@ -159,7 +160,7 @@ public abstract class AbstractWorldMap implements WorldMap{
             animals.remove(oldPosition, animal);
             animals.put(animal.getPosition(), animal);
         }
-        notifyObservers("XAnimal has " + animal.getChildrenAmount() + " children \n Animal has " + animal.getDescendantAmount() + " descendant \n");
+        notifyObservers("Animal move finished");
     }
 
 
@@ -251,4 +252,6 @@ public abstract class AbstractWorldMap implements WorldMap{
             observer.mapChanged(this, message);
         }
     }
+
+    public String getName() {return "Abstract map";}
 }

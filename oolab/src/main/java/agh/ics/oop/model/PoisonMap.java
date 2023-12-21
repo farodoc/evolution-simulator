@@ -51,4 +51,7 @@ public class PoisonMap extends AbstractWorldMap {
             }
         }
     }
+
+    @Override
+    public String getName() {return "Poison map";}
 }

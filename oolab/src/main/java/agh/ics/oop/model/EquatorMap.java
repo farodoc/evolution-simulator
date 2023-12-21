@@ -7,4 +7,7 @@ public class EquatorMap extends AbstractWorldMap{
         generateTiles();
         generateFood(FOOD_STARTING_AMOUNT);
     }
+
+    @Override
+    public String getName() {return "Equator map";}
 }

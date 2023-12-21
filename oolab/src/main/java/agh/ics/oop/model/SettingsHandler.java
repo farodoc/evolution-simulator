@@ -24,11 +24,10 @@ public class SettingsHandler {
         return options;
     }
 
-    public static void add(String name, String[] config) throws Exception {
+    public static void add(String[] config) throws Exception {
         FileWriter writer = new FileWriter(CSV_FILE, true);
 
         String line = String.join(",", config);
-        line = name + "," + line;
         line += "\n";
         writer.write(line);
 

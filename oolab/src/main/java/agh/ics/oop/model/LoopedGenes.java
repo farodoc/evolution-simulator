@@ -29,4 +29,6 @@ public class LoopedGenes extends AbstractGenes{
             }
         }
     }
+
+    public String getName() {return "Looped";}
 }

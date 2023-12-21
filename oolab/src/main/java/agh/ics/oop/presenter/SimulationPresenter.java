@@ -15,6 +15,7 @@ import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
 import javafx.stage.Screen;
 
+import java.io.FileNotFoundException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
@@ -56,6 +57,26 @@ public class SimulationPresenter implements MapChangeListener {
     @FXML
     private TextField FOOD_ENERGY;
 
+    @FXML
+    private void initialize(){
+        MAP_WIDTH.setText("30");
+        MAP_HEIGHT.setText("30");
+        mapComboBox.setValue("Equator map");
+        ANIMAL_STARTING_AMOUNT.setText("15");
+        ANIMAL_STARTING_ENERGY.setText("50");
+        ANIMAL_ENERGY_PER_MOVE.setText("5");
+        ANIMAL_MIN_ENERGY_TO_REPRODUCE.setText("35");
+        ANIMAL_ENERGY_TO_REPRODUCE_COST.setText("15");
+        ANIMAL_GENES_AMOUNT.setText("10");
+        ANIMAL_GENES_AMOUNT.setText("10");
+        genesComboBox.setValue("Looped");
+        ANIMAL_MIN_MUTATIONS.setText("1");
+        ANIMAL_MAX_MUTATIONS.setText("5");
+        FOOD_STARTING_AMOUNT.setText("20");
+        FOOD_GROWTH_PER_DAY.setText("5");
+        FOOD_ENERGY.setText("15");
+    }
+
     int mapWidth;
     int mapHeight;
     String selectedMap;
@@ -79,6 +100,10 @@ public class SimulationPresenter implements MapChangeListener {
     private Label infoLabel;
     @FXML
     private GridPane mapGrid;
+    @FXML
+    private Label errorLabel;
+    @FXML
+    private TextField CONFIG_NAME;
 
     public void setMap(AbstractWorldMap map) {
         this.map = map;
@@ -197,6 +222,47 @@ public class SimulationPresenter implements MapChangeListener {
         });
     }
 
+    public void onSimulationSaveClicked(javafx.event.ActionEvent actionEvent) throws Exception {
+        Settings settings;
+        try {
+            checkInputValues();
+            String[] attributesArray = {
+                    CONFIG_NAME.getText(),
+                    String.valueOf(mapWidth),
+                    String.valueOf(mapHeight),
+                    String.valueOf(animalStartingAmount),
+                    String.valueOf(animalStartingEnergy),
+                    String.valueOf(animalEnergyPerMove),
+                    String.valueOf(animalMinEnergyToReproduce),
+                    String.valueOf(animalEnergyToReproduceCost),
+                    String.valueOf(animalGenesAmount),
+                    String.valueOf(animalMinMutations),
+                    String.valueOf(animalMaxMutations),
+                    String.valueOf(foodStartingAmount),
+                    String.valueOf(foodGrowthPerDay),
+                    String.valueOf(foodEnergy),
+                    mapComboBox.getValue(),
+                    genesComboBox.getValue()
+            };
+            settings = new Settings(attributesArray);
+        } catch (Exception e) {
+            errorLabel.setText("Bledne wartosci! Wprowadz jeszcze raz.");
+            return;
+        }
+
+        try {
+            if(SettingsHandler.findConfig(settings.getName()) != null){
+                errorLabel.setText("Config o takiej nazwie juz istnieje! Podaj inna nazwe.");
+                return;
+            }
+        } catch (FileNotFoundException e) {
+            throw new RuntimeException(e);
+        }
+
+        errorLabel.setText("");
+        SettingsHandler.add(settings.getAttributesAsArray());
+    }
+
     public void onSimulationStartClicked(javafx.event.ActionEvent actionEvent)
     {
         if(!checkInputValues())
@@ -206,7 +272,7 @@ public class SimulationPresenter implements MapChangeListener {
         }
 
         AbstractWorldMap map;
-        if(Objects.equals(selectedMap, "Zatrute owoce")){
+        if(Objects.equals(selectedMap, "Poison map")){
             map = new PoisonMap(foodStartingAmount, mapWidth, mapHeight);
         }
         else{

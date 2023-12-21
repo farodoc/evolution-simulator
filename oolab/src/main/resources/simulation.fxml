@@ -9,7 +9,6 @@
 <?import javafx.scene.layout.StackPane?>
 
 <?import javafx.scene.control.TextField?>
-<?import javafx.scene.control.RadioButton?>
 <?import javafx.scene.control.ComboBox?>
 <?import javafx.collections.FXCollections?>
 <?import java.lang.String?>
@@ -22,6 +21,10 @@
     <center>
         <StackPane>
             <VBox spacing="10" >
+                <HBox>
+                    <Label text="Nazwa konfiguracji:"/>
+                    <TextField fx:id="CONFIG_NAME"/>
+                </HBox>
                 <Label text="Opcje mapy" styleClass="labelOptions"/>
                 <HBox>
                     <Label text="Szerokosc mapy:"/>
@@ -94,8 +97,12 @@
 
     <bottom>
         <VBox spacing="10">
+            <HBox>
+                <Label fx:id="errorLabel" textAlignment="CENTER"/>
+            </HBox>
             <HBox spacing="10" alignment="CENTER">
                 <Button text="Start" onAction="#onSimulationStartClicked" style="-fx-min-width: 100px;"/>
+                <Button text="Save config" onAction="#onSimulationSaveClicked" style="-fx-min-width: 100px;"/>
             </HBox>
         </VBox>
     </bottom>

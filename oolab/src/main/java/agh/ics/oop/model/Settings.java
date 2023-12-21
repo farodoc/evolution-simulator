@@ -18,31 +18,31 @@ public class Settings {
     private final int foodGrowthPerDay;
     private final int foodEnergy;
 
-    public Settings(String configName, String[] config) throws Exception{
-        name = configName;
-        mapWidth = Integer.parseInt(config[0]);
-        mapHeight = Integer.parseInt(config[1]);
-        animalStartingAmount = Integer.parseInt(config[2]);
-        animalStartingEnergy = Integer.parseInt(config[3]);
-        animalEnergyPerMove = Integer.parseInt(config[4]);
-        animalMinEnergyToReproduce = Integer.parseInt(config[5]);
-        animalEnergyToReproduce = Integer.parseInt(config[6]);
-        animalGenesAmount = Integer.parseInt(config[7]);
-        animalMinMutations = Integer.parseInt(config[8]);
-        animalMaxMutations = Integer.parseInt(config[9]);
-        foodStartingAmount = Integer.parseInt(config[10]);
-        foodGrowthPerDay = Integer.parseInt(config[11]);
-        foodEnergy = Integer.parseInt(config[12]);
+    public Settings(String[] config) throws Exception{
+        name = config[0];
+        mapWidth = Integer.parseInt(config[1]);
+        mapHeight = Integer.parseInt(config[2]);
+        animalStartingAmount = Integer.parseInt(config[3]);
+        animalStartingEnergy = Integer.parseInt(config[4]);
+        animalEnergyPerMove = Integer.parseInt(config[5]);
+        animalMinEnergyToReproduce = Integer.parseInt(config[6]);
+        animalEnergyToReproduce = Integer.parseInt(config[7]);
+        animalGenesAmount = Integer.parseInt(config[8]);
+        animalMinMutations = Integer.parseInt(config[9]);
+        animalMaxMutations = Integer.parseInt(config[10]);
+        foodStartingAmount = Integer.parseInt(config[11]);
+        foodGrowthPerDay = Integer.parseInt(config[12]);
+        foodEnergy = Integer.parseInt(config[13]);
 
         checkConfigValues();
 
-        switch (config[13]){
+        switch (config[14]){
             case "Equator map" -> map = new EquatorMap(foodStartingAmount, mapWidth, mapHeight);
             case "Poison map" -> map = new PoisonMap(foodStartingAmount, mapWidth, mapHeight);
             default -> throw new Exception("Blad przy wyborze mapy");
         }
 
-        switch (config[14]){
+        switch (config[15]){
             case "Default" -> genes = new StandardGenes(animalGenesAmount);
             case "Looped" -> genes = new LoopedGenes(animalGenesAmount);
             default -> throw new Exception("Blad przy wyborze zachowania zwierzaka");
@@ -68,4 +68,27 @@ public class Settings {
             throw new Exception("Blad wartosci minimalnych/maksymalnych mutacji");
         }
     }
+
+    public String[] getAttributesAsArray() {
+        return new String[]{
+                name,
+                String.valueOf(mapWidth),
+                String.valueOf(mapHeight),
+                String.valueOf(animalStartingAmount),
+                String.valueOf(animalStartingEnergy),
+                String.valueOf(animalEnergyPerMove),
+                String.valueOf(animalMinEnergyToReproduce),
+                String.valueOf(animalEnergyToReproduce),
+                String.valueOf(animalGenesAmount),
+                String.valueOf(animalMinMutations),
+                String.valueOf(animalMaxMutations),
+                String.valueOf(foodStartingAmount),
+                String.valueOf(foodGrowthPerDay),
+                String.valueOf(foodEnergy),
+                map.getName(),
+                genes.getName()
+        };
+    }
+
+    public String getName() {return name;}
 }

@@ -84,4 +84,6 @@ public abstract class AbstractGenes {
             genes.set(i, (genes.get(i) + random.nextInt(1, genesAmount)) % genesAmount);
         }
     }
+
+    public String getName() {return "Abstract genes";}
 }

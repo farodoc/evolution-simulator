@@ -74,6 +74,7 @@ public class Simulation implements Runnable{
             spawnNewFood();
             freezeSimulation();
         }
+        spawnNewFood();
         System.out.println("END OF SIMULATION - EVERY ANIMAL IS DEAD!");
     }
 
