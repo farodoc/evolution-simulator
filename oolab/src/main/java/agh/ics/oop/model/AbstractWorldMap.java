@@ -142,7 +142,7 @@ public abstract class AbstractWorldMap implements WorldMap{
                 generateUpper = true;
             }
 
-            probabilityForRow/=1.25;
+            probabilityForRow/=1.1;
         }
     }
 

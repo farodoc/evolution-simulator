@@ -12,7 +12,7 @@ public class Animal implements WorldElement{
     private int age = 0;
     private int childrenAmount = 0;
     private int descendantAmount = 0;
-    private final static int MAX_ENERGY = 100;
+    private int maxEnergy;
     private final int genesAmount;
     private final List<Animal> parents = new ArrayList<>(2);
     public Animal(Vector2d position, int startingEnergy, int genesAmount, boolean loopedGenesActive)
@@ -21,6 +21,7 @@ public class Animal implements WorldElement{
         this.genesAmount = genesAmount;
         orientation = MapDirection.generateRandomMapDirection();
         energy = startingEnergy;
+        maxEnergy = (int) (1.33*energy);
 
         if(loopedGenesActive) genes = new LoopedGenes(genesAmount);
         else                  genes = new StandardGenes(genesAmount);
@@ -31,6 +32,7 @@ public class Animal implements WorldElement{
         this(position, energy, genesAmount, loopedGenesActive);
         parents.add(0, parent1);
         parents.add(1, parent2);
+        maxEnergy = parent1.getMaxEnergy();
 
         if(loopedGenesActive) genes = new LoopedGenes(parent1, parent2, animalMinMutations, animalMaxMutations);
         else                  genes = new StandardGenes(parent1, parent2, animalMinMutations, animalMaxMutations);
@@ -42,15 +44,12 @@ public class Animal implements WorldElement{
     public Vector2d getPosition(){
         return this.position;
     }
-
     public MapDirection getOrientation(){
         return this.orientation;
     }
-
     public void setOrientation(MapDirection orientation){
         this.orientation = orientation;
     }
-
     @Override
     public String toString() {
         return "A";
@@ -97,16 +96,15 @@ public class Animal implements WorldElement{
         }
     }
 
-
     public int getEnergy() {return energy;}
-    public int getMaxEnergy() {return MAX_ENERGY;}
+    public int getMaxEnergy() {return maxEnergy;}
     public int getAge() {return age;}
     public int getChildrenAmount() {return childrenAmount;}
     public int getDescendantAmount() {return descendantAmount;}
     public int getGenesAmount() {return genesAmount;}
     public AbstractGenes getGenes() {return genes;}
     public void eat(int energy){
-        this.energy = Math.min(MAX_ENERGY, this.energy + energy);
+        this.energy = Math.min(maxEnergy, this.energy + energy);
     }
     public void updateAge(){
         this.age++;
@@ -133,14 +131,12 @@ public class Animal implements WorldElement{
             visitedAnimals.add(parent2);
             parent2.updateParentsRecursion(visitedAnimals);
         }
-
     }
+
     public void updateAnimalAfterBreeding(int ANIMAL_ENERGY_TO_REPRODUCE)
     {
         this.childrenAmount++;
         this.energy -= ANIMAL_ENERGY_TO_REPRODUCE;
         updateParentsRecursion(new ArrayList<>());
-
     }
-
 }

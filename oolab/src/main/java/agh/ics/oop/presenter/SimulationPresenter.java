@@ -7,6 +7,7 @@ import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.geometry.HPos;
 import javafx.geometry.Insets;
+import javafx.scene.control.ChoiceDialog;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
@@ -19,6 +20,7 @@ import java.io.FileNotFoundException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
+import java.util.Optional;
 
 public class SimulationPresenter implements MapChangeListener {
     @FXML
@@ -59,6 +61,7 @@ public class SimulationPresenter implements MapChangeListener {
 
     @FXML
     private void initialize(){
+        CONFIG_NAME.setText("Example config");
         MAP_WIDTH.setText("30");
         MAP_HEIGHT.setText("30");
         mapComboBox.setValue("Equator map");
@@ -222,10 +225,59 @@ public class SimulationPresenter implements MapChangeListener {
         });
     }
 
+    public void onSimulationLoadClicked(javafx.event.ActionEvent actionEvent) throws FileNotFoundException {
+        String[] availableConfigs = SettingsHandler.getConfigNames();
+
+        if (availableConfigs.length == 0) {
+            errorLabel.setText("No configurations available.");
+            return;
+        }
+
+        ChoiceDialog<String> dialog = new ChoiceDialog<>(availableConfigs[0], availableConfigs);
+        dialog.setTitle("Load Settings");
+        dialog.setHeaderText("Select a configuration to load:");
+        dialog.setContentText("Configuration:");
+
+        Optional<String> result = dialog.showAndWait();
+
+        result.ifPresent(selectedConfig -> {
+            String[] config;
+            try {
+                config = SettingsHandler.findConfig(selectedConfig);
+            } catch (FileNotFoundException e) {
+                throw new RuntimeException(e);
+            }
+            loadConfigIntoLabels(config);
+            errorLabel.setText("Loaded config: " + selectedConfig);
+        });
+    }
+
+    private void loadConfigIntoLabels(String[] config){
+        if(!checkAndSetInputValues()){
+            return;
+        }
+        CONFIG_NAME.setText(config[0]);
+        MAP_WIDTH.setText(config[1]);
+        MAP_HEIGHT.setText(config[2]);
+        ANIMAL_STARTING_AMOUNT.setText(config[3]);
+        ANIMAL_STARTING_ENERGY.setText(config[4]);
+        ANIMAL_ENERGY_PER_MOVE.setText(config[5]);
+        ANIMAL_MIN_ENERGY_TO_REPRODUCE.setText(config[6]);
+        ANIMAL_ENERGY_TO_REPRODUCE_COST.setText(config[7]);
+        ANIMAL_GENES_AMOUNT.setText(config[8]);
+        ANIMAL_MIN_MUTATIONS.setText(config[9]);
+        ANIMAL_MAX_MUTATIONS.setText(config[10]);
+        FOOD_STARTING_AMOUNT.setText(config[11]);
+        FOOD_GROWTH_PER_DAY.setText(config[12]);
+        FOOD_ENERGY.setText(config[13]);
+        mapComboBox.setValue(config[14]);
+        genesComboBox.setValue(config[15]);
+    }
+
     public void onSimulationSaveClicked(javafx.event.ActionEvent actionEvent) throws Exception {
         Settings settings;
         try {
-            checkInputValues();
+            checkAndSetInputValues();
             String[] attributesArray = {
                     CONFIG_NAME.getText(),
                     String.valueOf(mapWidth),
@@ -251,6 +303,10 @@ public class SimulationPresenter implements MapChangeListener {
         }
 
         try {
+            if(settings.getName().isEmpty()){
+                errorLabel.setText("Jesli chcesz zapisac config to musisz nadac mu nazwe.");
+                return;
+            }
             if(SettingsHandler.findConfig(settings.getName()) != null){
                 errorLabel.setText("Config o takiej nazwie juz istnieje! Podaj inna nazwe.");
                 return;
@@ -259,13 +315,13 @@ public class SimulationPresenter implements MapChangeListener {
             throw new RuntimeException(e);
         }
 
-        errorLabel.setText("");
         SettingsHandler.add(settings.getAttributesAsArray());
+        errorLabel.setText("Config o nazwie \"" + settings.getName() + "\" zostal zapisany poprawnie!");
     }
 
     public void onSimulationStartClicked(javafx.event.ActionEvent actionEvent)
     {
-        if(!checkInputValues())
+        if(!checkAndSetInputValues())
         {
             infoLabel.setText("Wpisano bledne dane, wprowadz je ponownie!");
             return;
@@ -282,7 +338,9 @@ public class SimulationPresenter implements MapChangeListener {
         map.addObserver(this);
         setMap(map);
 
-        CELL_SIZE = (int)(Screen.getPrimary().getVisualBounds().getHeight()/map.getMapHeight() * 0.8);
+        CELL_SIZE = Math.min(
+                (int)(Screen.getPrimary().getVisualBounds().getHeight()/(map.getMapHeight()+3)),
+                (int)(Screen.getPrimary().getVisualBounds().getWidth()/(map.getMapWidth()+3)));
         Simulation simulation = new Simulation(this.map, animalStartingAmount,
                 animalStartingEnergy, animalEnergyPerMove,
                 animalMinEnergyToReproduce, animalEnergyToReproduceCost,
@@ -301,13 +359,12 @@ public class SimulationPresenter implements MapChangeListener {
         engine.runAsync();
     }
 
-    private boolean checkInputValues()
+    private boolean checkAndSetInputValues()
     {
         try {
             mapWidth = Integer.parseInt(MAP_WIDTH.getText());
             mapHeight = Integer.parseInt(MAP_HEIGHT.getText());
             selectedMap = mapComboBox.getValue();
-            if(selectedMap == null) {mapComboBox.setValue("Domyslne");}
             animalStartingAmount = Integer.parseInt(ANIMAL_STARTING_AMOUNT.getText());
             animalStartingEnergy = Integer.parseInt(ANIMAL_STARTING_ENERGY.getText());
             animalEnergyPerMove = Integer.parseInt(ANIMAL_ENERGY_PER_MOVE.getText());
@@ -315,7 +372,6 @@ public class SimulationPresenter implements MapChangeListener {
             animalEnergyToReproduceCost = Integer.parseInt(ANIMAL_ENERGY_TO_REPRODUCE_COST.getText());
             animalGenesAmount = Integer.parseInt(ANIMAL_GENES_AMOUNT.getText());
             selectedGenes = genesComboBox.getValue();
-            if(selectedGenes == null){genesComboBox.setValue("Domyslne");}
             animalMinMutations = Integer.parseInt(ANIMAL_MIN_MUTATIONS.getText());
             animalMaxMutations = Integer.parseInt(ANIMAL_MAX_MUTATIONS.getText());
             foodStartingAmount = Integer.parseInt(FOOD_STARTING_AMOUNT.getText());

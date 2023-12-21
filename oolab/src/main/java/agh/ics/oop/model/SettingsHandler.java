@@ -39,7 +39,7 @@ public class SettingsHandler {
         List<String[]> configs = read();
         for (String[] config : configs) {
             if (config[0].equals(name)) {
-                return Arrays.copyOfRange(config, 1, config.length);
+                return Arrays.copyOfRange(config, 0, config.length);
             }
         }
         return null;
@@ -47,10 +47,10 @@ public class SettingsHandler {
 
     public static String[] getConfigNames() throws FileNotFoundException {
         List<String[]> configs = read();
-        String[] list = new String[configs.size() - 1];
-        for (int i = 0; i < list.length; i++) {
-            list[i] = configs.get(i + 1)[0];
+        String[] configNames = new String[configs.size()];
+        for (int i = 0; i < configNames.length; i++) {
+            configNames[i] = configs.get(i)[0];
         }
-        return list;
+        return configNames;
     }
 }

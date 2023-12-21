@@ -23,7 +23,7 @@
             <VBox spacing="10" >
                 <HBox>
                     <Label text="Nazwa konfiguracji:"/>
-                    <TextField fx:id="CONFIG_NAME"/>
+                    <TextField fx:id="CONFIG_NAME" styleClass="configTextField"/>
                 </HBox>
                 <Label text="Opcje mapy" styleClass="labelOptions"/>
                 <HBox>
@@ -86,9 +86,6 @@
                     <Label text="Energia za rosline:"/>
                     <TextField fx:id="FOOD_ENERGY"/>
                 </HBox>
-
-                <Label fx:id="infoLabel" textAlignment="CENTER" text="Uzupelnij dane symulacji przed kliknieciem start!"/>
-
             </VBox>
 
             <GridPane fx:id="mapGrid" alignment="CENTER" gridLinesVisible="true" managed="false" visible="false"/>
@@ -96,13 +93,14 @@
     </center>
 
     <bottom>
-        <VBox spacing="10">
+        <VBox spacing="10" alignment="CENTER">
             <HBox>
                 <Label fx:id="errorLabel" textAlignment="CENTER"/>
             </HBox>
             <HBox spacing="10" alignment="CENTER">
                 <Button text="Start" onAction="#onSimulationStartClicked" style="-fx-min-width: 100px;"/>
                 <Button text="Save config" onAction="#onSimulationSaveClicked" style="-fx-min-width: 100px;"/>
+                <Button text="Load config" onAction="#onSimulationLoadClicked" style="-fx-min-width: 100px;"/>
             </HBox>
         </VBox>
     </bottom>
