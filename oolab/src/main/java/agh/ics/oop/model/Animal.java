@@ -15,8 +15,7 @@ public class Animal implements WorldElement{
     private int maxEnergy;
     private final int genesAmount;
     private final List<Animal> parents = new ArrayList<>(2);
-    public Animal(Vector2d position, int startingEnergy, int genesAmount, boolean loopedGenesActive)
-    {
+    public Animal(Vector2d position, int startingEnergy, int genesAmount, boolean loopedGenesActive){
         this.position = position;
         this.genesAmount = genesAmount;
         orientation = MapDirection.generateRandomMapDirection();
@@ -27,8 +26,7 @@ public class Animal implements WorldElement{
         else                  genes = new StandardGenes(genesAmount);
     }
 
-    public Animal(Vector2d position, int energy, int genesAmount, boolean loopedGenesActive, Animal parent1, Animal parent2, int animalMinMutations, int animalMaxMutations)
-    {
+    public Animal(Vector2d position, int energy, int genesAmount, boolean loopedGenesActive, Animal parent1, Animal parent2, int animalMinMutations, int animalMaxMutations){
         this(position, energy, genesAmount, loopedGenesActive);
         parents.add(0, parent1);
         parents.add(1, parent2);
@@ -73,8 +71,7 @@ public class Animal implements WorldElement{
 
         Vector2d possiblePositionWithPoisonedFruit = map.getNewPositionForAnimal(this);
         AbstractFood food = foodTiles.getOrDefault(possiblePositionWithPoisonedFruit, new Grass(new Vector2d(-69,-69)));
-        if("X".equals(food.toString()) && Math.random()< 0.2)
-        {
+        if("X".equals(food.toString()) && Math.random()< 0.2){
             int newDirection = (1 + (int)(Math.random()*7));
             changeOrientation(newDirection);
             possiblePositionWithPoisonedFruit = map.getNewPositionForAnimal(this);
@@ -111,30 +108,26 @@ public class Animal implements WorldElement{
     }
     public void updateDescendantAmount(){this.descendantAmount++;}
 
-    private void updateParentsRecursion(List<Animal> visitedAnimals)
-    {
+    private void updateParentsRecursion(List<Animal> visitedAnimals){
         if(parents.isEmpty())
             return;
 
         Animal parent1 = parents.get(0);
-        if(!visitedAnimals.contains(parent1))
-        {
+        if(!visitedAnimals.contains(parent1)){
             parent1.updateDescendantAmount();
             visitedAnimals.add(parent1);
             parent1.updateParentsRecursion(visitedAnimals);
         }
 
         Animal parent2 = parents.get(1);
-        if(!visitedAnimals.contains(parent2))
-        {
+        if(!visitedAnimals.contains(parent2)){
             parent2.updateDescendantAmount();
             visitedAnimals.add(parent2);
             parent2.updateParentsRecursion(visitedAnimals);
         }
     }
 
-    public void updateAnimalAfterBreeding(int ANIMAL_ENERGY_TO_REPRODUCE)
-    {
+    public void updateAnimalAfterBreeding(int ANIMAL_ENERGY_TO_REPRODUCE){
         this.childrenAmount++;
         this.energy -= ANIMAL_ENERGY_TO_REPRODUCE;
         updateParentsRecursion(new ArrayList<>());

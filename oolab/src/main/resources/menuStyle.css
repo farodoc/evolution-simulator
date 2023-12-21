@@ -43,8 +43,7 @@ Button:pressed {
     -fx-font-weight: bold;
 }
 
-#infoLabel
-{
+#infoLabel {
     -fx-font-size: 30px;
 }
 

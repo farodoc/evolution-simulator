@@ -22,9 +22,6 @@ public class Simulation implements Runnable{
     private final int FOOD_GROWTH_PER_DAY;
     private final int FOOD_ENERGY;
 
-
-
-
     private final AbstractWorldMap map;
     private final List<Animal> animals;
 
@@ -135,27 +132,24 @@ public class Simulation implements Runnable{
         animals.add(child);
     }
 
-    private void feedAnimals()
-    {
+    private void feedAnimals(){
         Map<Vector2d, AbstractFood> foodTiles;
-        for(Animal animal: animals)
-        {
+        for(Animal animal: animals) {
             foodTiles = map.getFoodTiles();
-            if(foodTiles.containsKey(animal.getPosition()))
-            {
+            if(foodTiles.containsKey(animal.getPosition())) {
                 AbstractFood food = foodTiles.get(animal.getPosition());
                 Animal animalThatEats = conflictManager(animal.getPosition());
 
                 if(Objects.equals(food.toString(), "X"))
                     map.feedAnimal(animalThatEats, -FOOD_ENERGY);
+
                 else
                     map.feedAnimal(animalThatEats, FOOD_ENERGY);
             }
         }
     }
 
-    private Animal conflictManager(Vector2d position)
-    {
+    private Animal conflictManager(Vector2d position){
         List<Animal> filteredAnimals = new ArrayList<>();
 
         for (Animal animal : animals) {
@@ -174,6 +168,7 @@ public class Simulation implements Runnable{
 
         return filteredAnimals.get(0);
     }
+
     private void moveAllAnimals(){
         for(Animal animal : animals){
             map.move(animal, ANIMAL_ENERGY_PER_MOVE);
@@ -190,8 +185,7 @@ public class Simulation implements Runnable{
         }
     }
 
-    private void spawnNewFood()
-    {
+    private void spawnNewFood(){
         map.generateFood(FOOD_GROWTH_PER_DAY);
     }
 }

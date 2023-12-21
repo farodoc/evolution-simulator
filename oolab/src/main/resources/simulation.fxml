@@ -22,16 +22,16 @@
         <StackPane>
             <VBox spacing="10" >
                 <HBox>
-                    <Label text="Nazwa konfiguracji:"/>
+                    <Label text="Configuration name:"/>
                     <TextField fx:id="CONFIG_NAME" styleClass="configTextField"/>
                 </HBox>
-                <Label text="Opcje mapy" styleClass="labelOptions"/>
+                <Label text="Map options" styleClass="labelOptions"/>
                 <HBox>
-                    <Label text="Szerokosc mapy:"/>
+                    <Label text="Map width:"/>
                     <TextField fx:id="MAP_WIDTH"/>
-                    <Label text="Wysokosc mapy:"/>
+                    <Label text="Map height:"/>
                     <TextField fx:id="MAP_HEIGHT"/>
-                    <Label text="Wariant mapy:"/>
+                    <Label text="Map variant:"/>
                     <ComboBox fx:id="mapComboBox">
                         <items>
                             <FXCollections fx:factory="observableArrayList">
@@ -42,25 +42,25 @@
                     </ComboBox>
                 </HBox>
 
-                <Label text="Opcje zwierzat" styleClass="labelOptions"/>
+                <Label text="Animal options" styleClass="labelOptions"/>
                 <HBox>
-                    <Label text="Startowa liczba zwierzat:"/>
+                    <Label text="Animal starting amount:"/>
                     <TextField fx:id="ANIMAL_STARTING_AMOUNT"/>
-                    <Label text="Startowa energia zwierzat:"/>
+                    <Label text="Animal starting energy:"/>
                     <TextField fx:id="ANIMAL_STARTING_ENERGY"/>
-                    <Label text="Energia na ruch zwierzat:"/>
+                    <Label text="Energy per move:"/>
                     <TextField fx:id="ANIMAL_ENERGY_PER_MOVE"/>
                 </HBox>
                 <HBox>
-                    <Label text="Minimalna energia potrzebna do rozmnazania:"/>
+                    <Label text="Min energy to reproduce:"/>
                     <TextField fx:id="ANIMAL_MIN_ENERGY_TO_REPRODUCE"/>
-                    <Label text="Koszt energii na rozmnazanie:"/>
+                    <Label text="Energy to repoduce:"/>
                     <TextField fx:id="ANIMAL_ENERGY_TO_REPRODUCE_COST"/>
                 </HBox>
                 <HBox>
-                    <Label text="Liczba genow:"/>
+                    <Label text="Genes amount:"/>
                     <TextField fx:id="ANIMAL_GENES_AMOUNT"/>
-                    <Label text="Wariant zachowania zwierzat:"/>
+                    <Label text="Animal behavior variant:"/>
                     <ComboBox fx:id="genesComboBox">
                         <items>
                             <FXCollections fx:factory="observableArrayList">
@@ -71,19 +71,19 @@
                     </ComboBox>
                 </HBox>
                 <HBox>
-                    <Label text="Minimalne mutacje:"/>
+                    <Label text="Min mutations:"/>
                     <TextField fx:id="ANIMAL_MIN_MUTATIONS"/>
-                    <Label text="Maksymalne mutacje:"/>
+                    <Label text="Max mutations:"/>
                     <TextField fx:id="ANIMAL_MAX_MUTATIONS"/>
                 </HBox>
 
-                <Label text="Opcje roslinnosci" styleClass="labelOptions"/>
+                <Label text="Plant options" styleClass="labelOptions"/>
                 <HBox>
-                    <Label text="Startowa liczba roslin:"/>
+                    <Label text="Plant starting amount:"/>
                     <TextField fx:id="FOOD_STARTING_AMOUNT"/>
-                    <Label text="Liczba roslin na dzien:"/>
+                    <Label text="Plant growth per day:"/>
                     <TextField fx:id="FOOD_GROWTH_PER_DAY"/>
-                    <Label text="Energia za rosline:"/>
+                    <Label text="Energy for eating plant:"/>
                     <TextField fx:id="FOOD_ENERGY"/>
                 </HBox>
             </VBox>

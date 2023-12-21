@@ -55,7 +55,7 @@ public class SimulationEngine {
                     thread.join();
                 }
                 catch (InterruptedException e){
-                    System.err.println("Wątek został przerwany: " + e.getMessage());
+                    System.err.println("The thread has been interrupted: " + e.getMessage());
                     break;
                 }
             }

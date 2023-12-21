@@ -59,6 +59,16 @@ public class SimulationPresenter implements MapChangeListener {
     @FXML
     private TextField FOOD_ENERGY;
 
+
+    @FXML
+    private Label infoLabel;
+    @FXML
+    private GridPane mapGrid;
+    @FXML
+    private Label errorLabel;
+    @FXML
+    private TextField CONFIG_NAME;
+
     @FXML
     private void initialize(){
         CONFIG_NAME.setText("Example config");
@@ -95,18 +105,8 @@ public class SimulationPresenter implements MapChangeListener {
     int foodStartingAmount;
     int foodGrowthPerDay;
     int foodEnergy;
-
     AbstractWorldMap map;
     private int CELL_SIZE;
-
-    @FXML
-    private Label infoLabel;
-    @FXML
-    private GridPane mapGrid;
-    @FXML
-    private Label errorLabel;
-    @FXML
-    private TextField CONFIG_NAME;
 
     public void setMap(AbstractWorldMap map) {
         this.map = map;
@@ -319,10 +319,8 @@ public class SimulationPresenter implements MapChangeListener {
         errorLabel.setText("Config o nazwie \"" + settings.getName() + "\" zostal zapisany poprawnie!");
     }
 
-    public void onSimulationStartClicked(javafx.event.ActionEvent actionEvent)
-    {
-        if(!checkAndSetInputValues())
-        {
+    public void onSimulationStartClicked(javafx.event.ActionEvent actionEvent){
+        if(!checkAndSetInputValues()){
             infoLabel.setText("Wpisano bledne dane, wprowadz je ponownie!");
             return;
         }
@@ -341,12 +339,14 @@ public class SimulationPresenter implements MapChangeListener {
         CELL_SIZE = Math.min(
                 (int)(Screen.getPrimary().getVisualBounds().getHeight()/(map.getMapHeight()+3)),
                 (int)(Screen.getPrimary().getVisualBounds().getWidth()/(map.getMapWidth()+3)));
+
         Simulation simulation = new Simulation(this.map, animalStartingAmount,
                 animalStartingEnergy, animalEnergyPerMove,
                 animalMinEnergyToReproduce, animalEnergyToReproduceCost,
                 animalGenesAmount, !selectedGenes.equals("Default"),
                 animalMinMutations, animalMaxMutations,
                 foodGrowthPerDay, foodEnergy);
+
         List<Simulation> simulations = new ArrayList<>();
         simulations.add(simulation);
 
@@ -359,8 +359,7 @@ public class SimulationPresenter implements MapChangeListener {
         engine.runAsync();
     }
 
-    private boolean checkAndSetInputValues()
-    {
+    private boolean checkAndSetInputValues(){
         try {
             mapWidth = Integer.parseInt(MAP_WIDTH.getText());
             mapHeight = Integer.parseInt(MAP_HEIGHT.getText());
@@ -380,18 +379,15 @@ public class SimulationPresenter implements MapChangeListener {
 
             if (mapWidth <= 0 || mapHeight <= 0 || animalStartingAmount<=0 || animalStartingEnergy<=0 || animalEnergyPerMove<0 ||
                animalMinEnergyToReproduce<=0 || animalEnergyToReproduceCost<=0 || animalGenesAmount<=0 || animalMinMutations<0 ||
-               animalMaxMutations<0 || foodStartingAmount<0 || foodGrowthPerDay<0 || foodEnergy<0)
-            {
+               animalMaxMutations<0 || foodStartingAmount<0 || foodGrowthPerDay<0 || foodEnergy<0){
                 System.out.println("Blad: wartosci <=0");
                 return false;
             }
-            if(animalEnergyToReproduceCost > animalMinEnergyToReproduce)
-            {
+            if(animalEnergyToReproduceCost > animalMinEnergyToReproduce){
                 System.out.println("Blad wartosci kosztu oraz minima energii do reprodukcji");
                 return false;
             }
-            if(animalMinMutations>animalMaxMutations || animalMaxMutations>animalGenesAmount)
-            {
+            if(animalMinMutations>animalMaxMutations || animalMaxMutations>animalGenesAmount){
                 System.out.println("Blad wartosci minimalnych/maksymalnych mutacji");
                 return false;
             }

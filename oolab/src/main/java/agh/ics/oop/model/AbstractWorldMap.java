@@ -56,25 +56,20 @@ public abstract class AbstractWorldMap implements WorldMap{
             jungleFoodAmount++;
             return getFreeTile(jungleTilesPositions);
         }
-        else if(dirtFoodAmount<dirtTilesPositions.size())
-        {
+        else if(dirtFoodAmount<dirtTilesPositions.size()){
             dirtFoodAmount++;
             return getFreeTile(dirtTilesPositions);
         }
         return null;
     }
 
-    protected Vector2d getFreeTile(List<Vector2d> tilesPositions)
-    {
-
+    protected Vector2d getFreeTile(List<Vector2d> tilesPositions){
         int listSize = tilesPositions.size();
         int localIndex = (lastIndex + 1)%listSize;
         int cnt=0;
-        while(cnt<listSize)
-        {
+        while(cnt<listSize){
             Vector2d position = tilesPositions.get(localIndex);
-            if(!foodTiles.containsKey(position))
-            {
+            if(!foodTiles.containsKey(position)){
                 lastIndex = localIndex;
                 return position;
             }
@@ -86,14 +81,11 @@ public abstract class AbstractWorldMap implements WorldMap{
     }
 
 
-    protected void generateTiles()
-    {
+    protected void generateTiles(){
         generateJungleTiles();
 
-        for(int x=0; x<mapWidth; x++)
-        {
-            for(int y=0; y<mapHeight; y++)
-            {
+        for(int x=0; x<mapWidth; x++){
+            for(int y=0; y<mapHeight; y++){
                 if(tiles[y][x]!=TileType.JUNG){
                     tiles[y][x] = TileType.DIRT;
                     dirtTilesPositions.add(new Vector2d(x,y));
@@ -107,8 +99,7 @@ public abstract class AbstractWorldMap implements WorldMap{
         Collections.shuffle(jungleTilesPositions);
     }
 
-    protected void generateJungleTiles()
-    {
+    protected void generateJungleTiles(){
         int jungleTilesAmount = (int) (mapHeight*mapWidth*0.2);
         int jungleTilesCounter = 0;
         double probabilityForRow = 1.0;
@@ -117,27 +108,22 @@ public abstract class AbstractWorldMap implements WorldMap{
         boolean generateUpper = true;
         int yModifier = 0;
 
-        while(jungleTilesCounter < jungleTilesAmount && isInMap(equator, yModifier))
-        {
+        while(jungleTilesCounter < jungleTilesAmount && isInMap(equator, yModifier)){
             int x=0;
-            while(x<mapWidth && jungleTilesCounter<jungleTilesAmount)
-            {
-                if(Math.random() < probabilityForRow)
-                {
+            while(x<mapWidth && jungleTilesCounter<jungleTilesAmount){
+                if(Math.random() < probabilityForRow){
                     jungleTilesCounter++;
                     tiles[equator+yModifier][x] = TileType.JUNG;
                 }
                 x++;
             }
 
-            if(generateUpper)
-            {
+            if(generateUpper){
                 yModifier +=1;
                 yModifier *= (-1);
                 generateUpper = false;
             }
-            else
-            {
+            else{
                 yModifier *= (-1);
                 generateUpper = true;
             }
@@ -146,8 +132,7 @@ public abstract class AbstractWorldMap implements WorldMap{
         }
     }
 
-    protected boolean isInMap(int equator, int yModifier)
-    {
+    protected boolean isInMap(int equator, int yModifier){
         return equator + yModifier < mapHeight && equator - yModifier >= 0;
     }
 
@@ -217,8 +202,7 @@ public abstract class AbstractWorldMap implements WorldMap{
         return Collections.unmodifiableMap(foodTiles);
     }
 
-    public void feedAnimal(Animal animalThatEats, int foodEnergy)
-    {
+    public void feedAnimal(Animal animalThatEats, int foodEnergy){
         Vector2d position = animalThatEats.getPosition();
         if(tiles[position.y()][position.x()] == TileType.DIRT){
             dirtFoodAmount--;
@@ -229,6 +213,7 @@ public abstract class AbstractWorldMap implements WorldMap{
         foodTiles.remove(animalThatEats.getPosition());
         animalThatEats.eat(foodEnergy);
     }
+
     @Override
     public String toString(){
         Boundary boundaries = getCurrentBounds();
@@ -243,7 +228,6 @@ public abstract class AbstractWorldMap implements WorldMap{
     public UUID getId() {
         return id;
     }
-
     public void addObserver(MapChangeListener observer) {
         observers.add(observer);
     }

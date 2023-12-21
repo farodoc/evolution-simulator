@@ -1,7 +1,6 @@
 package agh.ics.oop.model;
 
-public enum MapDirection
-{
+public enum MapDirection{
     NORTH,
     NORTH_EAST,
     EAST,
@@ -11,10 +10,8 @@ public enum MapDirection
     WEST,
     NORTH_WEST;
 
-    public String toString()
-    {
-        return switch(this)
-        {
+    public String toString(){
+        return switch(this){
             case EAST -> "E";
             case WEST -> "W";
             case NORTH -> "N";
@@ -26,10 +23,8 @@ public enum MapDirection
         };
     }
 
-    public MapDirection next()
-    {
-        return switch(this)
-        {
+    public MapDirection next(){
+        return switch(this){
             case NORTH -> NORTH_EAST;
             case NORTH_EAST -> EAST;
             case EAST -> SOUTH_EAST;
@@ -41,10 +36,8 @@ public enum MapDirection
         };
     }
 
-    public MapDirection previous()
-    {
-        return switch(this)
-        {
+    public MapDirection previous(){
+        return switch(this){
             case NORTH_EAST -> NORTH;
             case EAST -> NORTH_EAST;
             case SOUTH_EAST -> EAST;
@@ -57,8 +50,7 @@ public enum MapDirection
     }
 
     public MapDirection reverse(){
-        return switch(this)
-        {
+        return switch(this){
             case NORTH_EAST -> SOUTH_WEST;
             case EAST -> WEST;
             case SOUTH_EAST -> NORTH_WEST;
@@ -70,10 +62,8 @@ public enum MapDirection
         };
     }
 
-    public Vector2d toUnitVector()
-    {
-        return switch(this)
-        {
+    public Vector2d toUnitVector(){
+        return switch(this){
             case EAST -> new Vector2d(1,0);
             case WEST -> new Vector2d(-1,0);
             case NORTH -> new Vector2d(0,1);
@@ -87,8 +77,7 @@ public enum MapDirection
 
     public static MapDirection generateRandomMapDirection(){
         int number = (int)(Math.random()*8);
-        return switch(number)
-        {
+        return switch(number){
             case 0 -> EAST;
             case 1 -> WEST;
             case 2 -> NORTH;
