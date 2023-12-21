@@ -34,21 +34,8 @@ public abstract class AbstractWorldMap implements WorldMap{
         animals.put(animal.getPosition(), animal);
         notifyObservers("Animal placed at " + animal.getPosition());
     }
-    public void generateFood(int howManyFoodToGenerate)
-    {
-        int cnt = 0;
-        while(cnt < howManyFoodToGenerate){
-            Vector2d newFoodPosition = generateNewFoodPosition();
-            if(newFoodPosition == null) break;
+    public void generateFood(int howManyFoodToGenerate){
 
-            if(!foodTiles.containsKey(newFoodPosition))
-            {
-                foodTiles.put(newFoodPosition,new Grass(newFoodPosition));
-                //notifyObservers("Food generated at " + newFoodPosition);
-                cnt++;
-            }
-        }
-        notifyObservers("Food generated");
     }
 
     protected Vector2d generateNewFoodPosition(){
@@ -100,36 +87,7 @@ public abstract class AbstractWorldMap implements WorldMap{
     }
 
     protected void generateJungleTiles(){
-        int jungleTilesAmount = (int) (mapHeight*mapWidth*0.2);
-        int jungleTilesCounter = 0;
-        double probabilityForRow = 1.0;
-        int equator = mapHeight/2;
 
-        boolean generateUpper = true;
-        int yModifier = 0;
-
-        while(jungleTilesCounter < jungleTilesAmount && isInMap(equator, yModifier)){
-            int x=0;
-            while(x<mapWidth && jungleTilesCounter<jungleTilesAmount){
-                if(Math.random() < probabilityForRow){
-                    jungleTilesCounter++;
-                    tiles[equator+yModifier][x] = TileType.JUNG;
-                }
-                x++;
-            }
-
-            if(generateUpper){
-                yModifier +=1;
-                yModifier *= (-1);
-                generateUpper = false;
-            }
-            else{
-                yModifier *= (-1);
-                generateUpper = true;
-            }
-
-            probabilityForRow/=1.1;
-        }
     }
 
     protected boolean isInMap(int equator, int yModifier){
