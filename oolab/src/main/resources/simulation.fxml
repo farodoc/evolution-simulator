@@ -94,8 +94,8 @@
 
     <bottom>
         <VBox spacing="10" alignment="CENTER">
-            <HBox>
-                <Label fx:id="errorLabel" textAlignment="CENTER"/>
+            <HBox fx:id="errorHBox">
+                <Label fx:id="errorLabel" style="-fx-font-size: 16px;"/>
             </HBox>
             <HBox spacing="10" alignment="CENTER">
                 <Button text="Start" onAction="#onSimulationStartClicked" style="-fx-min-width: 100px;"/>

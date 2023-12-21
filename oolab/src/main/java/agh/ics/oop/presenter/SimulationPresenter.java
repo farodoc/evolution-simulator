@@ -298,17 +298,17 @@ public class SimulationPresenter implements MapChangeListener {
             };
             settings = new Settings(attributesArray);
         } catch (Exception e) {
-            errorLabel.setText("Bledne wartosci! Wprowadz jeszcze raz.");
+            errorLabel.setText("Wrong input values!");
             return;
         }
 
         try {
             if(settings.getName().isEmpty()){
-                errorLabel.setText("Jesli chcesz zapisac config to musisz nadac mu nazwe.");
+                errorLabel.setText("In order to save this config give it a unique name.");
                 return;
             }
             if(SettingsHandler.findConfig(settings.getName()) != null){
-                errorLabel.setText("Config o takiej nazwie juz istnieje! Podaj inna nazwe.");
+                errorLabel.setText("Config with that name already exists!");
                 return;
             }
         } catch (FileNotFoundException e) {
@@ -316,12 +316,12 @@ public class SimulationPresenter implements MapChangeListener {
         }
 
         SettingsHandler.add(settings.getAttributesAsArray());
-        errorLabel.setText("Config o nazwie \"" + settings.getName() + "\" zostal zapisany poprawnie!");
+        errorLabel.setText("Config \"" + settings.getName() + "\" has been saved!");
     }
 
     public void onSimulationStartClicked(javafx.event.ActionEvent actionEvent){
         if(!checkAndSetInputValues()){
-            infoLabel.setText("Wpisano bledne dane, wprowadz je ponownie!");
+            infoLabel.setText("Wrong input values!");
             return;
         }
 
@@ -377,26 +377,26 @@ public class SimulationPresenter implements MapChangeListener {
             foodGrowthPerDay = Integer.parseInt(FOOD_GROWTH_PER_DAY.getText());
             foodEnergy = Integer.parseInt(FOOD_ENERGY.getText());
 
-            if (mapWidth <= 0 || mapHeight <= 0 || animalStartingAmount<=0 || animalStartingEnergy<=0 || animalEnergyPerMove<0 ||
-               animalMinEnergyToReproduce<=0 || animalEnergyToReproduceCost<=0 || animalGenesAmount<=0 || animalMinMutations<0 ||
-               animalMaxMutations<0 || foodStartingAmount<0 || foodGrowthPerDay<0 || foodEnergy<0){
-                System.out.println("Blad: wartosci <=0");
+            if (mapWidth <= 0 || mapHeight <= 0 || animalStartingAmount <= 0 || animalStartingEnergy <= 0 || animalEnergyPerMove < 0 ||
+               animalMinEnergyToReproduce <= 0 || animalEnergyToReproduceCost <= 0 || animalGenesAmount <= 0 || animalMinMutations < 0 ||
+               animalMaxMutations < 0 || foodStartingAmount < 0 || foodGrowthPerDay < 0 || foodEnergy < 0){
+                System.out.println("Error: values <= 0.");
                 return false;
             }
             if(animalEnergyToReproduceCost > animalMinEnergyToReproduce){
-                System.out.println("Blad wartosci kosztu oraz minima energii do reprodukcji");
+                System.out.println("Error: animalMinEnergyToReproduce < animalEnergyToReproduceCost.");
                 return false;
             }
             if(animalMinMutations>animalMaxMutations || animalMaxMutations>animalGenesAmount){
-                System.out.println("Blad wartosci minimalnych/maksymalnych mutacji");
+                System.out.println("Error: wrong min/max mutations amount.");
                 return false;
             }
 
-            System.out.println("Wprowadzone wartosci są poprawne!");
+            System.out.println("Input values are correct!");
             return true;
 
         } catch (NumberFormatException e) {
-            System.out.println("Blad: Wprowadzone wartosci musza bycć liczbami naturalnymi!");
+            System.out.println("Error: input values have to be numbers!");
             return false;
         }
     }

@@ -50,3 +50,9 @@ Button:pressed {
 .root {
     -fx-padding: 10px;
 }
+
+#errorHBox {
+    -fx-alignment: center;
+    -fx-padding: 20px;
+    -fx-font-family: "Georgia";
+}
