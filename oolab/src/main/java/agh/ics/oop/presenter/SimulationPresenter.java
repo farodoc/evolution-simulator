@@ -199,6 +199,7 @@ public class SimulationPresenter implements MapChangeListener {
 
     private Circle drawAnimal(Animal animal) {
         double healthPercentage = (double) animal.getEnergy() /animal.getMaxEnergy();
+        healthPercentage = Math.max(healthPercentage, 0);
         Circle redCircle = new Circle();
         redCircle.setRadius(CELL_SIZE * 0.3);
         redCircle.setFill(getColorForAnimal(healthPercentage));
