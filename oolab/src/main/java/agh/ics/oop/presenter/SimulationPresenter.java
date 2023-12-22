@@ -72,8 +72,8 @@ public class SimulationPresenter implements MapChangeListener {
     @FXML
     private void initialize(){
         CONFIG_NAME.setText("Example config");
-        MAP_WIDTH.setText("30");
-        MAP_HEIGHT.setText("30");
+        MAP_WIDTH.setText("5");
+        MAP_HEIGHT.setText("5");
         mapComboBox.setValue("Equator map");
         ANIMAL_STARTING_AMOUNT.setText("15");
         ANIMAL_STARTING_ENERGY.setText("50");
@@ -124,28 +124,12 @@ public class SimulationPresenter implements MapChangeListener {
         int width = boundaries.topRightCorner().x() - boundaries.bottomLeftCorner().x() + 1;
         int height = boundaries.topRightCorner().y() - boundaries.bottomLeftCorner().y() + 1;
 
-        for (int x = 0; x < width + 1; x++) {
+        for (int x = 0; x < width; x++) {
             mapGrid.getColumnConstraints().add(new ColumnConstraints(CELL_SIZE));
         }
 
-        for (int y = 0; y < height + 1; y++) {
+        for (int y = 0; y < height; y++) {
             mapGrid.getRowConstraints().add(new RowConstraints(CELL_SIZE));
-        }
-
-        Label xyLabel = new Label("y/x");
-        mapGrid.add(xyLabel, 0, 0);
-        GridPane.setHalignment(xyLabel, HPos.CENTER);
-
-        for (int x = 1; x < width + 1; x++) {
-            Label columnLabel = new Label(String.valueOf(x - 1 + boundaries.bottomLeftCorner().x()));
-            mapGrid.add(columnLabel, x, 0);
-            GridPane.setHalignment(columnLabel, HPos.CENTER);
-        }
-
-        for (int y = height; y >= 1; y--) {
-            Label rowLabel = new Label(String.valueOf(y - 1 + boundaries.bottomLeftCorner().y()));
-            mapGrid.add(rowLabel, 0, height - y + 1);
-            GridPane.setHalignment(rowLabel, HPos.CENTER);
         }
     }
 
@@ -156,14 +140,14 @@ public class SimulationPresenter implements MapChangeListener {
         int height = boundaries.topRightCorner().y() - boundaries.bottomLeftCorner().y() + 1;
         TileType[][] tiles = map.getTiles();
 
-        for (int y = height; y >= 1; y--) {
-            for (int x = 1; x < width + 1; x++) {
+        for (int y = height - 1; y >= 0; y--) {
+            for (int x = 0; x < width; x++) {
                 Label cellLabel = new Label();
                 cellLabel.setMinWidth(CELL_SIZE);
                 cellLabel.setMinHeight(CELL_SIZE);
                 cellLabel.setBorder(new Border(new BorderStroke(Color.BLACK, BorderStrokeStyle.DOTTED, null, new BorderWidths(0.4))));
-                cellLabel.setStyle("-fx-alignment: CENTER;-fx-font-weight: bold;-fx-font-size: " + grassSize + "px;");
-                Vector2d translatedPosition = new Vector2d(x - 1 + boundaries.bottomLeftCorner().x(), y - 1 + boundaries.bottomLeftCorner().y());
+                cellLabel.setStyle("-fx-alignment: CENTER;");
+                Vector2d translatedPosition = new Vector2d(x + boundaries.bottomLeftCorner().x(), y + boundaries.bottomLeftCorner().y());
 
                 if(tiles[translatedPosition.y()][translatedPosition.x()] == TileType.JUNG){
                     cellLabel.setBackground(new Background(new BackgroundFill(Color.rgb(18, 74, 13), CornerRadii.EMPTY, Insets.EMPTY)));
@@ -192,7 +176,7 @@ public class SimulationPresenter implements MapChangeListener {
                 }
 
                 GridPane.setHalignment(cellLabel, HPos.CENTER);
-                mapGrid.add(cellLabel, x, height - y + 1);
+                mapGrid.add(cellLabel, x, height - y - 1);
             }
         }
     }
@@ -338,8 +322,8 @@ public class SimulationPresenter implements MapChangeListener {
         setMap(map);
 
         CELL_SIZE = Math.min(
-                (int)(Screen.getPrimary().getVisualBounds().getHeight()/(map.getMapHeight()+3)),
-                (int)(Screen.getPrimary().getVisualBounds().getWidth()/(map.getMapWidth()+3)));
+                (int)(Screen.getPrimary().getVisualBounds().getHeight()/(map.getMapHeight())*0.5),
+                (int)(Screen.getPrimary().getVisualBounds().getWidth()/(map.getMapWidth())*0.5));
 
         Simulation simulation = new Simulation(this.map, animalStartingAmount,
                 animalStartingEnergy, animalEnergyPerMove,
