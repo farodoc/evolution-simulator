@@ -114,20 +114,18 @@ public class SimulationPresenter implements MapChangeListener {
     }
 
     private void clearGrid() {
-        List<Node> toRemove = new ArrayList<>();
         for (Node node : mapGrid.getChildren()) {
             if (node instanceof Label) {
                 ((Label) node).setText(null);
                 ((Label) node).setGraphic(null);
             }
-            toRemove.add(node);
         }
-        mapGrid.getChildren().removeAll(toRemove);
     }
 
 
     private void drawGrid(){
         Boundary boundaries = map.getCurrentBounds();
+        TileType[][] tiles = map.getTiles();
         int width = boundaries.topRightCorner().x() - boundaries.bottomLeftCorner().x() + 1;
         int height = boundaries.topRightCorner().y() - boundaries.bottomLeftCorner().y() + 1;
 
@@ -138,32 +136,40 @@ public class SimulationPresenter implements MapChangeListener {
         for (int y = 0; y < height; y++) {
             mapGrid.getRowConstraints().add(new RowConstraints(CELL_SIZE));
         }
-    }
 
-    private void fillMap(){
-        int grassSize = (int)(1.75*CELL_SIZE);
-        Boundary boundaries = map.getCurrentBounds();
-        int width = boundaries.topRightCorner().x() - boundaries.bottomLeftCorner().x() + 1;
-        int height = boundaries.topRightCorner().y() - boundaries.bottomLeftCorner().y() + 1;
-        TileType[][] tiles = map.getTiles();
-
-        for (int y = height - 1; y >= 0; y--) {
-            for (int x = 0; x < width; x++) {
+        for (int y = height - 1; y >= 0; y--)
+        {
+            for (int x = 0; x < width; x++)
+            {
                 Label cellLabel = new Label();
                 cellLabel.setMinWidth(CELL_SIZE);
                 cellLabel.setMinHeight(CELL_SIZE);
                 cellLabel.setBorder(new Border(new BorderStroke(Color.BLACK, BorderStrokeStyle.DOTTED, null, new BorderWidths(0.4))));
                 cellLabel.setStyle("-fx-alignment: CENTER;");
-                Vector2d translatedPosition = new Vector2d(x + boundaries.bottomLeftCorner().x(), y + boundaries.bottomLeftCorner().y());
 
-                if(tiles[translatedPosition.y()][translatedPosition.x()] == TileType.JUNG){
+                if(tiles[y][x] == TileType.JUNG){
                     cellLabel.setBackground(new Background(new BackgroundFill(Color.rgb(18, 74, 13), CornerRadii.EMPTY, Insets.EMPTY)));
                 }
                 else{
                     cellLabel.setBackground(new Background(new BackgroundFill(Color.rgb(161, 92, 32), CornerRadii.EMPTY, Insets.EMPTY)));
                 }
+ 
+                GridPane.setHalignment(cellLabel, HPos.CENTER);
+                mapGrid.add(cellLabel, x, height - y - 1);
+            }
+        }
+    }
 
-                Object objectAtPosition = map.objectAt(translatedPosition);
+    private void fillMap(){
+        /*
+        int grassSize = (int)(1.75*CELL_SIZE);
+        Boundary boundaries = map.getCurrentBounds();
+        int width = boundaries.topRightCorner().x() - boundaries.bottomLeftCorner().x() + 1;
+        int height = boundaries.topRightCorner().y() - boundaries.bottomLeftCorner().y() + 1;
+
+        for (int y = height - 1; y >= 0; y--) {
+            for (int x = 0; x < width; x++) {
+                Object objectAtPosition = map.objectAt(new Vector2d(x,y));
                 if (objectAtPosition != null) {
                     if (objectAtPosition instanceof Animal) {
                         cellLabel.setGraphic(drawAnimal((Animal) objectAtPosition));
@@ -185,7 +191,9 @@ public class SimulationPresenter implements MapChangeListener {
                 GridPane.setHalignment(cellLabel, HPos.CENTER);
                 mapGrid.add(cellLabel, x, height - y - 1);
             }
-        }
+        } */
+
+
     }
 
     private Circle drawAnimal(Animal animal) {
