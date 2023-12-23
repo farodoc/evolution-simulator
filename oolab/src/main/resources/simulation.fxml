@@ -88,7 +88,6 @@
                 </HBox>
             </VBox>
 
-            <GridPane fx:id="mapGrid" alignment="CENTER" gridLinesVisible="true" managed="false" visible="false"/>
         </StackPane>
     </center>
 

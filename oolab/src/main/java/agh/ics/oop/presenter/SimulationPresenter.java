@@ -1,7 +1,6 @@
 package agh.ics.oop.presenter;
 
 import agh.ics.oop.Simulation;
-import agh.ics.oop.SimulationEngine;
 import agh.ics.oop.model.*;
 import javafx.application.Platform;
 import javafx.fxml.FXML;
@@ -67,8 +66,6 @@ public class SimulationPresenter implements MapChangeListener {
 
     @FXML
     private Label infoLabel;
-    @FXML
-    private GridPane mapGrid;
     @FXML
     private Label errorLabel;
     @FXML
@@ -242,24 +239,19 @@ public class SimulationPresenter implements MapChangeListener {
             return;
         }
 
-        // Utwórz nowe okno dla symulacji
         Platform.runLater(() -> {
             Stage simulationStage = new Stage();
             simulationStage.initStyle(StageStyle.DECORATED);
             simulationStage.initModality(Modality.NONE);
             simulationStage.setTitle("Simulation");
 
-            // Utwórz nowy GridPane dla symulacji
             simulationGrid = new GridPane();
-            simulationStage.setScene(new Scene(simulationGrid, 400, 400));
+            simulationStage.setScene(new Scene(simulationGrid, 700, 700));
             simulationStage.setOnCloseRequest(event -> {
-                // Dodaj obsługę zamykania okna symulacji
-                // Możesz dodać kod, który ma być wykonany przed zamknięciem, np. zatrzymać symulację
                 simulationStage.close();
             });
             simulationStage.show();
 
-            // Operacje związane z interfejsem użytkownika powinny być wykonywane w głównym wątku
             AbstractWorldMap map;
             if (Objects.equals(selectedMap, "Poison map")) {
                 map = new PoisonMap(foodStartingAmount, mapWidth, mapHeight);
@@ -290,7 +282,6 @@ public class SimulationPresenter implements MapChangeListener {
             cellLabels = new Label[mapHeight][mapWidth];
             drawGrid();
 
-            // Uruchomienie symulacji w nowym wątku
             new Thread(() -> {
                 for (Simulation sim : simulations) {
                     sim.run();
