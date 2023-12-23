@@ -7,6 +7,7 @@ import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.geometry.HPos;
 import javafx.geometry.Insets;
+import javafx.scene.Node;
 import javafx.scene.control.ChoiceDialog;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
@@ -113,13 +114,19 @@ public class SimulationPresenter implements MapChangeListener {
     }
 
     private void clearGrid() {
-        mapGrid.getChildren().retainAll(mapGrid.getChildren().get(0));
-        mapGrid.getColumnConstraints().clear();
-        mapGrid.getRowConstraints().clear();
+        List<Node> toRemove = new ArrayList<>();
+        for (Node node : mapGrid.getChildren()) {
+            if (node instanceof Label) {
+                ((Label) node).setText(null);
+                ((Label) node).setGraphic(null);
+            }
+            toRemove.add(node);
+        }
+        mapGrid.getChildren().removeAll(toRemove);
     }
 
+
     private void drawGrid(){
-        clearGrid();
         Boundary boundaries = map.getCurrentBounds();
         int width = boundaries.topRightCorner().x() - boundaries.bottomLeftCorner().x() + 1;
         int height = boundaries.topRightCorner().y() - boundaries.bottomLeftCorner().y() + 1;
@@ -199,7 +206,7 @@ public class SimulationPresenter implements MapChangeListener {
     }
 
     public void drawMap(){
-        drawGrid();
+        clearGrid();
         fillMap();
     }
 
@@ -209,6 +216,48 @@ public class SimulationPresenter implements MapChangeListener {
             drawMap();
         });
     }
+
+    public void onSimulationStartClicked(javafx.event.ActionEvent actionEvent){
+        if(!checkAndSetInputValues()){
+            infoLabel.setText("Wrong input values!");
+            return;
+        }
+
+        AbstractWorldMap map;
+        if(Objects.equals(selectedMap, "Poison map")){
+            map = new PoisonMap(foodStartingAmount, mapWidth, mapHeight);
+        }
+        else{
+            map = new EquatorMap(foodStartingAmount, mapWidth, mapHeight);
+        }
+
+        map.addObserver(this);
+        setMap(map);
+
+        CELL_SIZE = Math.min(
+                (int)(Screen.getPrimary().getVisualBounds().getHeight()/(map.getMapHeight())*0.5),
+                (int)(Screen.getPrimary().getVisualBounds().getWidth()/(map.getMapWidth())*0.5));
+
+        Simulation simulation = new Simulation(this.map, animalStartingAmount,
+                animalStartingEnergy, animalEnergyPerMove,
+                animalMinEnergyToReproduce, animalEnergyToReproduceCost,
+                animalGenesAmount, !selectedGenes.equals("Default"),
+                animalMinMutations, animalMaxMutations,
+                foodGrowthPerDay, foodEnergy);
+
+        List<Simulation> simulations = new ArrayList<>();
+        simulations.add(simulation);
+
+        mapGrid.setManaged(true);
+        mapGrid.setVisible(true);
+
+        setMap(map);
+        drawGrid();
+
+        SimulationEngine engine = new SimulationEngine(simulations, 4);
+        engine.runAsync();
+    }
+
 
     public void onSimulationLoadClicked(javafx.event.ActionEvent actionEvent) throws FileNotFoundException {
         String[] availableConfigs = SettingsHandler.getConfigNames();
@@ -302,46 +351,6 @@ public class SimulationPresenter implements MapChangeListener {
 
         SettingsHandler.add(settings.getAttributesAsArray());
         errorLabel.setText("Config \"" + settings.getName() + "\" has been saved!");
-    }
-
-    public void onSimulationStartClicked(javafx.event.ActionEvent actionEvent){
-        if(!checkAndSetInputValues()){
-            infoLabel.setText("Wrong input values!");
-            return;
-        }
-
-        AbstractWorldMap map;
-        if(Objects.equals(selectedMap, "Poison map")){
-            map = new PoisonMap(foodStartingAmount, mapWidth, mapHeight);
-        }
-        else{
-            map = new EquatorMap(foodStartingAmount, mapWidth, mapHeight);
-        }
-
-        map.addObserver(this);
-        setMap(map);
-
-        CELL_SIZE = Math.min(
-                (int)(Screen.getPrimary().getVisualBounds().getHeight()/(map.getMapHeight())*0.5),
-                (int)(Screen.getPrimary().getVisualBounds().getWidth()/(map.getMapWidth())*0.5));
-
-        Simulation simulation = new Simulation(this.map, animalStartingAmount,
-                animalStartingEnergy, animalEnergyPerMove,
-                animalMinEnergyToReproduce, animalEnergyToReproduceCost,
-                animalGenesAmount, !selectedGenes.equals("Default"),
-                animalMinMutations, animalMaxMutations,
-                foodGrowthPerDay, foodEnergy);
-
-        List<Simulation> simulations = new ArrayList<>();
-        simulations.add(simulation);
-
-        mapGrid.setManaged(true);
-        mapGrid.setVisible(true);
-
-        setMap(map);
-
-        SimulationEngine engine = new SimulationEngine(simulations, 4);
-        engine.runAsync();
     }
 
     private boolean checkAndSetInputValues(){
