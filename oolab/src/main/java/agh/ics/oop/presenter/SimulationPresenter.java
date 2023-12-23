@@ -109,6 +109,7 @@ public class SimulationPresenter implements MapChangeListener {
     AbstractWorldMap map;
     private int CELL_SIZE;
 
+    private Label[][] cellLabels;
     public void setMap(AbstractWorldMap map) {
         this.map = map;
     }
@@ -125,7 +126,6 @@ public class SimulationPresenter implements MapChangeListener {
 
     private void drawGrid(){
         Boundary boundaries = map.getCurrentBounds();
-        TileType[][] tiles = map.getTiles();
         int width = boundaries.topRightCorner().x() - boundaries.bottomLeftCorner().x() + 1;
         int height = boundaries.topRightCorner().y() - boundaries.bottomLeftCorner().y() + 1;
 
@@ -136,6 +136,12 @@ public class SimulationPresenter implements MapChangeListener {
         for (int y = 0; y < height; y++) {
             mapGrid.getRowConstraints().add(new RowConstraints(CELL_SIZE));
         }
+
+        colorGrid(height, width);
+    }
+
+    private void colorGrid(int height, int width) {
+        TileType[][] tiles = map.getTiles();
 
         for (int y = height - 1; y >= 0; y--)
         {
@@ -153,15 +159,15 @@ public class SimulationPresenter implements MapChangeListener {
                 else{
                     cellLabel.setBackground(new Background(new BackgroundFill(Color.rgb(161, 92, 32), CornerRadii.EMPTY, Insets.EMPTY)));
                 }
- 
+
                 GridPane.setHalignment(cellLabel, HPos.CENTER);
+                cellLabels[y][x] = cellLabel;
                 mapGrid.add(cellLabel, x, height - y - 1);
             }
         }
     }
 
     private void fillMap(){
-        /*
         int grassSize = (int)(1.75*CELL_SIZE);
         Boundary boundaries = map.getCurrentBounds();
         int width = boundaries.topRightCorner().x() - boundaries.bottomLeftCorner().x() + 1;
@@ -170,6 +176,8 @@ public class SimulationPresenter implements MapChangeListener {
         for (int y = height - 1; y >= 0; y--) {
             for (int x = 0; x < width; x++) {
                 Object objectAtPosition = map.objectAt(new Vector2d(x,y));
+                Label cellLabel = cellLabels[y][x];
+
                 if (objectAtPosition != null) {
                     if (objectAtPosition instanceof Animal) {
                         cellLabel.setGraphic(drawAnimal((Animal) objectAtPosition));
@@ -187,13 +195,8 @@ public class SimulationPresenter implements MapChangeListener {
                         }
                     }
                 }
-
-                GridPane.setHalignment(cellLabel, HPos.CENTER);
-                mapGrid.add(cellLabel, x, height - y - 1);
             }
-        } */
-
-
+        }
     }
 
     private Circle drawAnimal(Animal animal) {
@@ -260,6 +263,7 @@ public class SimulationPresenter implements MapChangeListener {
         mapGrid.setVisible(true);
 
         setMap(map);
+        cellLabels = new Label[mapHeight][mapWidth];
         drawGrid();
 
         SimulationEngine engine = new SimulationEngine(simulations, 4);
