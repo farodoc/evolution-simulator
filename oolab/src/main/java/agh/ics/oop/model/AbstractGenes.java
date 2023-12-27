@@ -7,9 +7,11 @@ import java.util.Random;
 
 public abstract class AbstractGenes {
     protected List<Integer> genes = new ArrayList<>();
-    protected int geneIndex = 0;
+    protected int geneIndex;
 
     public AbstractGenes(int genesAmount){
+        Random random = new Random();
+        geneIndex = random.nextInt(genesAmount);
         generateGenesOnStart(genesAmount);
     }
 
