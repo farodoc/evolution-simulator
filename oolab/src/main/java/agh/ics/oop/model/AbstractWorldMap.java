@@ -32,7 +32,6 @@ public abstract class AbstractWorldMap implements WorldMap{
 
     public void place(Animal animal) {
         animals.put(animal.getPosition(), animal);
-        notifyObservers("Animal placed at " + animal.getPosition());
     }
     public void generateFood(int howManyFoodToGenerate){
 
@@ -103,7 +102,6 @@ public abstract class AbstractWorldMap implements WorldMap{
             animals.remove(oldPosition, animal);
             animals.put(animal.getPosition(), animal);
         }
-        notifyObservers("Animal move finished");
     }
 
 
@@ -194,6 +192,7 @@ public abstract class AbstractWorldMap implements WorldMap{
             observer.mapChanged(this, message);
         }
     }
+    public void initializeDrawMap(){ notifyObservers(""); }
 
     public String getName() {return "Abstract map";}
 }
