@@ -6,7 +6,6 @@ import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.geometry.HPos;
 import javafx.geometry.Insets;
-import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.control.ChoiceDialog;
 import javafx.scene.control.ComboBox;
@@ -23,6 +22,7 @@ import javafx.stage.StageStyle;
 import java.io.FileNotFoundException;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.Set;
 
 public class SimulationPresenter implements MapChangeListener {
     @FXML
@@ -108,21 +108,13 @@ public class SimulationPresenter implements MapChangeListener {
     AbstractWorldMap map;
     private int CELL_SIZE;
     private GridPane simulationGrid;
-
     private Label[][] cellLabels;
+
+    private Set<Vector2d> prevOccupiedPositions;
+
     public void setMap(AbstractWorldMap map) {
         this.map = map;
     }
-
-    private void clearGrid() {
-        for (Node node : simulationGrid.getChildren()) {
-            if (node instanceof Label) {
-                ((Label) node).setText(null);
-                ((Label) node).setGraphic(null);
-            }
-        }
-    }
-
 
     private void drawGrid() {
         simulationGrid.getColumnConstraints().clear();
@@ -169,33 +161,41 @@ public class SimulationPresenter implements MapChangeListener {
     }
 
     private void fillMap(){
+        clearGrid();
+        prevOccupiedPositions = map.getAllOccupiedPositions();
         int grassSize = (int)(1.75*CELL_SIZE);
-        Boundary boundaries = map.getCurrentBounds();
-        int width = boundaries.topRightCorner().x() - boundaries.bottomLeftCorner().x() + 1;
-        int height = boundaries.topRightCorner().y() - boundaries.bottomLeftCorner().y() + 1;
 
-        for (int y = height - 1; y >= 0; y--) {
-            for (int x = 0; x < width; x++) {
-                Object objectAtPosition = map.objectAt(new Vector2d(x,y));
-                Label cellLabel = cellLabels[y][x];
+        for (Vector2d vec : prevOccupiedPositions) {
+            int x = vec.x();
+            int y = vec.y();
+            Object objectAtPosition = map.objectAt(new Vector2d(x,y));
+            Label cellLabel = cellLabels[y][x];
 
-                if (objectAtPosition != null) {
-                    if (objectAtPosition instanceof Animal) {
-                        cellLabel.setGraphic(drawAnimal((Animal) objectAtPosition));
+            if (objectAtPosition != null) {
+                if (objectAtPosition instanceof Animal) {
+                    cellLabel.setGraphic(drawAnimal((Animal) objectAtPosition));
+                }
+                else {
+                    if (objectAtPosition instanceof Grass){
+                        cellLabel.setText(objectAtPosition.toString());
+                        cellLabel.setTextFill(Color.GREEN);
+                        cellLabel.setStyle("-fx-alignment: CENTER;-fx-font-weight: bold;-fx-font-size: " + grassSize + "px;");
                     }
-                    else {
-                        if (objectAtPosition instanceof Grass){
-                            cellLabel.setText(objectAtPosition.toString());
-                            cellLabel.setTextFill(Color.GREEN);
-                            cellLabel.setStyle("-fx-alignment: CENTER;-fx-font-weight: bold;-fx-font-size: " + grassSize + "px;");
-                        }
-                        else{
-                            cellLabel.setText("?");
-                            cellLabel.setTextFill(Color.rgb(149, 31, 255));
-                            cellLabel.setStyle("-fx-alignment: CENTER;-fx-font-weight: bold;-fx-font-size: " + grassSize/1.5 + "px;");
-                        }
+                    else{
+                        cellLabel.setText("?");
+                        cellLabel.setTextFill(Color.rgb(149, 31, 255));
+                        cellLabel.setStyle("-fx-alignment: CENTER;-fx-font-weight: bold;-fx-font-size: " + grassSize/1.5 + "px;");
                     }
                 }
+            }
+        }
+    }
+
+    private void clearGrid() {
+        if (prevOccupiedPositions != null) {
+            for (Vector2d vec : prevOccupiedPositions) {
+                cellLabels[vec.y()][vec.x()].setText(null);
+                cellLabels[vec.y()][vec.x()].setGraphic(null);
             }
         }
     }
@@ -218,7 +218,6 @@ public class SimulationPresenter implements MapChangeListener {
     }
 
     public void drawMap(){
-        clearGrid();
         fillMap();
     }
 

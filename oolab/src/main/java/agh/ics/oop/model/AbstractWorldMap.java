@@ -355,4 +355,10 @@ public abstract class AbstractWorldMap implements WorldMap{
     public boolean isEveryAnimalDead(){
         return animals.isEmpty();
     }
+
+    public Set<Vector2d> getAllOccupiedPositions(){
+        Set<Vector2d> keys = new HashSet<>(animals.keySet());
+        keys.addAll(new HashSet<>(foodTiles.keySet()));
+        return keys;
+    }
 }
