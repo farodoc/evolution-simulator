@@ -1,13 +1,13 @@
 package agh.ics.oop.presenter;
 
 import agh.ics.oop.Simulation;
-import agh.ics.oop.SimulationEngine;
 import agh.ics.oop.model.*;
 import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.geometry.HPos;
 import javafx.geometry.Insets;
 import javafx.scene.Node;
+import javafx.scene.Scene;
 import javafx.scene.control.ChoiceDialog;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
@@ -15,7 +15,10 @@ import javafx.scene.control.TextField;
 import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
+import javafx.stage.Modality;
 import javafx.stage.Screen;
+import javafx.stage.Stage;
+import javafx.stage.StageStyle;
 
 import java.io.FileNotFoundException;
 import java.util.ArrayList;
@@ -64,8 +67,6 @@ public class SimulationPresenter implements MapChangeListener {
     @FXML
     private Label infoLabel;
     @FXML
-    private GridPane mapGrid;
-    @FXML
     private Label errorLabel;
     @FXML
     private TextField CONFIG_NAME;
@@ -108,6 +109,7 @@ public class SimulationPresenter implements MapChangeListener {
     int foodEnergy;
     AbstractWorldMap map;
     private int CELL_SIZE;
+    private GridPane simulationGrid;
 
     private Label[][] cellLabels;
     public void setMap(AbstractWorldMap map) {
@@ -115,7 +117,7 @@ public class SimulationPresenter implements MapChangeListener {
     }
 
     private void clearGrid() {
-        for (Node node : mapGrid.getChildren()) {
+        for (Node node : simulationGrid.getChildren()) {
             if (node instanceof Label) {
                 ((Label) node).setText(null);
                 ((Label) node).setGraphic(null);
@@ -124,17 +126,22 @@ public class SimulationPresenter implements MapChangeListener {
     }
 
 
-    private void drawGrid(){
+    private void drawGrid() {
+        // Wyczyść poprzednie ustawienia
+        simulationGrid.getColumnConstraints().clear();
+        simulationGrid.getRowConstraints().clear();
+
+        // Analogicznie do poprzedniej wersji metody drawGrid, ale używając simulationGrid
         Boundary boundaries = map.getCurrentBounds();
         int width = boundaries.topRightCorner().x() - boundaries.bottomLeftCorner().x() + 1;
         int height = boundaries.topRightCorner().y() - boundaries.bottomLeftCorner().y() + 1;
 
         for (int x = 0; x < width; x++) {
-            mapGrid.getColumnConstraints().add(new ColumnConstraints(CELL_SIZE));
+            simulationGrid.getColumnConstraints().add(new ColumnConstraints(CELL_SIZE));
         }
 
         for (int y = 0; y < height; y++) {
-            mapGrid.getRowConstraints().add(new RowConstraints(CELL_SIZE));
+            simulationGrid.getRowConstraints().add(new RowConstraints(CELL_SIZE));
         }
 
         colorGrid(height, width);
@@ -143,10 +150,8 @@ public class SimulationPresenter implements MapChangeListener {
     private void colorGrid(int height, int width) {
         TileType[][] tiles = map.getTiles();
 
-        for (int y = height - 1; y >= 0; y--)
-        {
-            for (int x = 0; x < width; x++)
-            {
+        for (int y = height - 1; y >= 0; y--) {
+            for (int x = 0; x < width; x++) {
                 Label cellLabel = new Label();
                 cellLabel.setMinWidth(CELL_SIZE);
                 cellLabel.setMinHeight(CELL_SIZE);
@@ -162,7 +167,7 @@ public class SimulationPresenter implements MapChangeListener {
 
                 GridPane.setHalignment(cellLabel, HPos.CENTER);
                 cellLabels[y][x] = cellLabel;
-                mapGrid.add(cellLabel, x, height - y - 1);
+                simulationGrid.add(cellLabel, x, height - y - 1);
             }
         }
     }
@@ -228,46 +233,61 @@ public class SimulationPresenter implements MapChangeListener {
         });
     }
 
-    public void onSimulationStartClicked(javafx.event.ActionEvent actionEvent){
-        if(!checkAndSetInputValues()){
+    public void onSimulationStartClicked(javafx.event.ActionEvent actionEvent) {
+        if (!checkAndSetInputValues()) {
             infoLabel.setText("Wrong input values!");
             return;
         }
 
-        AbstractWorldMap map;
-        if(Objects.equals(selectedMap, "Poison map")){
-            map = new PoisonMap(foodStartingAmount, mapWidth, mapHeight);
-        }
-        else{
-            map = new EquatorMap(foodStartingAmount, mapWidth, mapHeight);
-        }
+        Platform.runLater(() -> {
+            Stage simulationStage = new Stage();
+            simulationStage.initStyle(StageStyle.DECORATED);
+            simulationStage.initModality(Modality.NONE);
+            simulationStage.setTitle("Simulation");
 
-        map.addObserver(this);
-        setMap(map);
+            simulationGrid = new GridPane();
+            simulationStage.setScene(new Scene(simulationGrid, 700, 700));
+            simulationStage.setOnCloseRequest(event -> {
+                simulationStage.close();
+            });
+            simulationStage.show();
 
-        CELL_SIZE = Math.min(
-                (int)(Screen.getPrimary().getVisualBounds().getHeight()/(map.getMapHeight())*0.5),
-                (int)(Screen.getPrimary().getVisualBounds().getWidth()/(map.getMapWidth())*0.5));
+            AbstractWorldMap map;
+            if (Objects.equals(selectedMap, "Poison map")) {
+                map = new PoisonMap(foodStartingAmount, mapWidth, mapHeight);
+            } else {
+                map = new EquatorMap(foodStartingAmount, mapWidth, mapHeight);
+            }
 
-        Simulation simulation = new Simulation(this.map, animalStartingAmount,
-                animalStartingEnergy, animalEnergyPerMove,
-                animalMinEnergyToReproduce, animalEnergyToReproduceCost,
-                animalGenesAmount, !selectedGenes.equals("Default"),
-                animalMinMutations, animalMaxMutations,
-                foodGrowthPerDay, foodEnergy);
+            map.addObserver(this);
+            setMap(map);
 
-        List<Simulation> simulations = new ArrayList<>();
-        simulations.add(simulation);
+            CELL_SIZE = Math.min(
+                    (int) (Screen.getPrimary().getVisualBounds().getHeight() / (map.getMapHeight()) * 0.5),
+                    (int) (Screen.getPrimary().getVisualBounds().getWidth() / (map.getMapWidth()) * 0.5));
 
-        mapGrid.setManaged(true);
-        mapGrid.setVisible(true);
+            List<Simulation> simulations = new ArrayList<>();
+            Simulation simulation = new Simulation(this.map, animalStartingAmount,
+                    animalStartingEnergy, animalEnergyPerMove,
+                    animalMinEnergyToReproduce, animalEnergyToReproduceCost,
+                    animalGenesAmount, !selectedGenes.equals("Default"),
+                    animalMinMutations, animalMaxMutations,
+                    foodGrowthPerDay, foodEnergy);
+            simulations.add(simulation);
 
-        setMap(map);
-        cellLabels = new Label[mapHeight][mapWidth];
-        drawGrid();
+            simulationGrid.setManaged(true);
+            simulationGrid.setVisible(true);
 
-        SimulationEngine engine = new SimulationEngine(simulations, 4);
-        engine.runAsync();
+            setMap(map);
+            cellLabels = new Label[mapHeight][mapWidth];
+            drawGrid();
+
+            new Thread(() -> {
+                for (Simulation sim : simulations) {
+                    sim.run();
+                }
+            }).start();
+        });
     }
 
 
@@ -384,8 +404,8 @@ public class SimulationPresenter implements MapChangeListener {
             foodEnergy = Integer.parseInt(FOOD_ENERGY.getText());
 
             if (mapWidth <= 0 || mapHeight <= 0 || animalStartingAmount <= 0 || animalStartingEnergy <= 0 || animalEnergyPerMove < 0 ||
-               animalMinEnergyToReproduce <= 0 || animalEnergyToReproduceCost <= 0 || animalGenesAmount <= 0 || animalMinMutations < 0 ||
-               animalMaxMutations < 0 || foodStartingAmount < 0 || foodGrowthPerDay < 0 || foodEnergy < 0){
+                    animalMinEnergyToReproduce <= 0 || animalEnergyToReproduceCost <= 0 || animalGenesAmount <= 0 || animalMinMutations < 0 ||
+                    animalMaxMutations < 0 || foodStartingAmount < 0 || foodGrowthPerDay < 0 || foodEnergy < 0){
                 System.out.println("Error: values <= 0.");
                 return false;
             }
