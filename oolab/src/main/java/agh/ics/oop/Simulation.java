@@ -5,7 +5,11 @@ import agh.ics.oop.model.*;
 import java.util.*;
 
 public class Simulation implements Runnable{
+    private boolean isOver = false;
 
+    public void endSimulation(){
+        isOver = true;
+    }
     private final int ANIMAL_STARTING_AMOUNT;
     private final int ANIMAL_STARTING_ENERGY;
     private final int ANIMAL_ENERGY_PER_MOVE;
@@ -62,16 +66,18 @@ public class Simulation implements Runnable{
     }
 
     public void run(){
+        map.initializeDrawMap();
         freezeSimulation();
-        while (true){
+        while (!isOver){
             clearDeadAnimals();
             if(!animals.isEmpty()) moveAllAnimals(); else break;
             feedAnimals();
             breedAnimals();
             spawnNewFood();
             freezeSimulation();
+            map.initializeDrawMap();
         }
-        spawnNewFood();
+        map.initializeDrawMap();
         System.out.println("END OF SIMULATION - EVERY ANIMAL IS DEAD!");
     }
 
