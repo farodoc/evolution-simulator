@@ -5,6 +5,7 @@ import agh.ics.oop.model.*;
 import java.util.*;
 
 public class Simulation implements Runnable{
+    private final Settings s;
     private boolean isOver = false;
 
     public void endSimulation(){
@@ -31,6 +32,7 @@ public class Simulation implements Runnable{
 
     public Simulation(Settings s)
     {
+        this.s = s;
         this.animals = new ArrayList<>();
         this.map = s.getMap();
         this.ANIMAL_STARTING_AMOUNT = s.getAnimalStartingAmount();
@@ -48,16 +50,8 @@ public class Simulation implements Runnable{
     }
 
     private void generateAnimals(){
-        int mapWidth = map.getMapWidth();
-        int mapHeight = map.getMapHeight();
-
-        for(int i = 0; i < ANIMAL_STARTING_AMOUNT; i++){
-            int x = (int)(Math.random() * mapWidth);
-            int y = (int)(Math.random() * mapHeight);
-            Animal animal = new Animal(new Vector2d(x, y), ANIMAL_STARTING_ENERGY, ANIMAL_GENES_AMOUNT, LOOPED_GENES_ACTIVE);
-            map.place(animal);
-            animals.add(animal);
-        }
+        map.generateAnimals(s.getAnimalStartingAmount(), s.getAnimalStartingEnergy(),
+                s.getAnimalGenesAmount(), s.getIsLoopedGenes());
     }
 
     public void run(){
@@ -65,7 +59,9 @@ public class Simulation implements Runnable{
         freezeSimulation();
         while (!isOver){
             clearDeadAnimals();
-            if(!animals.isEmpty()) moveAllAnimals(); else break;
+            if(map.isEveryAnimalDead())
+                break;
+            moveAllAnimals();
             feedAnimals();
             breedAnimals();
             spawnNewFood();
@@ -78,112 +74,28 @@ public class Simulation implements Runnable{
 
     private void freezeSimulation(){
         try {
-            Thread.sleep(100);
+            Thread.sleep(1000);
         } catch (InterruptedException e) {
             throw new RuntimeException(e);
         }
     }
 
     private void breedAnimals() {
-        HashSet<Vector2d> bredPositions = new HashSet<>();
-        List<Animal> animalsCopy = new ArrayList<>(animals);
-
-        for(Animal animal: animalsCopy){
-            if(!bredPositions.contains(animal.getPosition())) {
-                List<Animal> filteredAnimals = findAnimalsToBreed(animal.getPosition());
-                int pairs = filteredAnimals.size() / 2;
-                int animalIndex = 0;
-
-                for (int i = 0; i < pairs; i++) {
-                    combineAnimalsAndSpawnChild(filteredAnimals.get(animalIndex), filteredAnimals.get(animalIndex + 1));
-                    animalIndex += 2;
-                }
-                bredPositions.add(animal.getPosition());
-            }
-        }
-    }
-
-    private List<Animal> findAnimalsToBreed(Vector2d position){
-        List<Animal> filteredAnimals = new ArrayList<>();
-
-        for (Animal animal : animals) {
-            if (animal.getPosition().equals(position) && animal.getEnergy() >= ANIMAL_MIN_ENERGY_TO_REPRODUCE) {
-                filteredAnimals.add(animal);
-            }
-        }
-
-        Comparator<Animal> animalComparator = Comparator
-                .comparingInt(Animal::getEnergy)
-                .thenComparingInt(Animal::getAge)
-                .thenComparingInt(Animal::getChildrenAmount)
-                .reversed();
-
-        filteredAnimals.sort(animalComparator);
-
-        return filteredAnimals;
-    }
-
-    private void combineAnimalsAndSpawnChild(Animal strongerAnimal, Animal weakerAnimal){
-        strongerAnimal.updateAnimalAfterBreeding(ANIMAL_ENERGY_TO_REPRODUCE_COST);
-        weakerAnimal.updateAnimalAfterBreeding(ANIMAL_ENERGY_TO_REPRODUCE_COST);
-
-        Animal child = new Animal(strongerAnimal.getPosition(), 2 * ANIMAL_ENERGY_TO_REPRODUCE_COST, ANIMAL_GENES_AMOUNT, LOOPED_GENES_ACTIVE,
-                strongerAnimal, weakerAnimal, ANIMAL_MIN_MUTATIONS, ANIMAL_MAX_MUTATIONS);
-        map.place(child);
-        animals.add(child);
+        map.breedAnimals(s.getAnimalMinEnergyToReproduce(), s.getAnimalEnergyToReproduce(),
+                s.getAnimalGenesAmount(), s.getIsLoopedGenes(), s.getAnimalMinMutations(),
+                s.getAnimalMaxMutations());
     }
 
     private void feedAnimals(){
-        Map<Vector2d, AbstractFood> foodTiles;
-        for(Animal animal: animals) {
-            foodTiles = map.getFoodTiles();
-            if(foodTiles.containsKey(animal.getPosition())) {
-                AbstractFood food = foodTiles.get(animal.getPosition());
-                Animal animalThatEats = conflictManager(animal.getPosition());
-
-                if(Objects.equals(food.toString(), "X"))
-                    map.feedAnimal(animalThatEats, -FOOD_ENERGY);
-
-                else
-                    map.feedAnimal(animalThatEats, FOOD_ENERGY);
-            }
-        }
-    }
-
-    private Animal conflictManager(Vector2d position){
-        List<Animal> filteredAnimals = new ArrayList<>();
-
-        for (Animal animal : animals) {
-            if (animal.getPosition().equals(position)) {
-                filteredAnimals.add(animal);
-            }
-        }
-
-        Comparator<Animal> animalComparator = Comparator
-                .comparingInt(Animal::getEnergy)
-                .thenComparingInt(Animal::getAge)
-                .thenComparingInt(Animal::getChildrenAmount)
-                .reversed();
-
-        filteredAnimals.sort(animalComparator);
-
-        return filteredAnimals.get(0);
+        map.feedAnimals(s.getFoodEnergy());
     }
 
     private void moveAllAnimals(){
-        for(Animal animal : animals){
-            map.move(animal, ANIMAL_ENERGY_PER_MOVE);
-            animal.updateAge();
-        }
+        map.moveAllAnimals(s.getAnimalEnergyPerMove());
     }
 
     private void clearDeadAnimals(){
-        for(int i = animals.size()-1; i >= 0; i--){
-            if(animals.get(i).getEnergy() <= 0){
-                map.removeAnimal(animals.get(i));
-                animals.remove(i);
-            }
-        }
+        map.clearDeadAnimals();
     }
 
     private void spawnNewFood(){

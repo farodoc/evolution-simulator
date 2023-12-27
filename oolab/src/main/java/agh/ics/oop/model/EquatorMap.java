@@ -52,11 +52,9 @@ public class EquatorMap extends AbstractWorldMap{
             if(!foodTiles.containsKey(newFoodPosition))
             {
                 foodTiles.put(newFoodPosition,new Grass(newFoodPosition));
-                //notifyObservers("Food generated at " + newFoodPosition);
                 cnt++;
             }
         }
-        notifyObservers("Food generated");
     }
 
     @Override

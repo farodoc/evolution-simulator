@@ -25,7 +25,6 @@ public class PoisonMap extends AbstractWorldMap {
 
                 else foodTiles.put(newFoodPosition,new Grass(newFoodPosition));
 
-                notifyObservers("Food generated at " + newFoodPosition);
                 cnt++;
             }
         }
