@@ -176,10 +176,6 @@ public abstract class AbstractWorldMap implements WorldMap{
         }
     }
 
-    public Map<Vector2d, AbstractFood> getFoodTiles() {
-        return Collections.unmodifiableMap(foodTiles);
-    }
-
     public void feedAnimal(Animal animalThatEats, int foodEnergy){
         Vector2d position = animalThatEats.getPosition();
         if(tiles[position.y()][position.x()] == TileType.DIRT){
@@ -196,20 +192,6 @@ public abstract class AbstractWorldMap implements WorldMap{
     public String toString(){
         Boundary boundaries = getCurrentBounds();
         return mapVisualizer.draw(boundaries.bottomLeftCorner(), boundaries.topRightCorner());
-    }
-
-    //DO USUNIECIA !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-    public void removeAnimal(Animal animal) {
-        Vector2d position = animal.getPosition();
-        List<Animal> animalList = animals.get(position);
-
-        if (animalList != null) {
-            animalList.remove(animal);
-
-            if (animalList.isEmpty()) {
-                animals.remove(position);
-            }
-        }
     }
 
     public int getMapHeight() {return mapHeight;}
@@ -240,7 +222,9 @@ public abstract class AbstractWorldMap implements WorldMap{
     }
 
     public void clearDeadAnimals() {
-        for (Map.Entry<Vector2d, List<Animal>> entry : animals.entrySet()) {
+        Map<Vector2d, List<Animal>> animalsCopy = generateDeepCopyOfAnimalsMap();
+
+        for (Map.Entry<Vector2d, List<Animal>> entry : animalsCopy.entrySet()) {
             Vector2d position = entry.getKey();
             List<Animal> animalList = entry.getValue();
 
@@ -257,7 +241,10 @@ public abstract class AbstractWorldMap implements WorldMap{
     }
 
     public void moveAllAnimals(int ANIMAL_ENERGY_PER_MOVE){
-        for (Map.Entry<Vector2d, List<Animal>> entry : animals.entrySet()) {
+
+        Map<Vector2d, List<Animal>> animalsCopy = generateDeepCopyOfAnimalsMap();
+
+        for (Map.Entry<Vector2d, List<Animal>> entry : animalsCopy.entrySet()) {
             List<Animal> animalList = entry.getValue();
 
             for (Animal animal : animalList) {
@@ -284,7 +271,7 @@ public abstract class AbstractWorldMap implements WorldMap{
         }
     }
 
-    private Animal conflictManager(Vector2d position){
+    protected Animal conflictManager(Vector2d position){
         List<Animal> filteredAnimals = new ArrayList<>(animals.get(position));
 
         Comparator<Animal> animalComparator = Comparator
@@ -302,13 +289,12 @@ public abstract class AbstractWorldMap implements WorldMap{
                               int ANIMAL_GENES_AMOUNT, boolean LOOPED_GENES_ACTIVE,
                               int ANIMAL_MIN_MUTATIONS, int ANIMAL_MAX_MUTATIONS)
     {
-        HashMap<Vector2d, List<Animal>> animalsCopy = new HashMap<>(animals);
+        Map<Vector2d, List<Animal>> animalsCopy = generateDeepCopyOfAnimalsMap();
 
         for (Map.Entry<Vector2d, List<Animal>> entry : animalsCopy.entrySet()) {
-            Vector2d position = entry.getKey();
             List<Animal> animalList = entry.getValue();
             if(animalList.size() >= 2){
-                List<Animal> filteredAnimals = findAnimalsToBreed(position, ANIMAL_MIN_ENERGY_TO_REPRODUCE);
+                List<Animal> filteredAnimals = findAnimalsToBreed(animalList, ANIMAL_MIN_ENERGY_TO_REPRODUCE);
                 if(filteredAnimals.size() >= 2){
                     combineAnimalsAndSpawnChild(filteredAnimals.get(0), filteredAnimals.get(1),
                             ANIMAL_ENERGY_TO_REPRODUCE_COST, ANIMAL_GENES_AMOUNT, LOOPED_GENES_ACTIVE,
@@ -318,11 +304,10 @@ public abstract class AbstractWorldMap implements WorldMap{
         }
     }
 
-    private List<Animal> findAnimalsToBreed(Vector2d position, int ANIMAL_MIN_ENERGY_TO_REPRODUCE){
+    protected List<Animal> findAnimalsToBreed(List<Animal> animalCopyList, int ANIMAL_MIN_ENERGY_TO_REPRODUCE){
         List<Animal> filteredAnimals = new ArrayList<>();
-        List<Animal> animalList = new ArrayList<>(animals.get(position));
 
-        for (Animal animal : animalList) {
+        for (Animal animal : animalCopyList) {
             if (animal.getEnergy() >= ANIMAL_MIN_ENERGY_TO_REPRODUCE) {
                 filteredAnimals.add(animal);
             }
@@ -339,7 +324,7 @@ public abstract class AbstractWorldMap implements WorldMap{
         return filteredAnimals;
     }
 
-    private void combineAnimalsAndSpawnChild(Animal strongerAnimal, Animal weakerAnimal,
+    protected void combineAnimalsAndSpawnChild(Animal strongerAnimal, Animal weakerAnimal,
                                              int ANIMAL_ENERGY_TO_REPRODUCE_COST,
                                              int ANIMAL_GENES_AMOUNT,
                                              boolean LOOPED_GENES_ACTIVE,
@@ -352,6 +337,19 @@ public abstract class AbstractWorldMap implements WorldMap{
         Animal child = new Animal(strongerAnimal.getPosition(), 2 * ANIMAL_ENERGY_TO_REPRODUCE_COST, ANIMAL_GENES_AMOUNT, LOOPED_GENES_ACTIVE,
                 strongerAnimal, weakerAnimal, ANIMAL_MIN_MUTATIONS, ANIMAL_MAX_MUTATIONS);
         place(child);
+    }
+
+    private Map<Vector2d, List<Animal>> generateDeepCopyOfAnimalsMap()
+    {
+        Map<Vector2d, List<Animal>> animalsCopy = new HashMap<>();
+
+        for (Map.Entry<Vector2d, List<Animal>> entry : animals.entrySet()) {
+            Vector2d position = entry.getKey();
+            List<Animal> originalAnimalList = entry.getValue();
+            List<Animal> clonedAnimalList = new ArrayList<>(originalAnimalList);
+            animalsCopy.put(position, clonedAnimalList);
+        }
+        return animalsCopy;
     }
 
     public boolean isEveryAnimalDead(){

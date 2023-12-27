@@ -75,7 +75,7 @@ public class SimulationPresenter implements MapChangeListener {
         MAP_WIDTH.setText("5");
         MAP_HEIGHT.setText("5");
         mapComboBox.setValue("Equator map");
-        ANIMAL_STARTING_AMOUNT.setText("15");
+        ANIMAL_STARTING_AMOUNT.setText("3");
         ANIMAL_STARTING_ENERGY.setText("50");
         ANIMAL_ENERGY_PER_MOVE.setText("5");
         ANIMAL_MIN_ENERGY_TO_REPRODUCE.setText("35");

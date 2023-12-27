@@ -6,7 +6,6 @@ public class Simulation implements Runnable{
     private final Settings s;
     private final AbstractWorldMap map;
 
-
     public Simulation(Settings s)
     {
         this.s = s;
@@ -21,11 +20,9 @@ public class Simulation implements Runnable{
 
     public void run(){
         map.initializeDrawMap();
-        freezeSimulation();
         while (true){
             clearDeadAnimals();
-            if(map.isEveryAnimalDead())
-                break;
+            if(map.isEveryAnimalDead()) break;
             moveAllAnimals();
             feedAnimals();
             breedAnimals();
@@ -51,19 +48,11 @@ public class Simulation implements Runnable{
                 s.getAnimalMaxMutations());
     }
 
-    private void feedAnimals(){
-        map.feedAnimals(s.getFoodEnergy());
-    }
+    private void feedAnimals(){map.feedAnimals(s.getFoodEnergy());}
 
-    private void moveAllAnimals(){
-        map.moveAllAnimals(s.getAnimalEnergyPerMove());
-    }
+    private void moveAllAnimals(){map.moveAllAnimals(s.getAnimalEnergyPerMove());}
 
-    private void clearDeadAnimals(){
-        map.clearDeadAnimals();
-    }
+    private void clearDeadAnimals(){map.clearDeadAnimals();}
 
-    private void spawnNewFood(){
-        map.generateFood(s.getFoodGrowthPerDay());
-    }
+    private void spawnNewFood(){map.generateFood(s.getFoodGrowthPerDay());}
 }
