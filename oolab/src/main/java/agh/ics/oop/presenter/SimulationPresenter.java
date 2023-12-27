@@ -263,17 +263,37 @@ public class SimulationPresenter implements MapChangeListener {
                     (int) (Screen.getPrimary().getVisualBounds().getHeight() / (map.getMapHeight()) * 0.5),
                     (int) (Screen.getPrimary().getVisualBounds().getWidth() / (map.getMapWidth()) * 0.5));
 
-            Simulation simulation = new Simulation(this.map, animalStartingAmount,
-                    animalStartingEnergy, animalEnergyPerMove,
-                    animalMinEnergyToReproduce, animalEnergyToReproduceCost,
-                    animalGenesAmount, !selectedGenes.equals("Default"),
-                    animalMinMutations, animalMaxMutations,
-                    foodGrowthPerDay, foodEnergy);
+            String[] attributesArray = {
+                    CONFIG_NAME.getText(),
+                    String.valueOf(mapWidth),
+                    String.valueOf(mapHeight),
+                    String.valueOf(animalStartingAmount),
+                    String.valueOf(animalStartingEnergy),
+                    String.valueOf(animalEnergyPerMove),
+                    String.valueOf(animalMinEnergyToReproduce),
+                    String.valueOf(animalEnergyToReproduceCost),
+                    String.valueOf(animalGenesAmount),
+                    String.valueOf(animalMinMutations),
+                    String.valueOf(animalMaxMutations),
+                    String.valueOf(foodStartingAmount),
+                    String.valueOf(foodGrowthPerDay),
+                    String.valueOf(foodEnergy),
+                    mapComboBox.getValue(),
+                    genesComboBox.getValue()
+            };
+
+            Settings settings;
+            try {
+                settings = new Settings(attributesArray, map);
+            } catch (IllegalArgumentException e) {
+                throw new RuntimeException(e);
+            }
+
+            Simulation simulation = new Simulation(settings);
 
             simulationGrid.setManaged(true);
             simulationGrid.setVisible(true);
 
-            setMap(map);
             cellLabels = new Label[mapHeight][mapWidth];
             drawGrid();
 

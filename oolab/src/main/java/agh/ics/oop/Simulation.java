@@ -29,26 +29,21 @@ public class Simulation implements Runnable{
     private final AbstractWorldMap map;
     private final List<Animal> animals;
 
-    public Simulation(AbstractWorldMap map, int ANIMAL_STARTING_AMOUNT,
-                      int ANIMAL_STARTING_ENERGY, int ANIMAL_ENERGY_PER_MOVE,
-                      int ANIMAL_MIN_ENERGY_TO_REPRODUCE, int ANIMAL_ENERGY_TO_REPRODUCE_COST,
-                      int ANIMAL_GENES_AMOUNT, boolean LOOPED_GENES_ACTIVE,
-                      int ANIMAL_MIN_MUTATIONS, int ANIMAL_MAX_MUTATIONS,
-                      int FOOD_GROWTH_PER_DAY, int FOOD_ENERGY)
+    public Simulation(Settings s)
     {
         this.animals = new ArrayList<>();
-        this.map = map;
-        this.ANIMAL_STARTING_AMOUNT = ANIMAL_STARTING_AMOUNT;
-        this.ANIMAL_STARTING_ENERGY = ANIMAL_STARTING_ENERGY;
-        this.ANIMAL_ENERGY_PER_MOVE = ANIMAL_ENERGY_PER_MOVE;
-        this.ANIMAL_MIN_ENERGY_TO_REPRODUCE = ANIMAL_MIN_ENERGY_TO_REPRODUCE;
-        this.ANIMAL_ENERGY_TO_REPRODUCE_COST = ANIMAL_ENERGY_TO_REPRODUCE_COST;
-        this.ANIMAL_GENES_AMOUNT = ANIMAL_GENES_AMOUNT;
-        this.LOOPED_GENES_ACTIVE = LOOPED_GENES_ACTIVE;
-        this.ANIMAL_MIN_MUTATIONS = ANIMAL_MIN_MUTATIONS;
-        this.ANIMAL_MAX_MUTATIONS = ANIMAL_MAX_MUTATIONS;
-        this.FOOD_GROWTH_PER_DAY = FOOD_GROWTH_PER_DAY;
-        this.FOOD_ENERGY = FOOD_ENERGY;
+        this.map = s.getMap();
+        this.ANIMAL_STARTING_AMOUNT = s.getAnimalStartingAmount();
+        this.ANIMAL_STARTING_ENERGY = s.getAnimalStartingEnergy();
+        this.ANIMAL_ENERGY_PER_MOVE = s.getAnimalEnergyPerMove();
+        this.ANIMAL_MIN_ENERGY_TO_REPRODUCE = s.getAnimalMinEnergyToReproduce();
+        this.ANIMAL_ENERGY_TO_REPRODUCE_COST = s.getAnimalEnergyToReproduce();
+        this.ANIMAL_GENES_AMOUNT = s.getAnimalGenesAmount();
+        this.LOOPED_GENES_ACTIVE = s.getIsLoopedGenes();
+        this.ANIMAL_MIN_MUTATIONS = s.getAnimalMinMutations();
+        this.ANIMAL_MAX_MUTATIONS = s.getAnimalMaxMutations();
+        this.FOOD_GROWTH_PER_DAY = s.getFoodGrowthPerDay();
+        this.FOOD_ENERGY = s.getFoodEnergy();
         generateAnimals();
     }
 
@@ -83,7 +78,7 @@ public class Simulation implements Runnable{
 
     private void freezeSimulation(){
         try {
-            Thread.sleep(5000);
+            Thread.sleep(100);
         } catch (InterruptedException e) {
             throw new RuntimeException(e);
         }
