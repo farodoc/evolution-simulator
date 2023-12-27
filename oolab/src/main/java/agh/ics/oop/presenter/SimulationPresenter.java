@@ -21,8 +21,6 @@ import javafx.stage.Stage;
 import javafx.stage.StageStyle;
 
 import java.io.FileNotFoundException;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 
@@ -127,11 +125,9 @@ public class SimulationPresenter implements MapChangeListener {
 
 
     private void drawGrid() {
-        // Wyczyść poprzednie ustawienia
         simulationGrid.getColumnConstraints().clear();
         simulationGrid.getRowConstraints().clear();
-
-        // Analogicznie do poprzedniej wersji metody drawGrid, ale używając simulationGrid
+        
         Boundary boundaries = map.getCurrentBounds();
         int width = boundaries.topRightCorner().x() - boundaries.bottomLeftCorner().x() + 1;
         int height = boundaries.topRightCorner().y() - boundaries.bottomLeftCorner().y() + 1;
@@ -230,6 +226,7 @@ public class SimulationPresenter implements MapChangeListener {
     public void mapChanged(WorldMap map, String message) {
         Platform.runLater(() -> {
             drawMap();
+            System.out.println(map.getId());
         });
     }
 
@@ -266,14 +263,12 @@ public class SimulationPresenter implements MapChangeListener {
                     (int) (Screen.getPrimary().getVisualBounds().getHeight() / (map.getMapHeight()) * 0.5),
                     (int) (Screen.getPrimary().getVisualBounds().getWidth() / (map.getMapWidth()) * 0.5));
 
-            List<Simulation> simulations = new ArrayList<>();
             Simulation simulation = new Simulation(this.map, animalStartingAmount,
                     animalStartingEnergy, animalEnergyPerMove,
                     animalMinEnergyToReproduce, animalEnergyToReproduceCost,
                     animalGenesAmount, !selectedGenes.equals("Default"),
                     animalMinMutations, animalMaxMutations,
                     foodGrowthPerDay, foodEnergy);
-            simulations.add(simulation);
 
             simulationGrid.setManaged(true);
             simulationGrid.setVisible(true);
@@ -282,11 +277,7 @@ public class SimulationPresenter implements MapChangeListener {
             cellLabels = new Label[mapHeight][mapWidth];
             drawGrid();
 
-            new Thread(() -> {
-                for (Simulation sim : simulations) {
-                    sim.run();
-                }
-            }).start();
+            new Thread(simulation).start();
         });
     }
 

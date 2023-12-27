@@ -83,7 +83,7 @@ public class Simulation implements Runnable{
 
     private void freezeSimulation(){
         try {
-            Thread.sleep(1000);
+            Thread.sleep(5000);
         } catch (InterruptedException e) {
             throw new RuntimeException(e);
         }
