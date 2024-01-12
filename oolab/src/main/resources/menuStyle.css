@@ -1,0 +1,58 @@
+.configTextField {
+    -fx-min-width: 200px;
+}
+
+#mapComboBox,
+#genesComboBox {
+    -fx-pref-width: 150px;
+}
+
+TextField {
+    -fx-pref-width: 80px;
+}
+
+Label {
+    -fx-font-size: 14px;
+}
+
+VBox {
+    -fx-spacing: 15;
+}
+
+HBox {
+    -fx-spacing: 10;
+}
+
+Button {
+    -fx-min-width: 120px;
+    -fx-font-size: 14px;
+    -fx-background-color: LIGHTBLUE;
+    -fx-effect: dropshadow( three-pass-box, rgba(0,0,0,0.3), 5, 0, 0, 0);
+}
+
+Button:hover {
+    -fx-effect: dropshadow( three-pass-box, rgba(0,0,0,0.6), 10, 0, 0, 0);
+}
+
+Button:pressed {
+    -fx-effect: dropshadow( three-pass-box, rgba(0,0,0,0.8), 15, 0, 0, 0);
+}
+
+.labelOptions {
+    -fx-font-size: 16px;
+    -fx-font-weight: bold;
+}
+
+#infoLabel {
+    -fx-font-size: 30px;
+}
+
+.root {
+    -fx-padding: 10px;
+}
+
+#errorHBox {
+    -fx-alignment: center;
+    -fx-padding: 20px;
+    -fx-font-family: "Georgia";
+}
