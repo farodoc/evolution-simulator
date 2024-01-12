@@ -232,10 +232,11 @@ public class SimulationPresenter implements MapChangeListener {
     }
 
     private Label[] statValues;
+    private final int numberOfStats = 8;
 
     private void updateStats() {
         String[] currentStats = map.getCurrentStats();
-        for(int i = 0; i < 7; i++){
+        for(int i = 0; i < numberOfStats; i++){
             statValues[i].setText(currentStats[i]);
         }
     }
@@ -262,10 +263,9 @@ public class SimulationPresenter implements MapChangeListener {
             VBox statisticsPane = new VBox(10);
             statisticsPane.setPadding(new Insets(10));
 
-            int numberOfStats = 7;
             statValues = new Label[numberOfStats];
-            String[] statNames = {"Animal amount",
-                    "Plants amount",
+            String[] statNames = {"Day","Current animal amount",
+                    "Current plants amount",
                     "Free tiles amount",
                     "Most popular genotype",
                     "Average energy level",

@@ -14,6 +14,8 @@ public class Animal implements WorldElement{
     private int descendantAmount = 0;
     private int maxEnergy;
     private final int genesAmount;
+    private int plantsEaten = 0;
+    private Integer deathDate = null;
     private final List<Animal> parents = new ArrayList<>(2);
     public Animal(Vector2d position, int startingEnergy, int genesAmount, boolean loopedGenesActive){
         this.position = position;
@@ -100,14 +102,17 @@ public class Animal implements WorldElement{
     public int getDescendantAmount() {return descendantAmount;}
     public int getGenesAmount() {return genesAmount;}
     public AbstractGenes getGenes() {return genes;}
-    public void eat(int energy){
-        this.energy = Math.min(maxEnergy, this.energy + energy);
-    }
+    public int getPlantsEaten() {return plantsEaten;}
     public void updateAge(){
         this.age++;
     }
+    public void setDeathDate(int deathDate) {this.deathDate = deathDate;}
+    public String getDeathDate() {return deathDate == null ? "N/A" : String.valueOf(deathDate);}
     public void updateDescendantAmount(){this.descendantAmount++;}
-
+    public void eat(int energy){
+        this.energy = Math.min(maxEnergy, this.energy + energy);
+        plantsEaten++;
+    }
     private void updateParentsRecursion(List<Animal> visitedAnimals){
         if(parents.isEmpty())
             return;

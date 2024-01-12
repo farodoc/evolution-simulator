@@ -23,10 +23,10 @@ public abstract class AbstractWorldMap implements WorldMap{
     protected int lastIndex = 0;
 
     //values for stats
+    private int day = 0;
     protected int totalAnimalAmount = 0;
     protected int deadAnimalCount = 0;
     protected int deadAnimalSumAge = 0;
-
 
     public AbstractWorldMap(int mapWidth, int mapHeight) {
         this.mapWidth = mapWidth;
@@ -52,6 +52,8 @@ public abstract class AbstractWorldMap implements WorldMap{
         totalAnimalAmount++;
         genotypeCounts.put(animal.getGenes().getGenesList(), genotypeCounts.getOrDefault(animal.getGenes().getGenesList(), 0) + 1);
     }
+
+    public void nextDay(){day++;}
 
     abstract public void generateFood(int howManyFoodToGenerate);
     abstract protected void generateJungleTiles();
@@ -236,6 +238,7 @@ public abstract class AbstractWorldMap implements WorldMap{
                 if(animalList.get(i).getEnergy() <= 0){
                     deadAnimalCount++;
                     deadAnimalSumAge += animalList.get(i).getAge();
+                    animalList.get(i).setDeathDate(day);
                     animalList.remove(i);
                 }
             }
@@ -369,14 +372,15 @@ public abstract class AbstractWorldMap implements WorldMap{
     }
 
     public String[] getCurrentStats(){
-        String[] stats = new String[7];
-        stats[0] = String.valueOf(countCurrentAnimals());
-        stats[1] = String.valueOf(foodTiles.size());
-        stats[2] = String.valueOf(countFreeTilesAmount());
-        stats[3] = getMostFrequentGenotype();
-        stats[4] = String.valueOf(getAverageEnergyForLivingAnimals());
-        stats[5] = String.valueOf(getAverageLifespanForDeadAnimals());
-        stats[6] = String.valueOf(getAverageChildrenAmountForLivingAnimals());
+        String[] stats = new String[8];
+        stats[0] = String.valueOf(day);
+        stats[1] = String.valueOf(countCurrentAnimals());
+        stats[2] = String.valueOf(foodTiles.size());
+        stats[3] = String.valueOf(countFreeTilesAmount());
+        stats[4] = getMostFrequentGenotype();
+        stats[5] = String.valueOf(getAverageEnergyForLivingAnimals());
+        stats[6] = String.valueOf(getAverageLifespanForDeadAnimals());
+        stats[7] = String.valueOf(getAverageChildrenAmountForLivingAnimals());
         return stats;
     }
 
@@ -463,4 +467,19 @@ public abstract class AbstractWorldMap implements WorldMap{
 
         return res/100;
     }
+
+    public String[] getAnimalStats(Animal animal) {
+        String[] stats = new String[8];
+        stats[0] = String.valueOf(animal.getGenes().getGenesList());
+        stats[1] = String.valueOf(animal.getGenes().getActiveGene());
+        stats[2] = String.valueOf(animal.getEnergy());
+        stats[3] = String.valueOf(animal.getPlantsEaten());
+        stats[4] = String.valueOf(animal.getChildrenAmount());
+        stats[5] = String.valueOf(animal.getDescendantAmount());
+        stats[6] = String.valueOf(animal.getAge());
+        stats[7] = animal.getDeathDate();
+        return stats;
+    }
+
+
 }

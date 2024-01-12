@@ -28,6 +28,7 @@ public class Simulation implements Runnable{
             breedAnimals();
             spawnNewFood();
             freezeSimulation();
+            map.nextDay();
             map.initializeDrawMap();
         }
         map.initializeDrawMap();
