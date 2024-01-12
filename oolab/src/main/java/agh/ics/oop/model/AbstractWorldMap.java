@@ -10,6 +10,7 @@ public abstract class AbstractWorldMap implements WorldMap{
     private final List<MapChangeListener> observers = new ArrayList<>();
     protected final Map<Vector2d, List<Animal>> animals = new HashMap<>();
     protected final Map<Vector2d, AbstractFood> foodTiles = new HashMap<>();
+    private Map<List<Integer>, Integer> genotypeCounts = new HashMap<>();
     protected final MapVisualizer mapVisualizer;
     protected final UUID id;
     protected final Vector2d BOTTOM_LEFT_MAP_BORDER = new Vector2d(0,0);
@@ -20,6 +21,12 @@ public abstract class AbstractWorldMap implements WorldMap{
     protected final List<Vector2d> jungleTilesPositions = new ArrayList<>();
     protected int jungleFoodAmount = 0;
     protected int lastIndex = 0;
+
+    //values for stats
+    protected int totalAnimalAmount = 0;
+    protected int deadAnimalCount = 0;
+    protected int deadAnimalSumAge = 0;
+
 
     public AbstractWorldMap(int mapWidth, int mapHeight) {
         this.mapWidth = mapWidth;
@@ -42,11 +49,12 @@ public abstract class AbstractWorldMap implements WorldMap{
             newAnimalList.add(animal);
             animals.put(position, newAnimalList);
         }
+        totalAnimalAmount++;
+        genotypeCounts.put(animal.getGenes().getGenesList(), genotypeCounts.getOrDefault(animal.getGenes().getGenesList(), 0) + 1);
     }
 
-    public void generateFood(int howManyFoodToGenerate){
-
-    }
+    abstract public void generateFood(int howManyFoodToGenerate);
+    abstract protected void generateJungleTiles();
 
     protected Vector2d generateNewFoodPosition(){
         if(jungleFoodAmount<jungleTilesPositions.size() && Math.random() < 0.8){//jungle drawn
@@ -94,10 +102,6 @@ public abstract class AbstractWorldMap implements WorldMap{
         }
         Collections.shuffle(dirtTilesPositions);
         Collections.shuffle(jungleTilesPositions);
-    }
-
-    protected void generateJungleTiles(){
-
     }
 
     protected boolean isInMap(int equator, int yModifier){
@@ -230,6 +234,8 @@ public abstract class AbstractWorldMap implements WorldMap{
 
             for (int i = animalList.size() - 1; i >= 0; i--) {
                 if(animalList.get(i).getEnergy() <= 0){
+                    deadAnimalCount++;
+                    deadAnimalSumAge += animalList.get(i).getAge();
                     animalList.remove(i);
                 }
             }
@@ -360,5 +366,101 @@ public abstract class AbstractWorldMap implements WorldMap{
         Set<Vector2d> keys = new HashSet<>(animals.keySet());
         keys.addAll(new HashSet<>(foodTiles.keySet()));
         return keys;
+    }
+
+    public String[] getCurrentStats(){
+        String[] stats = new String[7];
+        stats[0] = String.valueOf(countCurrentAnimals());
+        stats[1] = String.valueOf(foodTiles.size());
+        stats[2] = String.valueOf(countFreeTilesAmount());
+        stats[3] = getMostFrequentGenotype();
+        stats[4] = String.valueOf(getAverageEnergyForLivingAnimals());
+        stats[5] = String.valueOf(getAverageLifespanForDeadAnimals());
+        stats[6] = String.valueOf(getAverageChildrenAmountForLivingAnimals());
+        return stats;
+    }
+
+    private int countFreeTilesAmount() {
+        Set<Vector2d> occupiedPositions = new HashSet<>();
+        occupiedPositions.addAll(animals.keySet());
+        occupiedPositions.addAll(foodTiles.keySet());
+
+        Set<Vector2d> copyOfOccupiedPositions = new HashSet<>(occupiedPositions);
+
+        return mapWidth * mapHeight - copyOfOccupiedPositions.size();
+    }
+
+    private int countCurrentAnimals() {
+        int totalAnimalsCount = 0;
+
+        for (List<Animal> animalList : animals.values()) {
+            if (animalList != null) {
+                totalAnimalsCount += animalList.size();
+            }
+        }
+
+        return totalAnimalsCount;
+    }
+
+    private String getMostFrequentGenotype() {
+        List<Integer> mostFrequentGenotype = new ArrayList<>();
+        int maxCount = 0;
+
+        for (Map.Entry<List<Integer>, Integer> entry : genotypeCounts.entrySet()) {
+            if (entry.getValue() > maxCount) {
+                mostFrequentGenotype = entry.getKey();
+                maxCount = entry.getValue();
+            }
+        }
+
+        return mostFrequentGenotype + " x " + maxCount;
+    }
+
+    private double getAverageEnergyForLivingAnimals(){
+        int energySum = 0;
+        int animalCount = 0;
+
+        for (List<Animal> animalsList : animals.values()) {
+            if (animalsList != null) {
+                for (Animal animal : animalsList) {
+                    energySum += animal.getEnergy();
+                    animalCount++;
+                }
+            }
+        }
+
+        double res = animalCount > 0 ? (double) energySum / animalCount : 0;
+        res *= 100;
+        res = Math.round(res);
+
+        return res/100;
+    }
+
+    private double getAverageLifespanForDeadAnimals(){
+        double res = deadAnimalCount > 0 ? (double) deadAnimalSumAge/deadAnimalCount : 0;
+        res *= 100;
+        res = Math.round(res);
+
+        return res/100;
+    }
+
+    private double getAverageChildrenAmountForLivingAnimals(){
+        int childrenSum = 0;
+        int animalCount = 0;
+
+        for (List<Animal> animalsList : animals.values()) {
+            if (animalsList != null) {
+                for (Animal animal : animalsList) {
+                    childrenSum += animal.getChildrenAmount();
+                    animalCount++;
+                }
+            }
+        }
+
+        double res = animalCount > 0 ? (double) childrenSum / animalCount : 0;
+        res *= 100;
+        res = Math.round(res);
+
+        return res/100;
     }
 }

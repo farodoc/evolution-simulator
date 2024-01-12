@@ -20,6 +20,7 @@ import javafx.stage.Stage;
 import javafx.stage.StageStyle;
 
 import java.io.FileNotFoundException;
+import java.util.ArrayList;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
@@ -75,7 +76,7 @@ public class SimulationPresenter implements MapChangeListener {
         MAP_WIDTH.setText("5");
         MAP_HEIGHT.setText("5");
         mapComboBox.setValue("Equator map");
-        ANIMAL_STARTING_AMOUNT.setText("3");
+        ANIMAL_STARTING_AMOUNT.setText("10");
         ANIMAL_STARTING_ENERGY.setText("50");
         ANIMAL_ENERGY_PER_MOVE.setText("5");
         ANIMAL_MIN_ENERGY_TO_REPRODUCE.setText("35");
@@ -225,8 +226,18 @@ public class SimulationPresenter implements MapChangeListener {
     public void mapChanged(WorldMap map, String message) {
         Platform.runLater(() -> {
             drawMap();
-            System.out.println(map.getId());
+            updateStats();
+            //System.out.println(map.getId());
         });
+    }
+
+    private Label[] statValues;
+
+    private void updateStats() {
+        String[] currentStats = map.getCurrentStats();
+        for(int i = 0; i < 7; i++){
+            statValues[i].setText(currentStats[i]);
+        }
     }
 
     public void onSimulationStartClicked(javafx.event.ActionEvent actionEvent) {
@@ -242,11 +253,40 @@ public class SimulationPresenter implements MapChangeListener {
             simulationStage.setTitle("Simulation");
 
             simulationGrid = new GridPane();
-            simulationStage.setScene(new Scene(simulationGrid, 700, 700));
+            simulationStage.setScene(new Scene(simulationGrid, 1200, 1000));
             simulationStage.setOnCloseRequest(event -> {
                 simulationStage.close();
             });
             simulationStage.show();
+
+            VBox statisticsPane = new VBox(10);
+            statisticsPane.setPadding(new Insets(10));
+
+            int numberOfStats = 7;
+            statValues = new Label[numberOfStats];
+            String[] statNames = {"Animal amount",
+                    "Plants amount",
+                    "Free tiles amount",
+                    "Most popular genotype",
+                    "Average energy level",
+                    "Average lifespan of dead animals",
+                    "Average children amount"};
+
+            for (int i = 0; i < numberOfStats; i++) {
+                HBox statBox = new HBox(10);
+                statValues[i] = new Label("N/A");
+                Label statLabel = new Label(statNames[i] + ":");
+                statBox.getChildren().addAll(statLabel, statValues[i]);
+                statisticsPane.getChildren().add(statBox);
+            }
+
+            HBox mainContainer = new HBox(simulationGrid, statisticsPane);
+
+            mainContainer.setPrefWidth(1600);
+
+            Scene scene = new Scene(mainContainer, 1600, 1000);
+
+            simulationStage.setScene(scene);
 
             AbstractWorldMap map;
             if (Objects.equals(selectedMap, "Poison map")) {
