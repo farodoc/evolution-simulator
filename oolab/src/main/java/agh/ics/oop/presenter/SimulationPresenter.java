@@ -6,11 +6,9 @@ import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.geometry.HPos;
 import javafx.geometry.Insets;
+import javafx.geometry.Pos;
 import javafx.scene.Scene;
-import javafx.scene.control.ChoiceDialog;
-import javafx.scene.control.ComboBox;
-import javafx.scene.control.Label;
-import javafx.scene.control.TextField;
+import javafx.scene.control.*;
 import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
@@ -248,46 +246,6 @@ public class SimulationPresenter implements MapChangeListener {
         }
 
         Platform.runLater(() -> {
-            Stage simulationStage = new Stage();
-            simulationStage.initStyle(StageStyle.DECORATED);
-            simulationStage.initModality(Modality.NONE);
-            simulationStage.setTitle("Simulation");
-
-            simulationGrid = new GridPane();
-            simulationStage.setScene(new Scene(simulationGrid, 1200, 1000));
-            simulationStage.setOnCloseRequest(event -> {
-                simulationStage.close();
-            });
-            simulationStage.show();
-
-            VBox statisticsPane = new VBox(10);
-            statisticsPane.setPadding(new Insets(10));
-
-            statValues = new Label[numberOfStats];
-            String[] statNames = {"Day","Current animal amount",
-                    "Current plants amount",
-                    "Free tiles amount",
-                    "Most popular genotype",
-                    "Average energy level",
-                    "Average lifespan of dead animals",
-                    "Average children amount"};
-
-            for (int i = 0; i < numberOfStats; i++) {
-                HBox statBox = new HBox(10);
-                statValues[i] = new Label("N/A");
-                Label statLabel = new Label(statNames[i] + ":");
-                statBox.getChildren().addAll(statLabel, statValues[i]);
-                statisticsPane.getChildren().add(statBox);
-            }
-
-            HBox mainContainer = new HBox(simulationGrid, statisticsPane);
-
-            mainContainer.setPrefWidth(1600);
-
-            Scene scene = new Scene(mainContainer, 1600, 1000);
-
-            simulationStage.setScene(scene);
-
             AbstractWorldMap map;
             if (Objects.equals(selectedMap, "Poison map")) {
                 map = new PoisonMap(foodStartingAmount, mapWidth, mapHeight);
@@ -297,10 +255,6 @@ public class SimulationPresenter implements MapChangeListener {
 
             map.addObserver(this);
             setMap(map);
-
-            CELL_SIZE = Math.min(
-                    (int) (Screen.getPrimary().getVisualBounds().getHeight() / (map.getMapHeight()) * 0.5),
-                    (int) (Screen.getPrimary().getVisualBounds().getWidth() / (map.getMapWidth()) * 0.5));
 
             String[] attributesArray = {
                     CONFIG_NAME.getText(),
@@ -329,6 +283,68 @@ public class SimulationPresenter implements MapChangeListener {
             }
 
             Simulation simulation = new Simulation(settings);
+
+
+
+            Stage simulationStage = new Stage();
+            simulationStage.initStyle(StageStyle.DECORATED);
+            simulationStage.initModality(Modality.NONE);
+            simulationStage.setTitle("Simulation");
+
+            simulationGrid = new GridPane();
+            simulationStage.setScene(new Scene(simulationGrid, 1200, 1000));
+            simulationStage.setOnCloseRequest(event -> {
+                simulationStage.close();
+            });
+            simulationStage.show();
+
+            Button pauseResumeButton = new Button("Pause/Resume");
+            pauseResumeButton.setOnAction(event -> {
+                if (simulation != null) {
+                    if (simulation.getIsPaused()) {
+                        simulation.resumeSimulation();
+                    } else {
+                        simulation.pauseSimulation();
+                    }
+                }
+            });
+
+            HBox buttonContainer = new HBox(pauseResumeButton);
+            buttonContainer.setPadding(new Insets(10));
+            buttonContainer.setAlignment(Pos.CENTER);
+
+            VBox statisticsPane = new VBox(10);
+            statisticsPane.setPadding(new Insets(10));
+
+            statValues = new Label[numberOfStats];
+            String[] statNames = {"Day","Current animal amount",
+                    "Current plants amount",
+                    "Free tiles amount",
+                    "Most popular genotype",
+                    "Average energy level",
+                    "Average lifespan of dead animals",
+                    "Average children amount"};
+
+            for (int i = 0; i < numberOfStats; i++) {
+                HBox statBox = new HBox(10);
+                statValues[i] = new Label("N/A");
+                Label statLabel = new Label(statNames[i] + ":");
+                statBox.getChildren().addAll(statLabel, statValues[i]);
+                statisticsPane.getChildren().add(statBox);
+            }
+
+            HBox mainContainer = new HBox(simulationGrid, buttonContainer, statisticsPane);
+
+            mainContainer.setPrefWidth(1600);
+
+            Scene scene = new Scene(mainContainer, 1600, 1000);
+
+            simulationStage.setScene(scene);
+
+            CELL_SIZE = Math.min(
+                    (int) (Screen.getPrimary().getVisualBounds().getHeight() / (map.getMapHeight()) * 0.5),
+                    (int) (Screen.getPrimary().getVisualBounds().getWidth() / (map.getMapWidth()) * 0.5));
+
 
             simulationGrid.setManaged(true);
             simulationGrid.setVisible(true);

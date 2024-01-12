@@ -5,7 +5,11 @@ import agh.ics.oop.model.*;
 public class Simulation implements Runnable{
     private final Settings s;
     private final AbstractWorldMap map;
+    private boolean isPaused = false;
 
+    public void pauseSimulation() {isPaused = true;}
+    public void resumeSimulation() {isPaused = false;}
+    public boolean getIsPaused() {return this.isPaused;}
     public Simulation(Settings s)
     {
         this.s = s;
@@ -20,16 +24,27 @@ public class Simulation implements Runnable{
 
     public void run(){
         map.initializeDrawMap();
+        freezeSimulation();
+        map.nextDay();
         while (true){
+            if (isPaused) {
+                try {
+                    Thread.sleep(500);
+                    continue;
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+            }
+
             clearDeadAnimals();
             if(map.isEveryAnimalDead()) break;
             moveAllAnimals();
             feedAnimals();
             breedAnimals();
             spawnNewFood();
+            map.initializeDrawMap();
             freezeSimulation();
             map.nextDay();
-            map.initializeDrawMap();
         }
         map.initializeDrawMap();
         System.out.println("END OF SIMULATION - EVERY ANIMAL IS DEAD!");
