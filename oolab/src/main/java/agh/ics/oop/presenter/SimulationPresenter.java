@@ -74,9 +74,9 @@ public class SimulationPresenter implements MapChangeListener {
         MAP_WIDTH.setText("5");
         MAP_HEIGHT.setText("5");
         mapComboBox.setValue("Equator map");
-        ANIMAL_STARTING_AMOUNT.setText("10");
-        ANIMAL_STARTING_ENERGY.setText("50");
-        ANIMAL_ENERGY_PER_MOVE.setText("5");
+        ANIMAL_STARTING_AMOUNT.setText("2");
+        ANIMAL_STARTING_ENERGY.setText("10");
+        ANIMAL_ENERGY_PER_MOVE.setText("1");
         ANIMAL_MIN_ENERGY_TO_REPRODUCE.setText("35");
         ANIMAL_ENERGY_TO_REPRODUCE_COST.setText("15");
         ANIMAL_GENES_AMOUNT.setText("10");
@@ -84,9 +84,9 @@ public class SimulationPresenter implements MapChangeListener {
         genesComboBox.setValue("Looped");
         ANIMAL_MIN_MUTATIONS.setText("1");
         ANIMAL_MAX_MUTATIONS.setText("5");
-        FOOD_STARTING_AMOUNT.setText("20");
-        FOOD_GROWTH_PER_DAY.setText("5");
-        FOOD_ENERGY.setText("15");
+        FOOD_STARTING_AMOUNT.setText("3");
+        FOOD_GROWTH_PER_DAY.setText("1");
+        FOOD_ENERGY.setText("1");
     }
 
     int mapWidth;
@@ -110,6 +110,9 @@ public class SimulationPresenter implements MapChangeListener {
     private Label[][] cellLabels;
 
     private Set<Vector2d> prevOccupiedPositions;
+
+    private Label selectedCellLabel;
+    private Animal trackedAnimal;
 
     public void setMap(AbstractWorldMap map) {
         this.map = map;
@@ -152,10 +155,59 @@ public class SimulationPresenter implements MapChangeListener {
                     cellLabel.setBackground(new Background(new BackgroundFill(Color.rgb(161, 92, 32), CornerRadii.EMPTY, Insets.EMPTY)));
                 }
 
+                cellLabel.setOnMouseClicked(event -> {
+                    int clickedX = GridPane.getColumnIndex(cellLabel);
+                    int clickedY = mapHeight - GridPane.getRowIndex(cellLabel) - 1;
+
+                    if (map.objectAt(new Vector2d(clickedX, clickedY)) instanceof Animal) {
+                        handleAnimalClick(new Vector2d(clickedX, clickedY));
+                    }
+                });
+
                 GridPane.setHalignment(cellLabel, HPos.CENTER);
                 cellLabels[y][x] = cellLabel;
                 simulationGrid.add(cellLabel, x, height - y - 1);
             }
+        }
+    }
+
+    private void trackAnimal(Vector2d position) {
+        WorldElement objectAtPosition = map.objectAt(position);
+
+        if (objectAtPosition instanceof Animal) {
+            Animal potentialTrackedAnimal = (Animal) objectAtPosition;
+
+            if (potentialTrackedAnimal.getEnergy() > 0) {
+                trackedAnimal = potentialTrackedAnimal;
+
+                if (selectedCellLabel != null) {
+                    selectedCellLabel.setBorder(new Border(new BorderStroke(
+                            Color.ORANGE, BorderStrokeStyle.SOLID, CornerRadii.EMPTY, new BorderWidths(2)
+                    )));
+                }
+            }
+        }
+    }
+
+    private void untrackAnimal() {
+        trackedAnimal = null;
+        if (selectedCellLabel != null) {
+            selectedCellLabel.setBorder(new Border(new BorderStroke(Color.BLACK, BorderStrokeStyle.DOTTED, null, new BorderWidths(0.4))));
+        }
+    }
+
+    private void handleAnimalClick(Vector2d position) {
+        WorldElement objectAtPosition = map.objectAt(position);
+
+        if (objectAtPosition instanceof Animal) {
+            Animal clickedAnimal = (Animal) objectAtPosition;
+
+            if (trackedAnimal != null && trackedAnimal.equals(clickedAnimal)) {
+                untrackAnimal();
+            } else {
+                trackAnimal(position);
+            }
+            Platform.runLater(this::drawMap);
         }
     }
 
@@ -171,8 +223,19 @@ public class SimulationPresenter implements MapChangeListener {
             Label cellLabel = cellLabels[y][x];
 
             if (objectAtPosition != null) {
+                if (trackedAnimal != null && trackedAnimal.getPosition() == vec && trackedAnimal.getEnergy() <= 0){
+                    untrackAnimal();
+                }
+
                 if (objectAtPosition instanceof Animal) {
-                    cellLabel.setGraphic(drawAnimal((Animal) objectAtPosition));
+                    Animal animal = (Animal) objectAtPosition;
+                    if(trackedAnimal != null && animal.getPosition() == trackedAnimal.getPosition()){
+                        continue;
+                    }
+
+                    if(animal.getEnergy() > 0){
+                        cellLabel.setGraphic(drawAnimal(animal));
+                    }
                 }
                 else {
                     if (objectAtPosition instanceof Grass){
@@ -188,13 +251,26 @@ public class SimulationPresenter implements MapChangeListener {
                 }
             }
         }
+
+        if (trackedAnimal != null) {
+            int x = trackedAnimal.getPosition().x();
+            int y = trackedAnimal.getPosition().y();
+            Label cellLabel = cellLabels[y][x];
+            cellLabel.setGraphic(drawAnimal(trackedAnimal));
+            cellLabel.setBorder(new Border(new BorderStroke(
+                    Color.ORANGE, BorderStrokeStyle.SOLID, CornerRadii.EMPTY, new BorderWidths(2)
+            )));
+            selectedCellLabel = cellLabel;
+        }
     }
 
     private void clearGrid() {
         if (prevOccupiedPositions != null) {
             for (Vector2d vec : prevOccupiedPositions) {
-                cellLabels[vec.y()][vec.x()].setText(null);
-                cellLabels[vec.y()][vec.x()].setGraphic(null);
+                Label cellLabel = cellLabels[vec.y()][vec.x()];
+                cellLabel.setText(null);
+                cellLabel.setGraphic(null);
+                cellLabel.setBorder(new Border(new BorderStroke(Color.BLACK, BorderStrokeStyle.DOTTED, null, new BorderWidths(0.4))));
             }
         }
     }
@@ -225,7 +301,9 @@ public class SimulationPresenter implements MapChangeListener {
         Platform.runLater(() -> {
             drawMap();
             updateStats();
-            //System.out.println(map.getId());
+            if(trackedAnimal != null){
+                System.out.println(trackedAnimal.getPosition());
+            }
         });
     }
 
