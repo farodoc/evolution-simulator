@@ -193,6 +193,7 @@ public class SimulationPresenter implements MapChangeListener {
         trackedAnimal = null;
         if (selectedCellLabel != null) {
             selectedCellLabel.setBorder(new Border(new BorderStroke(Color.BLACK, BorderStrokeStyle.DOTTED, null, new BorderWidths(0.4))));
+            selectedCellLabel = null;
         }
     }
 
@@ -301,9 +302,6 @@ public class SimulationPresenter implements MapChangeListener {
         Platform.runLater(() -> {
             drawMap();
             updateStats();
-            if(trackedAnimal != null){
-                System.out.println(trackedAnimal.getPosition());
-            }
         });
     }
 
