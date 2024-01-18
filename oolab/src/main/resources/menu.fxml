@@ -13,10 +13,11 @@
 <?import javafx.collections.FXCollections?>
 <?import java.lang.String?>
 <?import java.net.URL?>
+<?import javafx.scene.control.RadioButton?>
 <BorderPane xmlns="http://javafx.com/javafx"
             xmlns:fx="http://javafx.com/fxml"
             minHeight="550.0" minWidth="850.0"
-            fx:controller="agh.ics.oop.presenter.SimulationPresenter">
+            fx:controller="agh.ics.oop.presenter.MenuPresenter">
 
     <center>
         <StackPane>
@@ -85,6 +86,16 @@
                     <TextField fx:id="FOOD_GROWTH_PER_DAY"/>
                     <Label text="Energy for eating plant:"/>
                     <TextField fx:id="FOOD_ENERGY"/>
+                </HBox>
+                <Label text="Additional options" styleClass="labelOptions"/>
+                <HBox>
+                    <Label text="Save stats to CSV:"/>
+                    <HBox>
+                        <RadioButton fx:id="saveStatsYes" text="Yes"/>
+                        <RadioButton fx:id="saveStatsNo" text="No"/>
+                    </HBox>
+                    <Label text="Refresh time:"/>
+                    <TextField fx:id="REFRESH_TIME"/>
                 </HBox>
             </VBox>
 

@@ -71,4 +71,6 @@ public class Simulation implements Runnable{
     private void clearDeadAnimals(){map.clearDeadAnimals();}
 
     private void spawnNewFood(){map.generateFood(s.getFoodGrowthPerDay());}
+
+    public void subscribe(MapChangeListener observer){map.addObserver(observer);}
 }
