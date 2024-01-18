@@ -20,7 +20,7 @@ public class MenuPresenter{
     private ComboBox<String> mapComboBox, genesComboBox;
 
     @FXML
-    private Label infoLabel, errorLabel;
+    private Label errorLabel;
 
     @FXML
     private void initialize(){
@@ -50,10 +50,7 @@ public class MenuPresenter{
     String selectedMap, selectedGenes;
 
     public void onSimulationStartClicked(javafx.event.ActionEvent actionEvent) {
-        if (!checkAndSetInputValues()) {
-            infoLabel.setText("Wrong input values!");
-            return;
-        }
+        if (!checkAndSetInputValues()) return;
 
         String[] attributesArray = {
                 CONFIG_NAME.getText(),
@@ -81,13 +78,7 @@ public class MenuPresenter{
             map = new EquatorMap(foodStartingAmount, mapWidth, mapHeight);
         }
 
-        Settings settings;
-
-        try {
-            settings = new Settings(attributesArray, map);
-        } catch (IllegalArgumentException e) {
-            throw new RuntimeException(e);
-        }
+        Settings settings = new Settings(attributesArray, map);
 
         SimulationEngine simulationEngine = new SimulationEngine();
         simulationEngine.start(settings);
@@ -209,23 +200,23 @@ public class MenuPresenter{
             if (mapWidth <= 0 || mapHeight <= 0 || animalStartingAmount <= 0 || animalStartingEnergy <= 0 || animalEnergyPerMove < 0 ||
                     animalMinEnergyToReproduce <= 0 || animalEnergyToReproduceCost <= 0 || animalGenesAmount <= 0 || animalMinMutations < 0 ||
                     animalMaxMutations < 0 || foodStartingAmount < 0 || foodGrowthPerDay < 0 || foodEnergy < 0){
-                System.out.println("Error: values <= 0.");
+                errorLabel.setText("Error: values <= 0.");
                 return false;
             }
             if(animalEnergyToReproduceCost > animalMinEnergyToReproduce){
-                System.out.println("Error: animalMinEnergyToReproduce < animalEnergyToReproduceCost.");
+                errorLabel.setText("Error: animalMinEnergyToReproduce < animalEnergyToReproduceCost.");
                 return false;
             }
             if(animalMinMutations>animalMaxMutations || animalMaxMutations>animalGenesAmount){
-                System.out.println("Error: wrong min/max mutations amount.");
+                errorLabel.setText("Error: wrong min/max mutations amount.");
                 return false;
             }
 
-            System.out.println("Input values are correct!");
+            errorLabel.setText("Input values are correct!");
             return true;
 
         } catch (NumberFormatException e) {
-            System.out.println("Error: input values have to be numbers!");
+            errorLabel.setText("Error: input values have to be numbers!");
             return false;
         }
     }
