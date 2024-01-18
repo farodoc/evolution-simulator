@@ -32,6 +32,10 @@ public abstract class AbstractGenes {
     }
 
     public int getActiveGene(){
+        return genes.get(geneIndex);
+    }
+
+    public int getActiveGeneAndUpdateGene(){
         int resultGene = genes.get(geneIndex);
         updateGeneIndex();
         return resultGene;

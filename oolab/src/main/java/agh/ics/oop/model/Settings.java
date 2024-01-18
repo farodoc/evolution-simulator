@@ -17,6 +17,7 @@ public class Settings {
     private final int foodStartingAmount;
     private final int foodGrowthPerDay;
     private final int foodEnergy;
+    private final int refreshTime;
 
     public Settings(String[] config){
         name = config[0];
@@ -33,6 +34,8 @@ public class Settings {
         foodStartingAmount = Integer.parseInt(config[11]);
         foodGrowthPerDay = Integer.parseInt(config[12]);
         foodEnergy = Integer.parseInt(config[13]);
+        refreshTime = Integer.parseInt(config[16]);
+
 
         if (config[14].equals("Poison map")) {
             map = new PoisonMap(foodStartingAmount, mapWidth, mapHeight);
@@ -69,7 +72,8 @@ public class Settings {
                 String.valueOf(foodGrowthPerDay),
                 String.valueOf(foodEnergy),
                 map.getName(),
-                genes.getName()
+                genes.getName(),
+                String.valueOf(refreshTime)
         };
     }
 
@@ -115,4 +119,5 @@ public class Settings {
     public int getFoodEnergy() {
         return foodEnergy;
     }
+    public int getRefreshTime(){return refreshTime;}
 }

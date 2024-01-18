@@ -16,7 +16,7 @@ public class SimulationPresenter implements MapChangeListener {
     @FXML
     private GridPane simulationGrid;
     @FXML
-    private Label STAT_1,STAT_2,STAT_3,STAT_4,STAT_5,STAT_6,STAT_7,STAT_8;
+    private Label STAT_1,STAT_2,STAT_3,STAT_4,STAT_5,STAT_6,STAT_7,STAT_8,STAT_9;
     @FXML
     private Label STAT_A1,STAT_A2,STAT_A3,STAT_A4,STAT_A5,STAT_A6,STAT_A7,STAT_A8,STAT_A9,STAT_A10;
 
@@ -27,7 +27,8 @@ public class SimulationPresenter implements MapChangeListener {
     private Set<Vector2d> prevOccupiedPositions;
     private Label selectedCellLabel;
     private Animal trackedAnimal;
-    private final int numberOfStats = 8;
+    private Animal prevTrackedAnimal;
+    private final int numberOfStats = 9;
     private Label[] statValues = new Label[numberOfStats];
     private Label[] trackedAnimalStats = new Label[10];
 
@@ -48,6 +49,7 @@ public class SimulationPresenter implements MapChangeListener {
         statValues[5] = STAT_6;
         statValues[6] = STAT_7;
         statValues[7] = STAT_8;
+        statValues[8] = STAT_9;
 
         trackedAnimalStats[0] = STAT_A1;
         trackedAnimalStats[1] = STAT_A2;
@@ -103,8 +105,12 @@ public class SimulationPresenter implements MapChangeListener {
                 cellLabel.setOnMouseClicked(event -> {
                     int clickedX = GridPane.getColumnIndex(cellLabel);
                     int clickedY = map.getMapHeight() - GridPane.getRowIndex(cellLabel) - 1;
+                    Vector2d position = new Vector2d(clickedX, clickedY);
 
-                    if (map.objectAt(new Vector2d(clickedX, clickedY)) instanceof Animal) {
+                    if (trackedAnimal != null && position.equals(trackedAnimal.getPosition()) && trackedAnimal.getEnergy() <= 0) {
+                        untrackAnimal();
+                    }
+                    else if (map.objectAt(position) instanceof Animal) {
                         handleAnimalClick(new Vector2d(clickedX, clickedY));
                     }
                 });
@@ -136,10 +142,13 @@ public class SimulationPresenter implements MapChangeListener {
 
     private void untrackAnimal() {
         trackedAnimal = null;
-        clearTrackedAnimalBorder();
+        if (selectedCellLabel != null) {
+            selectedCellLabel.setBorder(new Border(new BorderStroke(Color.BLACK, BorderStrokeStyle.DOTTED, null, new BorderWidths(0.4))));
+            selectedCellLabel = null;
+        }
     }
 
-    private void clearTrackedAnimalBorder(){
+    private void untrackAnimalAfterDeath(){
         if (selectedCellLabel != null) {
             selectedCellLabel.setBorder(new Border(new BorderStroke(Color.BLACK, BorderStrokeStyle.DOTTED, null, new BorderWidths(0.4))));
             selectedCellLabel = null;
@@ -162,19 +171,16 @@ public class SimulationPresenter implements MapChangeListener {
 
 
     private void handleAnimalClick(Vector2d position) {
-        WorldElement objectAtPosition = map.objectAt(position);
+        Animal clickedAnimal = (Animal) map.objectAt(position);
+        Label clickedLabel = cellLabels[clickedAnimal.getPosition().y()][clickedAnimal.getPosition().x()];
 
-        if (objectAtPosition instanceof Animal) {
-            Animal clickedAnimal = (Animal) objectAtPosition;
-
-            if (trackedAnimal != null && trackedAnimal.equals(clickedAnimal)) {
-                untrackAnimal();
-            } else {
-                trackAnimal(position);
-            }
-
-            Platform.runLater(this::drawMap);
+        if (trackedAnimal != null && selectedCellLabel.equals(clickedLabel)) {
+            untrackAnimal();
+        } else {
+            trackAnimal(position);
         }
+
+        Platform.runLater(this::drawMap);
     }
 
     private void fillMap(){
@@ -190,7 +196,8 @@ public class SimulationPresenter implements MapChangeListener {
 
             if (objectAtPosition != null) {
                 if (trackedAnimal != null && trackedAnimal.getPosition() == vec && trackedAnimal.getEnergy() <= 0){
-                    clearTrackedAnimalBorder();
+                    prevTrackedAnimal = trackedAnimal;
+                    untrackAnimalAfterDeath();
                 }
 
                 if (objectAtPosition instanceof Animal) {
@@ -231,6 +238,13 @@ public class SimulationPresenter implements MapChangeListener {
     }
 
     private void clearGrid() {
+        if(prevTrackedAnimal != null){
+            Label cellLabel = cellLabels[prevTrackedAnimal.getPosition().y()][prevTrackedAnimal.getPosition().x()];
+            cellLabel.setText(null);
+            cellLabel.setGraphic(null);
+            cellLabel.setBorder(new Border(new BorderStroke(Color.BLACK, BorderStrokeStyle.DOTTED, null, new BorderWidths(0.4))));
+        }
+
         if (prevOccupiedPositions != null) {
             for (Vector2d vec : prevOccupiedPositions) {
                 Label cellLabel = cellLabels[vec.y()][vec.x()];

@@ -14,7 +14,7 @@ public class MenuPresenter{
     @FXML
     private TextField MAP_WIDTH, MAP_HEIGHT, ANIMAL_STARTING_AMOUNT, ANIMAL_STARTING_ENERGY, ANIMAL_ENERGY_PER_MOVE,
     ANIMAL_MIN_ENERGY_TO_REPRODUCE, ANIMAL_ENERGY_TO_REPRODUCE_COST, ANIMAL_GENES_AMOUNT, ANIMAL_MIN_MUTATIONS,
-    ANIMAL_MAX_MUTATIONS, FOOD_STARTING_AMOUNT, FOOD_GROWTH_PER_DAY, FOOD_ENERGY, CONFIG_NAME;
+    ANIMAL_MAX_MUTATIONS, FOOD_STARTING_AMOUNT, FOOD_GROWTH_PER_DAY, FOOD_ENERGY, CONFIG_NAME, REFRESH_TIME;
 
     @FXML
     private ComboBox<String> mapComboBox, genesComboBox;
@@ -25,27 +25,27 @@ public class MenuPresenter{
     @FXML
     private void initialize(){
         CONFIG_NAME.setText("Example config");
-        MAP_WIDTH.setText("5");
-        MAP_HEIGHT.setText("5");
-        mapComboBox.setValue("Equator map");
-        ANIMAL_STARTING_AMOUNT.setText("2");
-        ANIMAL_STARTING_ENERGY.setText("10");
-        ANIMAL_ENERGY_PER_MOVE.setText("1");
-        ANIMAL_MIN_ENERGY_TO_REPRODUCE.setText("35");
-        ANIMAL_ENERGY_TO_REPRODUCE_COST.setText("15");
-        ANIMAL_GENES_AMOUNT.setText("10");
+        MAP_WIDTH.setText("20");
+        MAP_HEIGHT.setText("20");
+        mapComboBox.setValue("Poison map");
+        ANIMAL_STARTING_AMOUNT.setText("30");
+        ANIMAL_STARTING_ENERGY.setText("100");
+        ANIMAL_ENERGY_PER_MOVE.setText("5");
+        ANIMAL_MIN_ENERGY_TO_REPRODUCE.setText("30");
+        ANIMAL_ENERGY_TO_REPRODUCE_COST.setText("10");
         ANIMAL_GENES_AMOUNT.setText("10");
         genesComboBox.setValue("Looped");
         ANIMAL_MIN_MUTATIONS.setText("1");
         ANIMAL_MAX_MUTATIONS.setText("5");
-        FOOD_STARTING_AMOUNT.setText("3");
-        FOOD_GROWTH_PER_DAY.setText("1");
-        FOOD_ENERGY.setText("1");
+        FOOD_STARTING_AMOUNT.setText("50");
+        FOOD_GROWTH_PER_DAY.setText("15");
+        FOOD_ENERGY.setText("25");
+        REFRESH_TIME.setText("1000");
     }
 
     int mapWidth, mapHeight, animalStartingAmount, animalStartingEnergy, animalEnergyPerMove, animalMinEnergyToReproduce,
     animalEnergyToReproduceCost, animalGenesAmount, animalMinMutations, animalMaxMutations, foodStartingAmount,
-    foodGrowthPerDay, foodEnergy;
+    foodGrowthPerDay, foodEnergy, refreshTime;
 
     String selectedMap, selectedGenes;
 
@@ -68,8 +68,11 @@ public class MenuPresenter{
                 String.valueOf(foodGrowthPerDay),
                 String.valueOf(foodEnergy),
                 mapComboBox.getValue(),
-                genesComboBox.getValue()
+                genesComboBox.getValue(),
+                String.valueOf(refreshTime)
         };
+
+        System.out.println(refreshTime);
 
         AbstractWorldMap map;
         if (Objects.equals(selectedMap, "Poison map")) {
@@ -196,10 +199,11 @@ public class MenuPresenter{
             foodStartingAmount = Integer.parseInt(FOOD_STARTING_AMOUNT.getText());
             foodGrowthPerDay = Integer.parseInt(FOOD_GROWTH_PER_DAY.getText());
             foodEnergy = Integer.parseInt(FOOD_ENERGY.getText());
+            refreshTime = Integer.parseInt(REFRESH_TIME.getText());
 
             if (mapWidth <= 0 || mapHeight <= 0 || animalStartingAmount <= 0 || animalStartingEnergy <= 0 || animalEnergyPerMove < 0 ||
                     animalMinEnergyToReproduce <= 0 || animalEnergyToReproduceCost <= 0 || animalGenesAmount <= 0 || animalMinMutations < 0 ||
-                    animalMaxMutations < 0 || foodStartingAmount < 0 || foodGrowthPerDay < 0 || foodEnergy < 0){
+                    animalMaxMutations < 0 || foodStartingAmount < 0 || foodGrowthPerDay < 0 || foodEnergy < 0 || refreshTime < 0){
                 errorLabel.setText("Error: values <= 0.");
                 return false;
             }

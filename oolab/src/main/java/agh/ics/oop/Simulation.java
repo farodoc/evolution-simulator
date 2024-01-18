@@ -27,7 +27,7 @@ public class Simulation implements Runnable{
         while (true){
             if (!isActive) {
                 try {
-                    Thread.sleep(500);
+                    Thread.sleep(s.getRefreshTime()/3);
                     continue;
                 } catch (InterruptedException e) {
                     e.printStackTrace();
@@ -50,7 +50,7 @@ public class Simulation implements Runnable{
 
     private void freezeSimulation(){
         try {
-            Thread.sleep(1000);
+            Thread.sleep(s.getRefreshTime());
         } catch (InterruptedException e) {
             throw new RuntimeException(e);
         }

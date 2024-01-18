@@ -368,11 +368,12 @@ public abstract class AbstractWorldMap implements WorldMap{
     public Set<Vector2d> getAllOccupiedPositions(){
         Set<Vector2d> keys = new HashSet<>(animals.keySet());
         keys.addAll(new HashSet<>(foodTiles.keySet()));
+        System.out.println(day + ": " + keys.size() + " + " + countFreeTilesAmount());
         return keys;
     }
 
     public String[] getCurrentStats(){
-        String[] stats = new String[8];
+        String[] stats = new String[9];
         stats[0] = String.valueOf(day);
         stats[1] = String.valueOf(countCurrentAnimals());
         stats[2] = String.valueOf(foodTiles.size());
@@ -381,6 +382,7 @@ public abstract class AbstractWorldMap implements WorldMap{
         stats[5] = String.valueOf(getAverageEnergyForLivingAnimals());
         stats[6] = String.valueOf(getAverageLifespanForDeadAnimals());
         stats[7] = String.valueOf(getAverageChildrenAmountForLivingAnimals());
+        stats[8] = String.valueOf(totalAnimalAmount);
         return stats;
     }
 
@@ -395,15 +397,15 @@ public abstract class AbstractWorldMap implements WorldMap{
     }
 
     private int countCurrentAnimals() {
-        int totalAnimalsCount = 0;
+        int currentAnimalCount = 0;
 
         for (List<Animal> animalList : animals.values()) {
             if (animalList != null) {
-                totalAnimalsCount += animalList.size();
+                currentAnimalCount += animalList.size();
             }
         }
 
-        return totalAnimalsCount;
+        return currentAnimalCount;
     }
 
     private String getMostFrequentGenotype() {
@@ -467,19 +469,4 @@ public abstract class AbstractWorldMap implements WorldMap{
 
         return res/100;
     }
-
-    public String[] getAnimalStats(Animal animal) {
-        String[] stats = new String[8];
-        stats[0] = String.valueOf(animal.getGenes().getGenesList());
-        stats[1] = String.valueOf(animal.getGenes().getActiveGene());
-        stats[2] = String.valueOf(animal.getEnergy());
-        stats[3] = String.valueOf(animal.getPlantsEaten());
-        stats[4] = String.valueOf(animal.getChildrenAmount());
-        stats[5] = String.valueOf(animal.getDescendantAmount());
-        stats[6] = String.valueOf(animal.getAge());
-        stats[7] = animal.getDeathDate();
-        return stats;
-    }
-
-
 }
