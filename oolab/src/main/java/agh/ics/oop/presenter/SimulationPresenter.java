@@ -194,15 +194,17 @@ public class SimulationPresenter implements MapChangeListener {
             Object objectAtPosition = map.objectAt(new Vector2d(x,y));
             Label cellLabel = cellLabels[y][x];
 
+            if (trackedAnimal != null && trackedAnimal.getPosition() == vec && trackedAnimal.getEnergy() <= 0){
+                prevTrackedAnimal = trackedAnimal;
+                untrackAnimalAfterDeath();
+            }
+
             if (objectAtPosition != null) {
-                if (trackedAnimal != null && trackedAnimal.getPosition() == vec && trackedAnimal.getEnergy() <= 0){
-                    prevTrackedAnimal = trackedAnimal;
-                    untrackAnimalAfterDeath();
-                }
+
 
                 if (objectAtPosition instanceof Animal) {
                     Animal animal = (Animal) objectAtPosition;
-                    if(trackedAnimal != null && animal.getPosition() == trackedAnimal.getPosition()){
+                    if(trackedAnimal != null && animal.getPosition().equals(trackedAnimal.getPosition())){
                         continue;
                     }
 

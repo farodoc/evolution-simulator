@@ -72,8 +72,6 @@ public class MenuPresenter{
                 String.valueOf(refreshTime)
         };
 
-        System.out.println(refreshTime);
-
         AbstractWorldMap map;
         if (Objects.equals(selectedMap, "Poison map")) {
             map = new PoisonMap(foodStartingAmount, mapWidth, mapHeight);
@@ -157,7 +155,8 @@ public class MenuPresenter{
                     String.valueOf(foodGrowthPerDay),
                     String.valueOf(foodEnergy),
                     mapComboBox.getValue(),
-                    genesComboBox.getValue()
+                    genesComboBox.getValue(),
+                    String.valueOf(refreshTime)
             };
             settings = new Settings(attributesArray);
         } catch (Exception e) {

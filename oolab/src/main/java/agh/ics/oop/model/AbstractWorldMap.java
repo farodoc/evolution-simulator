@@ -143,11 +143,20 @@ public abstract class AbstractWorldMap implements WorldMap{
         List<Animal> animalList = animals.getOrDefault(position, null);
 
         if (animalList != null && !animalList.isEmpty()) {
-            return animalList.get(0);
+            Animal animalToReturn = animalList.get(0);
+            for(Animal animal: animalList){
+                if(animal.getEnergy() > animalToReturn.getEnergy()){
+                    animalToReturn = animal;
+                }
+            }
+
+            if(animalToReturn.getEnergy() <= 0)
+                return foodTiles.getOrDefault(position, null);
+
+            return animalToReturn;
         }
-        else {
-            return foodTiles.getOrDefault(position, null);
-        }
+
+        return foodTiles.getOrDefault(position, null);
     }
 
     @Override
@@ -368,7 +377,6 @@ public abstract class AbstractWorldMap implements WorldMap{
     public Set<Vector2d> getAllOccupiedPositions(){
         Set<Vector2d> keys = new HashSet<>(animals.keySet());
         keys.addAll(new HashSet<>(foodTiles.keySet()));
-        System.out.println(day + ": " + keys.size() + " + " + countFreeTilesAmount());
         return keys;
     }
 
