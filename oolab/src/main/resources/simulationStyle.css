@@ -1,4 +1,18 @@
 .stats-table {
     -fx-border-color: black;
-    -fx-border-width: 2;
+    -fx-border-width: 1;
+    -fx-padding: 10 10 10 10;
+    -fx-margin: 10;
+}
+
+.stats-container{
+    -fx-padding: 10 25 10 10;
+}
+
+.divider{
+    -fx-padding: 10 0 10 0;
+}
+
+.buttonik {
+    -fx-font-size: 20;
 }
