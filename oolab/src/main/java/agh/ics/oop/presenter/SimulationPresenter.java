@@ -6,18 +6,10 @@ import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.geometry.HPos;
 import javafx.geometry.Insets;
-import javafx.geometry.Pos;
-import javafx.scene.Scene;
-import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
-import javafx.stage.Modality;
-import javafx.stage.Screen;
-import javafx.stage.Stage;
-import javafx.stage.StageStyle;
-
 import java.util.Set;
 
 public class SimulationPresenter implements MapChangeListener {
@@ -25,6 +17,8 @@ public class SimulationPresenter implements MapChangeListener {
     private GridPane simulationGrid;
     @FXML
     private Label STAT_1,STAT_2,STAT_3,STAT_4,STAT_5,STAT_6,STAT_7,STAT_8;
+    @FXML
+    private Label STAT_A1,STAT_A2,STAT_A3,STAT_A4,STAT_A5,STAT_A6,STAT_A7,STAT_A8,STAT_A9,STAT_A10;
 
     private Simulation simulation;
     private AbstractWorldMap map;
@@ -35,13 +29,14 @@ public class SimulationPresenter implements MapChangeListener {
     private Animal trackedAnimal;
     private final int numberOfStats = 8;
     private Label[] statValues = new Label[numberOfStats];
+    private Label[] trackedAnimalStats = new Label[10];
 
     public void initialize(Simulation simulation){
         this.simulation = simulation;
         this.map = simulation.getMap();
         CELL_SIZE = Math.min(
-                1400 / (map.getMapHeight()),
-                800 / (map.getMapWidth()));
+                1000 / (map.getMapHeight()),
+                1000 / (map.getMapWidth()));
 
         cellLabels = new Label[map.getMapHeight()][map.getMapWidth()];
 
@@ -53,6 +48,17 @@ public class SimulationPresenter implements MapChangeListener {
         statValues[5] = STAT_6;
         statValues[6] = STAT_7;
         statValues[7] = STAT_8;
+
+        trackedAnimalStats[0] = STAT_A1;
+        trackedAnimalStats[1] = STAT_A2;
+        trackedAnimalStats[2] = STAT_A3;
+        trackedAnimalStats[3] = STAT_A4;
+        trackedAnimalStats[4] = STAT_A5;
+        trackedAnimalStats[5] = STAT_A6;
+        trackedAnimalStats[6] = STAT_A7;
+        trackedAnimalStats[7] = STAT_A8;
+        trackedAnimalStats[8] = STAT_A9;
+        trackedAnimalStats[9] = STAT_A10;
 
         drawGrid();
     }
@@ -130,11 +136,30 @@ public class SimulationPresenter implements MapChangeListener {
 
     private void untrackAnimal() {
         trackedAnimal = null;
+        clearTrackedAnimalBorder();
+    }
+
+    private void clearTrackedAnimalBorder(){
         if (selectedCellLabel != null) {
             selectedCellLabel.setBorder(new Border(new BorderStroke(Color.BLACK, BorderStrokeStyle.DOTTED, null, new BorderWidths(0.4))));
             selectedCellLabel = null;
         }
     }
+
+
+    private void showTrackedAnimalStats() {
+        if(trackedAnimal != null) {
+            String[] stats = trackedAnimal.getAnimalStats();
+
+            for(int i = 0; i < stats.length; i++)
+                trackedAnimalStats[i].setText(stats[i]);
+        }
+        else {
+            for (Label trackedAnimalStat : trackedAnimalStats)
+                trackedAnimalStat.setText("N/A");
+        }
+    }
+
 
     private void handleAnimalClick(Vector2d position) {
         WorldElement objectAtPosition = map.objectAt(position);
@@ -147,6 +172,7 @@ public class SimulationPresenter implements MapChangeListener {
             } else {
                 trackAnimal(position);
             }
+
             Platform.runLater(this::drawMap);
         }
     }
@@ -164,7 +190,7 @@ public class SimulationPresenter implements MapChangeListener {
 
             if (objectAtPosition != null) {
                 if (trackedAnimal != null && trackedAnimal.getPosition() == vec && trackedAnimal.getEnergy() <= 0){
-                    untrackAnimal();
+                    clearTrackedAnimalBorder();
                 }
 
                 if (objectAtPosition instanceof Animal) {
@@ -234,6 +260,7 @@ public class SimulationPresenter implements MapChangeListener {
 
     public void drawMap(){
         fillMap();
+        showTrackedAnimalStats();
     }
 
     @Override

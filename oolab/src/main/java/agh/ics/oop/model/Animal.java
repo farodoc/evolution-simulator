@@ -137,4 +137,20 @@ public class Animal implements WorldElement{
         this.energy -= ANIMAL_ENERGY_TO_REPRODUCE;
         updateParentsRecursion(new ArrayList<>());
     }
+
+    public String[] getAnimalStats() {
+        String[] stats = new String[10];
+        stats[0] = "id";
+        stats[1] = position.toString();
+        stats[2] = String.valueOf(genes.getGenesList());
+        stats[3] = String.valueOf(genes.getActiveGene());
+        stats[4] = String.valueOf(energy);
+        stats[5] = String.valueOf(plantsEaten);
+        stats[6] = String.valueOf(childrenAmount);
+        stats[7] = String.valueOf(descendantAmount);
+        stats[8] = String.valueOf(age);
+        stats[9] = String.valueOf(deathDate);
+
+        return stats;
+    }
 }
