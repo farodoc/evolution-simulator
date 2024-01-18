@@ -21,7 +21,7 @@ public class SimulationLauncher extends Application {
         try {
             Scene scene = new Scene(loader.load());
             SimulationPresenter presenter = loader.getController();
-            //controller.init(simulation);
+            presenter.initialize(simulation);
             simulation.subscribe(presenter);
 
             primaryStage.setTitle("Simulation");

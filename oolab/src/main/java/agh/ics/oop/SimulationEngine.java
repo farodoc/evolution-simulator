@@ -1,8 +1,6 @@
 package agh.ics.oop;
 
-import agh.ics.oop.Simulation;
 import agh.ics.oop.model.Settings;
-import agh.ics.oop.SimulationLauncher;
 import javafx.stage.Stage;
 
 import java.util.concurrent.ExecutorService;
@@ -24,5 +22,4 @@ public class SimulationEngine {
 
         executorService.execute(simulation);
     }
-
 }

@@ -1,11 +1,64 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.layout.GridPane?>
 
+<?import java.net.URL?>
 <BorderPane xmlns="http://javafx.com/javafx"
             xmlns:fx="http://javafx.com/fxml"
-            minHeight="550.0" minWidth="850.0"
+            minHeight="1000" minWidth="1400"
             fx:controller="agh.ics.oop.presenter.SimulationPresenter">
 
+    <left>
+        <VBox spacing="10">
+            <GridPane fx:id="simulationGrid" />
+        </VBox>
+    </left>
+
+    <right>
+        <BorderPane>
+            <center>
+                <GridPane alignment="CENTER" hgap="10" vgap="10" styleClass="stats-table">
+                    <Label text="Day" GridPane.columnIndex="0" GridPane.rowIndex="0"/>
+                    <Label fx:id="STAT_1" GridPane.columnIndex="1" GridPane.rowIndex="0"/>
+
+                    <Label text="Current animal amount" GridPane.columnIndex="0" GridPane.rowIndex="1"/>
+                    <Label fx:id="STAT_2" GridPane.columnIndex="1" GridPane.rowIndex="1"/>
+
+                    <Label text="Current plants amount" GridPane.columnIndex="0" GridPane.rowIndex="2"/>
+                    <Label fx:id="STAT_3" GridPane.columnIndex="1" GridPane.rowIndex="2"/>
+
+                    <Label text="Free tiles amount" GridPane.columnIndex="0" GridPane.rowIndex="3"/>
+                    <Label fx:id="STAT_4" GridPane.columnIndex="1" GridPane.rowIndex="3"/>
+
+                    <Label text="Most popular genotype" GridPane.columnIndex="0" GridPane.rowIndex="4"/>
+                    <Label fx:id="STAT_5" GridPane.columnIndex="1" GridPane.rowIndex="4"/>
+
+                    <Label text="Average energy level" GridPane.columnIndex="0" GridPane.rowIndex="5"/>
+                    <Label fx:id="STAT_6" GridPane.columnIndex="1" GridPane.rowIndex="5"/>
+
+                    <Label text="Average lifespan of dead animals" GridPane.columnIndex="0" GridPane.rowIndex="6"/>
+                    <Label fx:id="STAT_7" GridPane.columnIndex="1" GridPane.rowIndex="6"/>
+
+                    <Label text="Average children amount" GridPane.columnIndex="0" GridPane.rowIndex="7"/>
+                    <Label fx:id="STAT_8" GridPane.columnIndex="1" GridPane.rowIndex="7"/>
+                </GridPane>
+            </center>
+        </BorderPane>
+    </right>
+
+    <bottom>
+        <HBox alignment="CENTER">
+            <Button text="Pause/Resume" onAction="#onPauseResumeClicked"/>
+        </HBox>
+    </bottom>
+
+    <stylesheets>
+        <URL value="@simulationStyle.css" />
+    </stylesheets>
 
 </BorderPane>

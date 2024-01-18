@@ -5,11 +5,9 @@ import agh.ics.oop.model.*;
 public class Simulation implements Runnable{
     private final Settings s;
     private final AbstractWorldMap map;
-    private boolean isPaused = false;
+    private boolean isActive = true;
+    public void changeState() {isActive = !isActive;}
 
-    public void pauseSimulation() {isPaused = true;}
-    public void resumeSimulation() {isPaused = false;}
-    public boolean getIsPaused() {return this.isPaused;}
     public Simulation(Settings s)
     {
         this.s = s;
@@ -27,7 +25,7 @@ public class Simulation implements Runnable{
         freezeSimulation();
         map.nextDay();
         while (true){
-            if (isPaused) {
+            if (!isActive) {
                 try {
                     Thread.sleep(500);
                     continue;
@@ -73,4 +71,6 @@ public class Simulation implements Runnable{
     private void spawnNewFood(){map.generateFood(s.getFoodGrowthPerDay());}
 
     public void subscribe(MapChangeListener observer){map.addObserver(observer);}
+
+    public AbstractWorldMap getMap(){return this.map;}
 }
