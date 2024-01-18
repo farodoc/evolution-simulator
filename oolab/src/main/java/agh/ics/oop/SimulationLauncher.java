@@ -8,14 +8,12 @@ import javafx.stage.Stage;
 
 public class SimulationLauncher extends Application {
     private Simulation simulation;
-
     public void run(Stage primaryStage, Simulation simulation) {
         this.simulation = simulation;
         start(primaryStage);
     }
     @Override
     public void start(Stage primaryStage) {
-
         FXMLLoader loader = new FXMLLoader();
         loader.setLocation(getClass().getClassLoader().getResource("simulation.fxml"));
         try {
