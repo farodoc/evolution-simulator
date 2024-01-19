@@ -6,14 +6,15 @@ import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.geometry.HPos;
 import javafx.geometry.Insets;
+import javafx.scene.chart.LineChart;
+import javafx.scene.chart.NumberAxis;
+import javafx.scene.chart.XYChart;
 import javafx.scene.control.Label;
 import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
-
 import java.util.List;
 import java.util.Set;
-import java.util.Vector;
 
 public class SimulationPresenter implements MapChangeListener {
     @FXML
@@ -22,6 +23,8 @@ public class SimulationPresenter implements MapChangeListener {
     private Label STAT_1,STAT_2,STAT_3,STAT_4,STAT_5,STAT_6,STAT_7,STAT_8,STAT_9;
     @FXML
     private Label STAT_A1,STAT_A2,STAT_A3,STAT_A4,STAT_A5,STAT_A6,STAT_A7,STAT_A8,STAT_A9,STAT_A10;
+    @FXML
+    private HBox lineChartContainer;
 
     private Simulation simulation;
     private List<Animal> mostFrequentGenesAnimals = null;
@@ -35,7 +38,7 @@ public class SimulationPresenter implements MapChangeListener {
     private final int numberOfStats = 9;
     private Label[] statValues = new Label[numberOfStats];
     private Label[] trackedAnimalStats = new Label[10];
-
+    private LineChart<Number, Number> lineChart;
     public void initialize(Simulation simulation){
         this.simulation = simulation;
         this.map = simulation.getMap();
@@ -44,6 +47,7 @@ public class SimulationPresenter implements MapChangeListener {
                 600 / (map.getMapWidth()));
 
         cellLabels = new Label[map.getMapHeight()][map.getMapWidth()];
+        initializeChart();
 
         statValues[0] = STAT_1;
         statValues[1] = STAT_2;
@@ -297,6 +301,7 @@ public class SimulationPresenter implements MapChangeListener {
         Platform.runLater(() -> {
             drawMap();
             updateStats();
+            updateChart();
         });
     }
 
@@ -316,5 +321,23 @@ public class SimulationPresenter implements MapChangeListener {
             mostFrequentGenesAnimals = null;
         }
         drawMap();
+    }
+
+    private void initializeChart() {
+        lineChart = new LineChart<>(new NumberAxis(), new NumberAxis());
+        XYChart.Series<Number, Number> series1 = new XYChart.Series<>();
+        XYChart.Series<Number, Number> series2 = new XYChart.Series<>();
+        series1.setName("Animal amount");
+        series2.setName("Plant amount");
+        lineChart.getData().addAll(series1, series2);
+        lineChartContainer.getChildren().add(lineChart);
+    }
+    private void updateChart() {
+        String[] stats = map.getCurrentStats();
+        XYChart.Series<Number, Number> series1 = lineChart.getData().get(0);
+        XYChart.Series<Number, Number> series2 = lineChart.getData().get(1);
+
+        series1.getData().add(new XYChart.Data<>(Integer.parseInt(stats[0]), Integer.parseInt(stats[1])));
+        series2.getData().add(new XYChart.Data<>(Integer.parseInt(stats[0]), Integer.parseInt(stats[2])));
     }
 }
