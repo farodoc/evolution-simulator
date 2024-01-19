@@ -194,6 +194,7 @@ public class SimulationPresenter implements MapChangeListener {
         for (Vector2d vec : prevOccupiedPositions) {
             int x = vec.x();
             int y = vec.y();
+            //tu jest problem z podswietlaniem najsilniejszego genu
             Object objectAtPosition = map.objectAt(new Vector2d(x,y));
             Label cellLabel = cellLabels[y][x];
 
