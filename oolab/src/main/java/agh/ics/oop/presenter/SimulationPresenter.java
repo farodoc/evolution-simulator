@@ -13,6 +13,7 @@ import javafx.scene.shape.Circle;
 
 import java.util.List;
 import java.util.Set;
+import java.util.Vector;
 
 public class SimulationPresenter implements MapChangeListener {
     @FXML
@@ -23,7 +24,7 @@ public class SimulationPresenter implements MapChangeListener {
     private Label STAT_A1,STAT_A2,STAT_A3,STAT_A4,STAT_A5,STAT_A6,STAT_A7,STAT_A8,STAT_A9,STAT_A10;
 
     private Simulation simulation;
-    private List<Integer> mostFrequentGenes = null;
+    private List<Animal> mostFrequentGenesAnimals = null;
     private AbstractWorldMap map;
     private int CELL_SIZE;
     private Label[][] cellLabels;
@@ -194,7 +195,6 @@ public class SimulationPresenter implements MapChangeListener {
         for (Vector2d vec : prevOccupiedPositions) {
             int x = vec.x();
             int y = vec.y();
-            //tu jest problem z podswietlaniem najsilniejszego genu
             Object objectAtPosition = map.objectAt(new Vector2d(x,y));
             Label cellLabel = cellLabels[y][x];
 
@@ -212,10 +212,6 @@ public class SimulationPresenter implements MapChangeListener {
 
                     if(animal.getEnergy() > 0){
                         cellLabel.setGraphic(drawAnimal(animal));
-                        if(animal.getGenes().getGenesList().equals(mostFrequentGenes)){
-                            System.out.println(animal.getPosition());
-                            cellLabel.setBorder(new Border(new BorderStroke(Color.BLUE, BorderStrokeStyle.SOLID, null, new BorderWidths(2))));
-                        }
                     }
                 }
                 else {
@@ -230,6 +226,17 @@ public class SimulationPresenter implements MapChangeListener {
                         cellLabel.setStyle("-fx-alignment: CENTER;-fx-font-weight: bold;-fx-font-size: " + grassSize/1.5 + "px;");
                     }
                 }
+            }
+        }
+
+        if (mostFrequentGenesAnimals != null){
+            for(Animal animal : mostFrequentGenesAnimals){
+                int x = animal.getPosition().x();
+                int y = animal.getPosition().y();
+                Label cellLabel = cellLabels[y][x];
+                cellLabel.setBorder(new Border(new BorderStroke(
+                        Color.BLUE, BorderStrokeStyle.SOLID, CornerRadii.EMPTY, new BorderWidths(2)
+                )));
             }
         }
 
@@ -303,11 +310,10 @@ public class SimulationPresenter implements MapChangeListener {
     public void onPauseResumeClicked(javafx.event.ActionEvent actionEvent){
         simulation.changeState();
         if(!simulation.getIsActive()){
-            mostFrequentGenes = map.getCurrentMostFrequentGenotype();
-            System.out.println(mostFrequentGenes);
+            mostFrequentGenesAnimals = map.getCurrentMostFrequentGenotypeAnimalList();
         }
         else{
-            mostFrequentGenes = null;
+            mostFrequentGenesAnimals = null;
         }
         drawMap();
     }

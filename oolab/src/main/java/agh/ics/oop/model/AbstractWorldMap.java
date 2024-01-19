@@ -10,8 +10,7 @@ public abstract class AbstractWorldMap implements WorldMap{
     private final List<MapChangeListener> observers = new ArrayList<>();
     protected final Map<Vector2d, List<Animal>> animals = new HashMap<>();
     protected final Map<Vector2d, AbstractFood> foodTiles = new HashMap<>();
-    private Map<List<Integer>, Integer> genotypeCounts = new HashMap<>();
-    private Map<List<Integer>, Integer> currentGenotypeCounts = new HashMap<>();
+    private final Map<List<Integer>, Integer> currentGenotypeCounts = new HashMap<>();
     protected final MapVisualizer mapVisualizer;
     protected final UUID id;
     protected final Vector2d BOTTOM_LEFT_MAP_BORDER = new Vector2d(0,0);
@@ -51,7 +50,6 @@ public abstract class AbstractWorldMap implements WorldMap{
             animals.put(position, newAnimalList);
         }
         totalAnimalAmount++;
-        genotypeCounts.put(animal.getGenes().getGenesList(), genotypeCounts.getOrDefault(animal.getGenes().getGenesList(), 0) + 1);
         currentGenotypeCounts.put(animal.getGenes().getGenesList(), currentGenotypeCounts.getOrDefault(animal.getGenes().getGenesList(), 0) + 1);
     }
 
@@ -428,7 +426,6 @@ public abstract class AbstractWorldMap implements WorldMap{
         List<Integer> mostFrequentGenotype = new ArrayList<>();
         int maxCount = 0;
 
-        //for (Map.Entry<List<Integer>, Integer> entry : genotypeCounts.entrySet()) {
         for (Map.Entry<List<Integer>, Integer> entry : currentGenotypeCounts.entrySet()) {
             if (entry.getValue() > maxCount) {
                 mostFrequentGenotype = entry.getKey();
@@ -439,7 +436,7 @@ public abstract class AbstractWorldMap implements WorldMap{
         return mostFrequentGenotype + " x " + maxCount;
     }
 
-    public List<Integer> getCurrentMostFrequentGenotype() {
+    public List<Animal> getCurrentMostFrequentGenotypeAnimalList() {
         List<Integer> mostFrequentGenotype = new ArrayList<>();
         int maxCount = 0;
 
@@ -450,7 +447,19 @@ public abstract class AbstractWorldMap implements WorldMap{
             }
         }
 
-        return mostFrequentGenotype;
+        List<Animal> animalListToReturn = new ArrayList<>();
+
+        for (List<Animal> animalsList : animals.values()) {
+            if (animalsList != null) {
+                for (Animal animal : animalsList) {
+                    if(animal.getGenes().getGenesList().equals(mostFrequentGenotype)){
+                        animalListToReturn.add(animal);
+                    }
+                }
+            }
+        }
+
+        return animalListToReturn;
     }
 
     private double getAverageEnergyForLivingAnimals(){
