@@ -13,6 +13,8 @@
 <?import java.lang.String?>
 <?import java.net.URL?>
 <?import javafx.scene.control.RadioButton?>
+<?import javafx.scene.control.ToggleButton?>
+<?import javafx.scene.control.CheckBox?>
 <BorderPane xmlns="http://javafx.com/javafx"
             xmlns:fx="http://javafx.com/fxml"
             minHeight="550.0" minWidth="850.0"
@@ -88,13 +90,11 @@
                 </HBox>
                 <Label text="Additional options" styleClass="labelOptions"/>
                 <HBox>
-                    <Label text="Save stats to CSV:"/>
-                    <HBox>
-                        <RadioButton fx:id="saveStatsYes" text="Yes"/>
-                        <RadioButton fx:id="saveStatsNo" text="No"/>
-                    </HBox>
-                    <Label text="Refresh time:"/>
-                    <TextField fx:id="REFRESH_TIME"/>
+                        <Label text="Refresh time:"/>
+                        <TextField fx:id="REFRESH_TIME"/>
+
+                        <Label text="Save stats to CSV:"/>
+                        <CheckBox fx:id="SAVE_STATS"/>
                 </HBox>
             </VBox>
 

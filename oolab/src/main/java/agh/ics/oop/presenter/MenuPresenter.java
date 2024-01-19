@@ -23,6 +23,9 @@ public class MenuPresenter{
     private Label errorLabel;
 
     @FXML
+    private CheckBox SAVE_STATS;
+
+    @FXML
     private void initialize(){
         CONFIG_NAME.setText("Example config");
         MAP_WIDTH.setText("20");
@@ -47,6 +50,8 @@ public class MenuPresenter{
     animalEnergyToReproduceCost, animalGenesAmount, animalMinMutations, animalMaxMutations, foodStartingAmount,
     foodGrowthPerDay, foodEnergy, refreshTime;
 
+    boolean saveStats;
+
     String selectedMap, selectedGenes;
 
     public void onSimulationStartClicked(javafx.event.ActionEvent actionEvent) {
@@ -69,7 +74,8 @@ public class MenuPresenter{
                 String.valueOf(foodEnergy),
                 mapComboBox.getValue(),
                 genesComboBox.getValue(),
-                String.valueOf(refreshTime)
+                String.valueOf(refreshTime),
+                String.valueOf(saveStats)
         };
 
         AbstractWorldMap map;
@@ -156,7 +162,8 @@ public class MenuPresenter{
                     String.valueOf(foodEnergy),
                     mapComboBox.getValue(),
                     genesComboBox.getValue(),
-                    String.valueOf(refreshTime)
+                    String.valueOf(refreshTime),
+                    String.valueOf(saveStats)
             };
             settings = new Settings(attributesArray);
         } catch (Exception e) {
@@ -199,6 +206,7 @@ public class MenuPresenter{
             foodGrowthPerDay = Integer.parseInt(FOOD_GROWTH_PER_DAY.getText());
             foodEnergy = Integer.parseInt(FOOD_ENERGY.getText());
             refreshTime = Integer.parseInt(REFRESH_TIME.getText());
+            saveStats = SAVE_STATS.isSelected();
 
             if (mapWidth <= 0 || mapHeight <= 0 || animalStartingAmount <= 0 || animalStartingEnergy <= 0 || animalEnergyPerMove < 0 ||
                     animalMinEnergyToReproduce <= 0 || animalEnergyToReproduceCost <= 0 || animalGenesAmount <= 0 || animalMinMutations < 0 ||

@@ -148,10 +148,6 @@ public abstract class AbstractWorldMap implements WorldMap{
                 if(animal.getEnergy() > animalToReturn.getEnergy()){
                     animalToReturn = animal;
                 }
-
-                if(animalToReturn.getEnergy() > 0){
-                    return animalToReturn;
-                }
             }
 
             if(animalToReturn.getEnergy() <= 0)

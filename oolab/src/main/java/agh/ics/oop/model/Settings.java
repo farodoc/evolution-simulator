@@ -18,6 +18,7 @@ public class Settings {
     private final int foodGrowthPerDay;
     private final int foodEnergy;
     private final int refreshTime;
+    private final boolean saveStats;
 
     public Settings(String[] config){
         name = config[0];
@@ -35,7 +36,7 @@ public class Settings {
         foodGrowthPerDay = Integer.parseInt(config[12]);
         foodEnergy = Integer.parseInt(config[13]);
         refreshTime = Integer.parseInt(config[16]);
-
+        saveStats = Boolean.parseBoolean(config[17]);
 
         if (config[14].equals("Poison map")) {
             map = new PoisonMap(foodStartingAmount, mapWidth, mapHeight);
@@ -73,51 +74,27 @@ public class Settings {
                 String.valueOf(foodEnergy),
                 map.getName(),
                 genes.getName(),
-                String.valueOf(refreshTime)
+                String.valueOf(refreshTime),
+                String.valueOf(saveStats)
         };
     }
 
-    public String getName() {
-        return name;
-    }
-    public AbstractWorldMap getMap() {
-        return map;
-    }
+    public boolean getIsSaveStats() {return saveStats;}
+    public String getName() {return name;}
+    public AbstractWorldMap getMap() {return map;}
     public int getMapWidth() {return mapWidth;}
     public int getMapHeight() {return mapHeight;}
-    public int getAnimalStartingAmount() {
-        return animalStartingAmount;
-    }
-    public int getAnimalStartingEnergy() {
-        return animalStartingEnergy;
-    }
-    public int getAnimalEnergyPerMove() {
-        return animalEnergyPerMove;
-    }
-    public int getAnimalMinEnergyToReproduce() {
-        return animalMinEnergyToReproduce;
-    }
-    public int getAnimalEnergyToReproduce() {
-        return animalEnergyToReproduce;
-    }
-    public int getAnimalGenesAmount() {
-        return animalGenesAmount;
-    }
-    public boolean getIsLoopedGenes() {
-        return genes.getName().equals("Looped");
-    }
-    public int getAnimalMinMutations() {
-        return animalMinMutations;
-    }
-    public int getAnimalMaxMutations() {
-        return animalMaxMutations;
-    }
+    public int getAnimalStartingAmount() {return animalStartingAmount;}
+    public int getAnimalStartingEnergy() {return animalStartingEnergy;}
+    public int getAnimalEnergyPerMove() {return animalEnergyPerMove;}
+    public int getAnimalMinEnergyToReproduce() {return animalMinEnergyToReproduce;}
+    public int getAnimalEnergyToReproduce() {return animalEnergyToReproduce;}
+    public int getAnimalGenesAmount() {return animalGenesAmount;}
+    public boolean getIsLoopedGenes() {return genes.getName().equals("Looped");}
+    public int getAnimalMinMutations() {return animalMinMutations;}
+    public int getAnimalMaxMutations() {return animalMaxMutations;}
     public int getFoodStartingAmount() {return foodStartingAmount;}
-    public int getFoodGrowthPerDay() {
-        return foodGrowthPerDay;
-    }
-    public int getFoodEnergy() {
-        return foodEnergy;
-    }
+    public int getFoodGrowthPerDay() {return foodGrowthPerDay;}
+    public int getFoodEnergy() {return foodEnergy;}
     public int getRefreshTime(){return refreshTime;}
 }
