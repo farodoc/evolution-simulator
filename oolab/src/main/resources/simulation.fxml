@@ -10,7 +10,7 @@
 <?import java.net.URL?>
 <BorderPane xmlns="http://javafx.com/javafx"
             xmlns:fx="http://javafx.com/fxml"
-            minHeight="1000" minWidth="1400"
+            minHeight="600" minWidth="1000"
             fx:controller="agh.ics.oop.presenter.SimulationPresenter">
 
     <left>

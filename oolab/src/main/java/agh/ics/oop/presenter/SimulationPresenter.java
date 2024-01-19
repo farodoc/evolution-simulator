@@ -10,6 +10,8 @@ import javafx.scene.control.Label;
 import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
+
+import java.util.List;
 import java.util.Set;
 
 public class SimulationPresenter implements MapChangeListener {
@@ -21,6 +23,7 @@ public class SimulationPresenter implements MapChangeListener {
     private Label STAT_A1,STAT_A2,STAT_A3,STAT_A4,STAT_A5,STAT_A6,STAT_A7,STAT_A8,STAT_A9,STAT_A10;
 
     private Simulation simulation;
+    private List<Integer> mostFrequentGenes = null;
     private AbstractWorldMap map;
     private int CELL_SIZE;
     private Label[][] cellLabels;
@@ -36,8 +39,8 @@ public class SimulationPresenter implements MapChangeListener {
         this.simulation = simulation;
         this.map = simulation.getMap();
         CELL_SIZE = Math.min(
-                1000 / (map.getMapHeight()),
-                1000 / (map.getMapWidth()));
+                600 / (map.getMapHeight()),
+                600 / (map.getMapWidth()));
 
         cellLabels = new Label[map.getMapHeight()][map.getMapWidth()];
 
@@ -200,8 +203,6 @@ public class SimulationPresenter implements MapChangeListener {
             }
 
             if (objectAtPosition != null) {
-
-
                 if (objectAtPosition instanceof Animal) {
                     Animal animal = (Animal) objectAtPosition;
                     if(trackedAnimal != null && animal.getPosition().equals(trackedAnimal.getPosition())){
@@ -210,6 +211,10 @@ public class SimulationPresenter implements MapChangeListener {
 
                     if(animal.getEnergy() > 0){
                         cellLabel.setGraphic(drawAnimal(animal));
+                        if(animal.getGenes().getGenesList() == mostFrequentGenes){
+                            System.out.println(animal.getPosition());
+                            cellLabel.setBorder(new Border(new BorderStroke(Color.BLUE, BorderStrokeStyle.SOLID, null, new BorderWidths(2))));
+                        }
                     }
                 }
                 else {
@@ -296,5 +301,13 @@ public class SimulationPresenter implements MapChangeListener {
 
     public void onPauseResumeClicked(javafx.event.ActionEvent actionEvent){
         simulation.changeState();
+        if(!simulation.getIsActive()){
+            mostFrequentGenes = map.getMostFrequentGenotype();
+            System.out.println(mostFrequentGenes);
+        }
+        else{
+            mostFrequentGenes = null;
+        }
+        drawMap();
     }
 }

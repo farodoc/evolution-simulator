@@ -11,6 +11,7 @@ public abstract class AbstractWorldMap implements WorldMap{
     protected final Map<Vector2d, List<Animal>> animals = new HashMap<>();
     protected final Map<Vector2d, AbstractFood> foodTiles = new HashMap<>();
     private Map<List<Integer>, Integer> genotypeCounts = new HashMap<>();
+    private Map<List<Integer>, Integer> currentGenotypeCounts = new HashMap<>();
     protected final MapVisualizer mapVisualizer;
     protected final UUID id;
     protected final Vector2d BOTTOM_LEFT_MAP_BORDER = new Vector2d(0,0);
@@ -51,6 +52,7 @@ public abstract class AbstractWorldMap implements WorldMap{
         }
         totalAnimalAmount++;
         genotypeCounts.put(animal.getGenes().getGenesList(), genotypeCounts.getOrDefault(animal.getGenes().getGenesList(), 0) + 1);
+        currentGenotypeCounts.put(animal.getGenes().getGenesList(), currentGenotypeCounts.getOrDefault(animal.getGenes().getGenesList(), 0) + 1);
     }
 
     public void nextDay(){day++;}
@@ -147,6 +149,10 @@ public abstract class AbstractWorldMap implements WorldMap{
             for(Animal animal: animalList){
                 if(animal.getEnergy() > animalToReturn.getEnergy()){
                     animalToReturn = animal;
+                }
+
+                if(animalToReturn.getEnergy() > 0){
+                    return animalToReturn;
                 }
             }
 
@@ -249,6 +255,8 @@ public abstract class AbstractWorldMap implements WorldMap{
                     deadAnimalSumAge += animalList.get(i).getAge();
                     animalList.get(i).setDeathDate(day);
                     animalList.remove(i);
+                    List<Integer> genesList = animalList.get(i).getGenes().getGenesList();
+                    currentGenotypeCounts.put(genesList, currentGenotypeCounts.getOrDefault(genesList, 0) - 1);
                 }
             }
 
@@ -386,7 +394,7 @@ public abstract class AbstractWorldMap implements WorldMap{
         stats[1] = String.valueOf(countCurrentAnimals());
         stats[2] = String.valueOf(foodTiles.size());
         stats[3] = String.valueOf(countFreeTilesAmount());
-        stats[4] = getMostFrequentGenotype();
+        stats[4] = getMostFrequentGenotypeAsString();
         stats[5] = String.valueOf(getAverageEnergyForLivingAnimals());
         stats[6] = String.valueOf(getAverageLifespanForDeadAnimals());
         stats[7] = String.valueOf(getAverageChildrenAmountForLivingAnimals());
@@ -416,7 +424,7 @@ public abstract class AbstractWorldMap implements WorldMap{
         return currentAnimalCount;
     }
 
-    private String getMostFrequentGenotype() {
+    private String getMostFrequentGenotypeAsString() {
         List<Integer> mostFrequentGenotype = new ArrayList<>();
         int maxCount = 0;
 
@@ -428,6 +436,20 @@ public abstract class AbstractWorldMap implements WorldMap{
         }
 
         return mostFrequentGenotype + " x " + maxCount;
+    }
+
+    public List<Integer> getMostFrequentGenotype() {
+        List<Integer> mostFrequentGenotype = new ArrayList<>();
+        int maxCount = 0;
+
+        for (Map.Entry<List<Integer>, Integer> entry : currentGenotypeCounts.entrySet()) {
+            if (entry.getValue() > maxCount) {
+                mostFrequentGenotype = entry.getKey();
+                maxCount = entry.getValue();
+            }
+        }
+
+        return mostFrequentGenotype;
     }
 
     private double getAverageEnergyForLivingAnimals(){

@@ -6,6 +6,7 @@ public class Simulation implements Runnable{
     private final Settings s;
     private final AbstractWorldMap map;
     private boolean isActive = true;
+    public boolean getIsActive(){return isActive;}
     public void changeState() {isActive = !isActive;}
 
     public Simulation(Settings s)
@@ -27,7 +28,7 @@ public class Simulation implements Runnable{
         while (true){
             if (!isActive) {
                 try {
-                    Thread.sleep(s.getRefreshTime()/3);
+                    Thread.sleep(s.getRefreshTime());
                     continue;
                 } catch (InterruptedException e) {
                     e.printStackTrace();
