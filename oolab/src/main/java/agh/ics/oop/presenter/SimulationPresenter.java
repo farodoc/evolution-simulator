@@ -211,7 +211,7 @@ public class SimulationPresenter implements MapChangeListener {
 
                     if(animal.getEnergy() > 0){
                         cellLabel.setGraphic(drawAnimal(animal));
-                        if(animal.getGenes().getGenesList() == mostFrequentGenes){
+                        if(animal.getGenes().getGenesList().equals(mostFrequentGenes)){
                             System.out.println(animal.getPosition());
                             cellLabel.setBorder(new Border(new BorderStroke(Color.BLUE, BorderStrokeStyle.SOLID, null, new BorderWidths(2))));
                         }
@@ -302,7 +302,7 @@ public class SimulationPresenter implements MapChangeListener {
     public void onPauseResumeClicked(javafx.event.ActionEvent actionEvent){
         simulation.changeState();
         if(!simulation.getIsActive()){
-            mostFrequentGenes = map.getMostFrequentGenotype();
+            mostFrequentGenes = map.getCurrentMostFrequentGenotype();
             System.out.println(mostFrequentGenes);
         }
         else{

@@ -254,9 +254,9 @@ public abstract class AbstractWorldMap implements WorldMap{
                     deadAnimalCount++;
                     deadAnimalSumAge += animalList.get(i).getAge();
                     animalList.get(i).setDeathDate(day);
-                    animalList.remove(i);
                     List<Integer> genesList = animalList.get(i).getGenes().getGenesList();
                     currentGenotypeCounts.put(genesList, currentGenotypeCounts.getOrDefault(genesList, 0) - 1);
+                    animalList.remove(i);
                 }
             }
 
@@ -428,7 +428,8 @@ public abstract class AbstractWorldMap implements WorldMap{
         List<Integer> mostFrequentGenotype = new ArrayList<>();
         int maxCount = 0;
 
-        for (Map.Entry<List<Integer>, Integer> entry : genotypeCounts.entrySet()) {
+        //for (Map.Entry<List<Integer>, Integer> entry : genotypeCounts.entrySet()) {
+        for (Map.Entry<List<Integer>, Integer> entry : currentGenotypeCounts.entrySet()) {
             if (entry.getValue() > maxCount) {
                 mostFrequentGenotype = entry.getKey();
                 maxCount = entry.getValue();
@@ -438,7 +439,7 @@ public abstract class AbstractWorldMap implements WorldMap{
         return mostFrequentGenotype + " x " + maxCount;
     }
 
-    public List<Integer> getMostFrequentGenotype() {
+    public List<Integer> getCurrentMostFrequentGenotype() {
         List<Integer> mostFrequentGenotype = new ArrayList<>();
         int maxCount = 0;
 
