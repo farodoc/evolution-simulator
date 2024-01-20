@@ -7,11 +7,10 @@
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.layout.GridPane?>
 <?import java.net.URL?>
-<?import javafx.scene.chart.LineChart?>
 
 <BorderPane xmlns="http://javafx.com/javafx"
             xmlns:fx="http://javafx.com/fxml"
-            minHeight="600" minWidth="1300"
+            minHeight="800" minWidth="1500"
             fx:controller="agh.ics.oop.presenter.SimulationPresenter">
 
     <left>
@@ -25,7 +24,7 @@
             <top>
                 <VBox styleClass="stats-container">
                     <HBox>
-                        <GridPane alignment="CENTER" hgap="10" vgap="10" styleClass="stats-table">
+                        <GridPane alignment="CENTER" styleClass="stats-table">
                             <Label text="Day" GridPane.columnIndex="0" GridPane.rowIndex="0"/>
                             <Label fx:id="STAT_1" GridPane.columnIndex="1" GridPane.rowIndex="0"/>
 
@@ -54,7 +53,7 @@
                             <Label fx:id="STAT_8" GridPane.columnIndex="1" GridPane.rowIndex="8"/>
                         </GridPane>
 
-                        <GridPane  hgap="10" vgap="10" styleClass="stats-table">
+                        <GridPane alignment="CENTER" styleClass="stats-table">
                             <Label text="ID" GridPane.columnIndex="0" GridPane.rowIndex="0"/>
                             <Label fx:id="STAT_A1" GridPane.columnIndex="1" GridPane.rowIndex="0"/>
 
@@ -76,7 +75,7 @@
                             <Label text="Children amount" GridPane.columnIndex="0" GridPane.rowIndex="6"/>
                             <Label fx:id="STAT_A7" GridPane.columnIndex="1" GridPane.rowIndex="6"/>
 
-                            <Label text="Descendant amount                     " GridPane.columnIndex="0" GridPane.rowIndex="7"/>
+                            <Label text="Descendant amount" GridPane.columnIndex="0" GridPane.rowIndex="7"/>
                             <Label fx:id="STAT_A8" GridPane.columnIndex="1" GridPane.rowIndex="7"/>
 
                             <Label text="Days alive" GridPane.columnIndex="0" GridPane.rowIndex="8"/>
@@ -89,12 +88,12 @@
                     <VBox styleClass="divider"/>
 
 
-                    <HBox fx:id="lineChartContainer"/>
+                    <HBox alignment="CENTER" fx:id="lineChartContainer"/>
 
 
                     <VBox styleClass="divider"/>
                     <HBox alignment="CENTER">
-                        <Button text="Pause/Resume" onAction="#onPauseResumeClicked" styleClass="buttonik"/>
+                        <Button text="Pause/Resume" onAction="#onPauseResumeClicked" styleClass="pause-button"/>
                     </HBox>
                 </VBox>
             </top>

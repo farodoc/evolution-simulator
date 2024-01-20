@@ -82,8 +82,6 @@ public class Settings {
     public boolean getIsSaveStats() {return saveStats;}
     public String getName() {return name;}
     public AbstractWorldMap getMap() {return map;}
-    public int getMapWidth() {return mapWidth;}
-    public int getMapHeight() {return mapHeight;}
     public int getAnimalStartingAmount() {return animalStartingAmount;}
     public int getAnimalStartingEnergy() {return animalStartingEnergy;}
     public int getAnimalEnergyPerMove() {return animalEnergyPerMove;}
@@ -93,7 +91,6 @@ public class Settings {
     public boolean getIsLoopedGenes() {return genes.getName().equals("Looped");}
     public int getAnimalMinMutations() {return animalMinMutations;}
     public int getAnimalMaxMutations() {return animalMaxMutations;}
-    public int getFoodStartingAmount() {return foodStartingAmount;}
     public int getFoodGrowthPerDay() {return foodGrowthPerDay;}
     public int getFoodEnergy() {return foodEnergy;}
     public int getRefreshTime(){return refreshTime;}

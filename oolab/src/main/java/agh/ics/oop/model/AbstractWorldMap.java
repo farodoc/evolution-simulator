@@ -1,7 +1,5 @@
 package agh.ics.oop.model;
 
-import agh.ics.oop.model.util.MapVisualizer;
-
 import java.util.*;
 
 public abstract class AbstractWorldMap implements WorldMap{
@@ -11,7 +9,6 @@ public abstract class AbstractWorldMap implements WorldMap{
     protected final Map<Vector2d, List<Animal>> animals = new HashMap<>();
     protected final Map<Vector2d, AbstractFood> foodTiles = new HashMap<>();
     private final Map<List<Integer>, Integer> currentGenotypeCounts = new HashMap<>();
-    protected final MapVisualizer mapVisualizer;
     protected final UUID id;
     protected final Vector2d BOTTOM_LEFT_MAP_BORDER = new Vector2d(0,0);
     protected final Vector2d TOP_RIGHT_MAP_BORDER;
@@ -34,7 +31,6 @@ public abstract class AbstractWorldMap implements WorldMap{
         TOP_RIGHT_MAP_BORDER = new Vector2d(mapWidth - 1,mapHeight - 1);
         tiles = new TileType[mapHeight][mapWidth];
         id = UUID.randomUUID();
-        mapVisualizer = new MapVisualizer(this);
     }
 
     public void place(Animal animal) {
@@ -86,7 +82,6 @@ public abstract class AbstractWorldMap implements WorldMap{
         }
         return null;
     }
-
 
     protected void generateTiles(){
         generateJungleTiles();
@@ -168,6 +163,7 @@ public abstract class AbstractWorldMap implements WorldMap{
         return position.x() < BOTTOM_LEFT_MAP_BORDER.x() || position.x() > TOP_RIGHT_MAP_BORDER.x() ||
                 position.y() < BOTTOM_LEFT_MAP_BORDER.y() || position.y() > TOP_RIGHT_MAP_BORDER.y();
     }
+
     public Vector2d getNewPositionForAnimal(Animal animal){
         Vector2d oldPosition = animal.getPosition();
         MapDirection orientation = animal.getOrientation();
@@ -203,12 +199,6 @@ public abstract class AbstractWorldMap implements WorldMap{
         animalThatEats.eat(foodEnergy);
     }
 
-    @Override
-    public String toString(){
-        Boundary boundaries = getCurrentBounds();
-        return mapVisualizer.draw(boundaries.bottomLeftCorner(), boundaries.topRightCorner());
-    }
-
     public int getMapHeight() {return mapHeight;}
     public int getMapWidth() {return mapWidth;}
     public UUID getId() {
@@ -217,11 +207,13 @@ public abstract class AbstractWorldMap implements WorldMap{
     public void addObserver(MapChangeListener observer) {
         observers.add(observer);
     }
+
     protected void notifyObservers(String message) {
         for (MapChangeListener observer : observers) {
             observer.mapChanged(this, message);
         }
     }
+
     public void initializeDrawMap(){ notifyObservers(""); }
 
     public String getName() {return "Abstract map";}

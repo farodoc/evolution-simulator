@@ -1,6 +1,5 @@
 package agh.ics.oop.presenter;
 
-
 import agh.ics.oop.SimulationEngine;
 import agh.ics.oop.model.*;
 import javafx.fxml.FXML;
@@ -8,7 +7,6 @@ import javafx.scene.control.*;
 import java.io.FileNotFoundException;
 import java.util.Objects;
 import java.util.Optional;
-
 
 public class MenuPresenter{
     @FXML

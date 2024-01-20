@@ -6,7 +6,7 @@ import java.nio.file.NotDirectoryException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 
-public class FolderGarbageCollector {
+public class FolderCleaner {
     private final static String path = "src/main/resources/stats";
 
     public static void clearStatsDirectory() throws NotDirectoryException {

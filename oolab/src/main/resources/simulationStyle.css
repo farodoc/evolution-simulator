@@ -1,8 +1,11 @@
 .stats-table {
-    -fx-border-color: black;
-    -fx-border-width: 1;
-    -fx-padding: 10 10 10 10;
+    -fx-padding: 10 0 10 20;
     -fx-margin: 10;
+    -fx-grid-lines-visible: true;
+}
+
+.stats-table .label {
+    -fx-padding: 5;
 }
 
 .stats-container{
@@ -13,6 +16,6 @@
     -fx-padding: 10 0 10 0;
 }
 
-.buttonik {
-    -fx-font-size: 20;
+.pause-button {
+    -fx-font-size: 15;
 }

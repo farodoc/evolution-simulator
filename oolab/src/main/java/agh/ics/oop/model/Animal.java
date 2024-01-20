@@ -105,7 +105,6 @@ public class Animal implements WorldElement{
     public int getDescendantAmount() {return descendantAmount;}
     public int getGenesAmount() {return genesAmount;}
     public AbstractGenes getGenes() {return genes;}
-    public int getPlantsEaten() {return plantsEaten;}
     public void updateAge(){
         this.age++;
     }

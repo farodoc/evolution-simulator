@@ -1,14 +1,12 @@
 package agh.ics.oop;
 
-import agh.ics.oop.model.util.FolderGarbageCollector;
+import agh.ics.oop.model.util.FolderCleaner;
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
 import javafx.scene.layout.BorderPane;
 import javafx.stage.Stage;
-
 import java.io.IOException;
-import java.nio.file.NotDirectoryException;
 
 public class MenuLauncher extends Application {
     @Override
@@ -17,7 +15,7 @@ public class MenuLauncher extends Application {
         loader.setLocation(getClass().getClassLoader().getResource("menu.fxml"));
         BorderPane viewRoot = loader.load();
 
-        FolderGarbageCollector.clearStatsDirectory();
+        FolderCleaner.clearStatsDirectory();
 
         configureStage(primaryStage,viewRoot);
         primaryStage.show();

@@ -2,10 +2,12 @@ package agh.ics.oop.presenter;
 
 import agh.ics.oop.Simulation;
 import agh.ics.oop.model.*;
+import com.sun.javafx.charts.Legend;
 import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.geometry.HPos;
 import javafx.geometry.Insets;
+import javafx.scene.Node;
 import javafx.scene.chart.LineChart;
 import javafx.scene.chart.NumberAxis;
 import javafx.scene.chart.XYChart;
@@ -43,8 +45,8 @@ public class SimulationPresenter implements MapChangeListener {
         this.simulation = simulation;
         this.map = simulation.getMap();
         CELL_SIZE = Math.min(
-                600 / (map.getMapHeight()),
-                600 / (map.getMapWidth()));
+                800 / (map.getMapHeight()),
+                800 / (map.getMapWidth()));
 
         cellLabels = new Label[map.getMapHeight()][map.getMapWidth()];
         initializeChart();
@@ -107,7 +109,7 @@ public class SimulationPresenter implements MapChangeListener {
                     cellLabel.setBackground(new Background(new BackgroundFill(Color.rgb(18, 74, 13), CornerRadii.EMPTY, Insets.EMPTY)));
                 }
                 else{
-                    cellLabel.setBackground(new Background(new BackgroundFill(Color.rgb(161, 92, 32), CornerRadii.EMPTY, Insets.EMPTY)));
+                    cellLabel.setBackground(new Background(new BackgroundFill(Color.rgb(210, 180, 140), CornerRadii.EMPTY, Insets.EMPTY)));
                 }
 
                 cellLabel.setOnMouseClicked(event -> {
@@ -141,7 +143,7 @@ public class SimulationPresenter implements MapChangeListener {
 
                 if (selectedCellLabel != null) {
                     selectedCellLabel.setBorder(new Border(new BorderStroke(
-                            Color.ORANGE, BorderStrokeStyle.SOLID, CornerRadii.EMPTY, new BorderWidths(2)
+                            Color.ORANGE, BorderStrokeStyle.SOLID, CornerRadii.EMPTY, new BorderWidths(4)
                     )));
                 }
             }
@@ -221,12 +223,12 @@ public class SimulationPresenter implements MapChangeListener {
                 else {
                     if (objectAtPosition instanceof Grass){
                         cellLabel.setText(objectAtPosition.toString());
-                        cellLabel.setTextFill(Color.GREEN);
+                        cellLabel.setTextFill(Color.rgb(0, 128, 0));
                         cellLabel.setStyle("-fx-alignment: CENTER;-fx-font-weight: bold;-fx-font-size: " + grassSize + "px;");
                     }
                     else{
                         cellLabel.setText("?");
-                        cellLabel.setTextFill(Color.rgb(149, 31, 255));
+                        cellLabel.setTextFill(Color.rgb(255, 0, 255));
                         cellLabel.setStyle("-fx-alignment: CENTER;-fx-font-weight: bold;-fx-font-size: " + grassSize/1.5 + "px;");
                     }
                 }
@@ -239,7 +241,7 @@ public class SimulationPresenter implements MapChangeListener {
                 int y = animal.getPosition().y();
                 Label cellLabel = cellLabels[y][x];
                 cellLabel.setBorder(new Border(new BorderStroke(
-                        Color.BLUE, BorderStrokeStyle.SOLID, CornerRadii.EMPTY, new BorderWidths(2)
+                        Color.BLUE, BorderStrokeStyle.SOLID, CornerRadii.EMPTY, new BorderWidths(4)
                 )));
             }
         }
@@ -250,7 +252,7 @@ public class SimulationPresenter implements MapChangeListener {
             Label cellLabel = cellLabels[y][x];
             cellLabel.setGraphic(drawAnimal(trackedAnimal));
             cellLabel.setBorder(new Border(new BorderStroke(
-                    Color.ORANGE, BorderStrokeStyle.SOLID, CornerRadii.EMPTY, new BorderWidths(2)
+                    Color.ORANGE, BorderStrokeStyle.SOLID, CornerRadii.EMPTY, new BorderWidths(4)
             )));
             selectedCellLabel = cellLabel;
         }
@@ -284,11 +286,7 @@ public class SimulationPresenter implements MapChangeListener {
     }
 
     private Color getColorForAnimal(double healthPercentage){
-        double hue = 1;
-        double brightness = 0.9;
-        double opacity = 1.0;
-
-        return Color.hsb(hue * 360, healthPercentage, brightness, opacity);
+        return Color.hsb(360, 1, healthPercentage, 1);
     }
 
     public void drawMap(){
@@ -329,9 +327,35 @@ public class SimulationPresenter implements MapChangeListener {
         XYChart.Series<Number, Number> series2 = new XYChart.Series<>();
         series1.setName("Animal amount");
         series2.setName("Plant amount");
+
+        lineChart.setCreateSymbols(false);
+
         lineChart.getData().addAll(series1, series2);
+
+        setSeriesColor(series1, Color.ORANGE);
+        setSeriesColor(series2, Color.GREEN);
+
+        setLegendColor(lineChart, Color.ORANGE, Color.GREEN);
+
         lineChartContainer.getChildren().add(lineChart);
     }
+
+    private void setSeriesColor(XYChart.Series<Number, Number> series, Color color) {
+        Node seriesNode = series.getNode().lookup(".chart-series-line");
+        seriesNode.setStyle("-fx-stroke: " + color.toString().replace("0x", "#") + ";");
+    }
+
+    private void setLegendColor(LineChart<Number, Number> chart, Color... colors) {
+        Legend legend = (Legend) chart.lookup(".chart-legend");
+        if (legend != null) {
+            Legend.LegendItem[] legendItems = legend.getItems().toArray(new Legend.LegendItem[0]);
+            for (int i = 0; i < legendItems.length && i < colors.length; i++) {
+                Node legendNode = legendItems[i].getSymbol();
+                legendNode.setStyle("-fx-background-color: " + colors[i].toString().replace("0x", "#") + ";");
+            }
+        }
+    }
+
     private void updateChart() {
         String[] stats = map.getCurrentStats();
         XYChart.Series<Number, Number> series1 = lineChart.getData().get(0);
