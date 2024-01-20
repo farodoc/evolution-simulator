@@ -2,124 +2,83 @@ package agh.ics.oop.presenter;
 
 import agh.ics.oop.Simulation;
 import agh.ics.oop.model.*;
+import com.sun.javafx.charts.Legend;
 import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.geometry.HPos;
 import javafx.geometry.Insets;
-import javafx.scene.Scene;
-import javafx.scene.control.ChoiceDialog;
-import javafx.scene.control.ComboBox;
+import javafx.scene.Node;
+import javafx.scene.chart.LineChart;
+import javafx.scene.chart.NumberAxis;
+import javafx.scene.chart.XYChart;
 import javafx.scene.control.Label;
-import javafx.scene.control.TextField;
 import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
-import javafx.stage.Modality;
-import javafx.stage.Screen;
-import javafx.stage.Stage;
-import javafx.stage.StageStyle;
-
-import java.io.FileNotFoundException;
-import java.util.Objects;
-import java.util.Optional;
+import java.util.List;
 import java.util.Set;
 
 public class SimulationPresenter implements MapChangeListener {
     @FXML
-    private TextField MAP_WIDTH;
-    @FXML
-    private TextField MAP_HEIGHT;
-    @FXML
-    private ComboBox<String> mapComboBox;
-
-    @FXML
-    private TextField ANIMAL_STARTING_AMOUNT;
-    @FXML
-    private TextField ANIMAL_STARTING_ENERGY;
-    @FXML
-    private TextField ANIMAL_ENERGY_PER_MOVE;
-
-    @FXML
-    private TextField ANIMAL_MIN_ENERGY_TO_REPRODUCE;
-    @FXML
-    private TextField ANIMAL_ENERGY_TO_REPRODUCE_COST;
-
-    @FXML
-    private TextField ANIMAL_GENES_AMOUNT;
-    @FXML
-    private ComboBox<String> genesComboBox;
-
-    @FXML
-    private TextField ANIMAL_MIN_MUTATIONS;
-    @FXML
-    private TextField ANIMAL_MAX_MUTATIONS;
-
-    @FXML
-    private TextField FOOD_STARTING_AMOUNT;
-    @FXML
-    private TextField FOOD_GROWTH_PER_DAY;
-    @FXML
-    private TextField FOOD_ENERGY;
-
-
-    @FXML
-    private Label infoLabel;
-    @FXML
-    private Label errorLabel;
-    @FXML
-    private TextField CONFIG_NAME;
-
-    @FXML
-    private void initialize(){
-        CONFIG_NAME.setText("Example config");
-        MAP_WIDTH.setText("5");
-        MAP_HEIGHT.setText("5");
-        mapComboBox.setValue("Equator map");
-        ANIMAL_STARTING_AMOUNT.setText("3");
-        ANIMAL_STARTING_ENERGY.setText("50");
-        ANIMAL_ENERGY_PER_MOVE.setText("5");
-        ANIMAL_MIN_ENERGY_TO_REPRODUCE.setText("35");
-        ANIMAL_ENERGY_TO_REPRODUCE_COST.setText("15");
-        ANIMAL_GENES_AMOUNT.setText("10");
-        ANIMAL_GENES_AMOUNT.setText("10");
-        genesComboBox.setValue("Looped");
-        ANIMAL_MIN_MUTATIONS.setText("1");
-        ANIMAL_MAX_MUTATIONS.setText("5");
-        FOOD_STARTING_AMOUNT.setText("20");
-        FOOD_GROWTH_PER_DAY.setText("5");
-        FOOD_ENERGY.setText("15");
-    }
-
-    int mapWidth;
-    int mapHeight;
-    String selectedMap;
-    int animalStartingAmount;
-    int animalStartingEnergy;
-    int animalEnergyPerMove;
-    int animalMinEnergyToReproduce;
-    int animalEnergyToReproduceCost;
-    int animalGenesAmount;
-    String selectedGenes;
-    int animalMinMutations;
-    int animalMaxMutations;
-    int foodStartingAmount;
-    int foodGrowthPerDay;
-    int foodEnergy;
-    AbstractWorldMap map;
-    private int CELL_SIZE;
     private GridPane simulationGrid;
+    @FXML
+    private Label STAT_1,STAT_2,STAT_3,STAT_4,STAT_5,STAT_6,STAT_7,STAT_8,STAT_9;
+    @FXML
+    private Label STAT_A1,STAT_A2,STAT_A3,STAT_A4,STAT_A5,STAT_A6,STAT_A7,STAT_A8,STAT_A9,STAT_A10;
+    @FXML
+    private HBox lineChartContainer;
+
+    private Simulation simulation;
+    private List<Animal> mostFrequentGenesAnimals = null;
+    private AbstractWorldMap map;
+    private int CELL_SIZE;
     private Label[][] cellLabels;
-
     private Set<Vector2d> prevOccupiedPositions;
+    private Label selectedCellLabel;
+    private Animal trackedAnimal;
+    private Animal prevTrackedAnimal;
+    private final int numberOfStats = 9;
+    private Label[] statValues = new Label[numberOfStats];
+    private Label[] trackedAnimalStats = new Label[10];
+    private LineChart<Number, Number> lineChart;
+    public void initialize(Simulation simulation){
+        this.simulation = simulation;
+        this.map = simulation.getMap();
+        CELL_SIZE = Math.min(
+                800 / (map.getMapHeight()),
+                800 / (map.getMapWidth()));
 
-    public void setMap(AbstractWorldMap map) {
-        this.map = map;
+        cellLabels = new Label[map.getMapHeight()][map.getMapWidth()];
+        initializeChart();
+
+        statValues[0] = STAT_1;
+        statValues[1] = STAT_2;
+        statValues[2] = STAT_3;
+        statValues[3] = STAT_4;
+        statValues[4] = STAT_5;
+        statValues[5] = STAT_6;
+        statValues[6] = STAT_7;
+        statValues[7] = STAT_8;
+        statValues[8] = STAT_9;
+
+        trackedAnimalStats[0] = STAT_A1;
+        trackedAnimalStats[1] = STAT_A2;
+        trackedAnimalStats[2] = STAT_A3;
+        trackedAnimalStats[3] = STAT_A4;
+        trackedAnimalStats[4] = STAT_A5;
+        trackedAnimalStats[5] = STAT_A6;
+        trackedAnimalStats[6] = STAT_A7;
+        trackedAnimalStats[7] = STAT_A8;
+        trackedAnimalStats[8] = STAT_A9;
+        trackedAnimalStats[9] = STAT_A10;
+
+        drawGrid();
     }
 
     private void drawGrid() {
         simulationGrid.getColumnConstraints().clear();
         simulationGrid.getRowConstraints().clear();
-        
+
         Boundary boundaries = map.getCurrentBounds();
         int width = boundaries.topRightCorner().x() - boundaries.bottomLeftCorner().x() + 1;
         int height = boundaries.topRightCorner().y() - boundaries.bottomLeftCorner().y() + 1;
@@ -150,14 +109,88 @@ public class SimulationPresenter implements MapChangeListener {
                     cellLabel.setBackground(new Background(new BackgroundFill(Color.rgb(18, 74, 13), CornerRadii.EMPTY, Insets.EMPTY)));
                 }
                 else{
-                    cellLabel.setBackground(new Background(new BackgroundFill(Color.rgb(161, 92, 32), CornerRadii.EMPTY, Insets.EMPTY)));
+                    cellLabel.setBackground(new Background(new BackgroundFill(Color.rgb(210, 180, 140), CornerRadii.EMPTY, Insets.EMPTY)));
                 }
+
+                cellLabel.setOnMouseClicked(event -> {
+                    int clickedX = GridPane.getColumnIndex(cellLabel);
+                    int clickedY = map.getMapHeight() - GridPane.getRowIndex(cellLabel) - 1;
+                    Vector2d position = new Vector2d(clickedX, clickedY);
+
+                    if (trackedAnimal != null && position.equals(trackedAnimal.getPosition()) && trackedAnimal.getEnergy() <= 0) {
+                        untrackAnimal();
+                    }
+                    else if (map.objectAt(position) instanceof Animal) {
+                        handleAnimalClick(new Vector2d(clickedX, clickedY));
+                    }
+                });
 
                 GridPane.setHalignment(cellLabel, HPos.CENTER);
                 cellLabels[y][x] = cellLabel;
                 simulationGrid.add(cellLabel, x, height - y - 1);
             }
         }
+    }
+
+    private void trackAnimal(Vector2d position) {
+        WorldElement objectAtPosition = map.objectAt(position);
+
+        if (objectAtPosition instanceof Animal) {
+            Animal potentialTrackedAnimal = (Animal) objectAtPosition;
+
+            if (potentialTrackedAnimal.getEnergy() > 0) {
+                trackedAnimal = potentialTrackedAnimal;
+
+                if (selectedCellLabel != null) {
+                    selectedCellLabel.setBorder(new Border(new BorderStroke(
+                            Color.ORANGE, BorderStrokeStyle.SOLID, CornerRadii.EMPTY, new BorderWidths(4)
+                    )));
+                }
+            }
+        }
+    }
+
+    private void untrackAnimal() {
+        trackedAnimal = null;
+        if (selectedCellLabel != null) {
+            selectedCellLabel.setBorder(new Border(new BorderStroke(Color.BLACK, BorderStrokeStyle.DOTTED, null, new BorderWidths(0.4))));
+            selectedCellLabel = null;
+        }
+    }
+
+    private void untrackAnimalAfterDeath(){
+        if (selectedCellLabel != null) {
+            selectedCellLabel.setBorder(new Border(new BorderStroke(Color.BLACK, BorderStrokeStyle.DOTTED, null, new BorderWidths(0.4))));
+            selectedCellLabel = null;
+        }
+    }
+
+
+    private void showTrackedAnimalStats() {
+        if(trackedAnimal != null) {
+            String[] stats = trackedAnimal.getAnimalStats();
+
+            for(int i = 0; i < stats.length; i++)
+                trackedAnimalStats[i].setText(stats[i]);
+        }
+        else {
+            for (Label trackedAnimalStat : trackedAnimalStats)
+                trackedAnimalStat.setText("N/A");
+        }
+    }
+
+
+    private void handleAnimalClick(Vector2d position) {
+        Animal clickedAnimal = (Animal) map.objectAt(position);
+        Label clickedLabel = cellLabels[clickedAnimal.getPosition().y()][clickedAnimal.getPosition().x()];
+
+        if (trackedAnimal != null && selectedCellLabel.equals(clickedLabel)) {
+            untrackAnimal();
+        } else {
+            trackAnimal(position);
+        }
+
+        Platform.runLater(this::drawMap);
     }
 
     private void fillMap(){
@@ -171,31 +204,74 @@ public class SimulationPresenter implements MapChangeListener {
             Object objectAtPosition = map.objectAt(new Vector2d(x,y));
             Label cellLabel = cellLabels[y][x];
 
+            if (trackedAnimal != null && trackedAnimal.getPosition() == vec && trackedAnimal.getEnergy() <= 0){
+                prevTrackedAnimal = trackedAnimal;
+                untrackAnimalAfterDeath();
+            }
+
             if (objectAtPosition != null) {
                 if (objectAtPosition instanceof Animal) {
-                    cellLabel.setGraphic(drawAnimal((Animal) objectAtPosition));
+                    Animal animal = (Animal) objectAtPosition;
+                    if(trackedAnimal != null && animal.getPosition().equals(trackedAnimal.getPosition())){
+                        continue;
+                    }
+
+                    if(animal.getEnergy() > 0){
+                        cellLabel.setGraphic(drawAnimal(animal));
+                    }
                 }
                 else {
                     if (objectAtPosition instanceof Grass){
                         cellLabel.setText(objectAtPosition.toString());
-                        cellLabel.setTextFill(Color.GREEN);
+                        cellLabel.setTextFill(Color.rgb(0, 128, 0));
                         cellLabel.setStyle("-fx-alignment: CENTER;-fx-font-weight: bold;-fx-font-size: " + grassSize + "px;");
                     }
                     else{
                         cellLabel.setText("?");
-                        cellLabel.setTextFill(Color.rgb(149, 31, 255));
+                        cellLabel.setTextFill(Color.rgb(255, 0, 255));
                         cellLabel.setStyle("-fx-alignment: CENTER;-fx-font-weight: bold;-fx-font-size: " + grassSize/1.5 + "px;");
                     }
                 }
             }
         }
+
+        if (mostFrequentGenesAnimals != null){
+            for(Animal animal : mostFrequentGenesAnimals){
+                int x = animal.getPosition().x();
+                int y = animal.getPosition().y();
+                Label cellLabel = cellLabels[y][x];
+                cellLabel.setBorder(new Border(new BorderStroke(
+                        Color.BLUE, BorderStrokeStyle.SOLID, CornerRadii.EMPTY, new BorderWidths(4)
+                )));
+            }
+        }
+
+        if (trackedAnimal != null) {
+            int x = trackedAnimal.getPosition().x();
+            int y = trackedAnimal.getPosition().y();
+            Label cellLabel = cellLabels[y][x];
+            cellLabel.setGraphic(drawAnimal(trackedAnimal));
+            cellLabel.setBorder(new Border(new BorderStroke(
+                    Color.ORANGE, BorderStrokeStyle.SOLID, CornerRadii.EMPTY, new BorderWidths(4)
+            )));
+            selectedCellLabel = cellLabel;
+        }
     }
 
     private void clearGrid() {
+        if(prevTrackedAnimal != null){
+            Label cellLabel = cellLabels[prevTrackedAnimal.getPosition().y()][prevTrackedAnimal.getPosition().x()];
+            cellLabel.setText(null);
+            cellLabel.setGraphic(null);
+            cellLabel.setBorder(new Border(new BorderStroke(Color.BLACK, BorderStrokeStyle.DOTTED, null, new BorderWidths(0.4))));
+        }
+
         if (prevOccupiedPositions != null) {
             for (Vector2d vec : prevOccupiedPositions) {
-                cellLabels[vec.y()][vec.x()].setText(null);
-                cellLabels[vec.y()][vec.x()].setGraphic(null);
+                Label cellLabel = cellLabels[vec.y()][vec.x()];
+                cellLabel.setText(null);
+                cellLabel.setGraphic(null);
+                cellLabel.setBorder(new Border(new BorderStroke(Color.BLACK, BorderStrokeStyle.DOTTED, null, new BorderWidths(0.4))));
             }
         }
     }
@@ -210,230 +286,82 @@ public class SimulationPresenter implements MapChangeListener {
     }
 
     private Color getColorForAnimal(double healthPercentage){
-        double hue = 1;
-        double brightness = 0.9;
-        double opacity = 1.0;
-
-        return Color.hsb(hue * 360, healthPercentage, brightness, opacity);
+        return Color.hsb(360, 1, healthPercentage, 1);
     }
 
     public void drawMap(){
         fillMap();
+        showTrackedAnimalStats();
     }
 
     @Override
     public void mapChanged(WorldMap map, String message) {
         Platform.runLater(() -> {
             drawMap();
-            System.out.println(map.getId());
+            updateStats();
+            updateChart();
         });
     }
 
-    public void onSimulationStartClicked(javafx.event.ActionEvent actionEvent) {
-        if (!checkAndSetInputValues()) {
-            infoLabel.setText("Wrong input values!");
-            return;
+    private void updateStats() {
+        String[] currentStats = map.getCurrentStats();
+        for(int i = 0; i < numberOfStats; i++){
+            statValues[i].setText(currentStats[i]);
         }
-
-        Platform.runLater(() -> {
-            Stage simulationStage = new Stage();
-            simulationStage.initStyle(StageStyle.DECORATED);
-            simulationStage.initModality(Modality.NONE);
-            simulationStage.setTitle("Simulation");
-
-            simulationGrid = new GridPane();
-            simulationStage.setScene(new Scene(simulationGrid, 700, 700));
-            simulationStage.setOnCloseRequest(event -> {
-                simulationStage.close();
-            });
-            simulationStage.show();
-
-            AbstractWorldMap map;
-            if (Objects.equals(selectedMap, "Poison map")) {
-                map = new PoisonMap(foodStartingAmount, mapWidth, mapHeight);
-            } else {
-                map = new EquatorMap(foodStartingAmount, mapWidth, mapHeight);
-            }
-
-            map.addObserver(this);
-            setMap(map);
-
-            CELL_SIZE = Math.min(
-                    (int) (Screen.getPrimary().getVisualBounds().getHeight() / (map.getMapHeight()) * 0.5),
-                    (int) (Screen.getPrimary().getVisualBounds().getWidth() / (map.getMapWidth()) * 0.5));
-
-            String[] attributesArray = {
-                    CONFIG_NAME.getText(),
-                    String.valueOf(mapWidth),
-                    String.valueOf(mapHeight),
-                    String.valueOf(animalStartingAmount),
-                    String.valueOf(animalStartingEnergy),
-                    String.valueOf(animalEnergyPerMove),
-                    String.valueOf(animalMinEnergyToReproduce),
-                    String.valueOf(animalEnergyToReproduceCost),
-                    String.valueOf(animalGenesAmount),
-                    String.valueOf(animalMinMutations),
-                    String.valueOf(animalMaxMutations),
-                    String.valueOf(foodStartingAmount),
-                    String.valueOf(foodGrowthPerDay),
-                    String.valueOf(foodEnergy),
-                    mapComboBox.getValue(),
-                    genesComboBox.getValue()
-            };
-
-            Settings settings;
-            try {
-                settings = new Settings(attributesArray, map);
-            } catch (IllegalArgumentException e) {
-                throw new RuntimeException(e);
-            }
-
-            Simulation simulation = new Simulation(settings);
-
-            simulationGrid.setManaged(true);
-            simulationGrid.setVisible(true);
-
-            cellLabels = new Label[mapHeight][mapWidth];
-            drawGrid();
-
-            new Thread(simulation).start();
-        });
     }
 
-
-    public void onSimulationLoadClicked(javafx.event.ActionEvent actionEvent) throws FileNotFoundException {
-        String[] availableConfigs = SettingsHandler.getConfigNames();
-
-        if (availableConfigs.length == 0) {
-            errorLabel.setText("No configurations available.");
-            return;
+    public void onPauseResumeClicked(javafx.event.ActionEvent actionEvent){
+        simulation.changeState();
+        if(!simulation.getIsActive()){
+            mostFrequentGenesAnimals = map.getCurrentMostFrequentGenotypeAnimalList();
         }
-
-        ChoiceDialog<String> dialog = new ChoiceDialog<>(availableConfigs[0], availableConfigs);
-        dialog.setTitle("Load Settings");
-        dialog.setHeaderText("Select a configuration to load:");
-        dialog.setContentText("Configuration:");
-
-        Optional<String> result = dialog.showAndWait();
-
-        result.ifPresent(selectedConfig -> {
-            String[] config;
-            try {
-                config = SettingsHandler.findConfig(selectedConfig);
-            } catch (FileNotFoundException e) {
-                throw new RuntimeException(e);
-            }
-            loadConfigIntoLabels(config);
-            errorLabel.setText("Loaded config: " + selectedConfig);
-        });
+        else{
+            mostFrequentGenesAnimals = null;
+        }
+        drawMap();
     }
 
-    private void loadConfigIntoLabels(String[] config){
-        if(!checkAndSetInputValues()){
-            return;
-        }
-        CONFIG_NAME.setText(config[0]);
-        MAP_WIDTH.setText(config[1]);
-        MAP_HEIGHT.setText(config[2]);
-        ANIMAL_STARTING_AMOUNT.setText(config[3]);
-        ANIMAL_STARTING_ENERGY.setText(config[4]);
-        ANIMAL_ENERGY_PER_MOVE.setText(config[5]);
-        ANIMAL_MIN_ENERGY_TO_REPRODUCE.setText(config[6]);
-        ANIMAL_ENERGY_TO_REPRODUCE_COST.setText(config[7]);
-        ANIMAL_GENES_AMOUNT.setText(config[8]);
-        ANIMAL_MIN_MUTATIONS.setText(config[9]);
-        ANIMAL_MAX_MUTATIONS.setText(config[10]);
-        FOOD_STARTING_AMOUNT.setText(config[11]);
-        FOOD_GROWTH_PER_DAY.setText(config[12]);
-        FOOD_ENERGY.setText(config[13]);
-        mapComboBox.setValue(config[14]);
-        genesComboBox.setValue(config[15]);
+    private void initializeChart() {
+        lineChart = new LineChart<>(new NumberAxis(), new NumberAxis());
+        XYChart.Series<Number, Number> series1 = new XYChart.Series<>();
+        XYChart.Series<Number, Number> series2 = new XYChart.Series<>();
+        series1.setName("Animal amount");
+        series2.setName("Plant amount");
+
+        lineChart.setCreateSymbols(false);
+
+        lineChart.getData().addAll(series1, series2);
+
+        setSeriesColor(series1, Color.ORANGE);
+        setSeriesColor(series2, Color.GREEN);
+
+        setLegendColor(lineChart, Color.ORANGE, Color.GREEN);
+
+        lineChartContainer.getChildren().add(lineChart);
     }
 
-    public void onSimulationSaveClicked(javafx.event.ActionEvent actionEvent) throws Exception {
-        Settings settings;
-        try {
-            checkAndSetInputValues();
-            String[] attributesArray = {
-                    CONFIG_NAME.getText(),
-                    String.valueOf(mapWidth),
-                    String.valueOf(mapHeight),
-                    String.valueOf(animalStartingAmount),
-                    String.valueOf(animalStartingEnergy),
-                    String.valueOf(animalEnergyPerMove),
-                    String.valueOf(animalMinEnergyToReproduce),
-                    String.valueOf(animalEnergyToReproduceCost),
-                    String.valueOf(animalGenesAmount),
-                    String.valueOf(animalMinMutations),
-                    String.valueOf(animalMaxMutations),
-                    String.valueOf(foodStartingAmount),
-                    String.valueOf(foodGrowthPerDay),
-                    String.valueOf(foodEnergy),
-                    mapComboBox.getValue(),
-                    genesComboBox.getValue()
-            };
-            settings = new Settings(attributesArray);
-        } catch (Exception e) {
-            errorLabel.setText("Wrong input values!");
-            return;
-        }
-
-        try {
-            if(settings.getName().isEmpty()){
-                errorLabel.setText("In order to save this config give it a unique name.");
-                return;
-            }
-            if(SettingsHandler.findConfig(settings.getName()) != null){
-                errorLabel.setText("Config with that name already exists!");
-                return;
-            }
-        } catch (FileNotFoundException e) {
-            throw new RuntimeException(e);
-        }
-
-        SettingsHandler.add(settings.getAttributesAsArray());
-        errorLabel.setText("Config \"" + settings.getName() + "\" has been saved!");
+    private void setSeriesColor(XYChart.Series<Number, Number> series, Color color) {
+        Node seriesNode = series.getNode().lookup(".chart-series-line");
+        seriesNode.setStyle("-fx-stroke: " + color.toString().replace("0x", "#") + ";");
     }
 
-    private boolean checkAndSetInputValues(){
-        try {
-            mapWidth = Integer.parseInt(MAP_WIDTH.getText());
-            mapHeight = Integer.parseInt(MAP_HEIGHT.getText());
-            selectedMap = mapComboBox.getValue();
-            animalStartingAmount = Integer.parseInt(ANIMAL_STARTING_AMOUNT.getText());
-            animalStartingEnergy = Integer.parseInt(ANIMAL_STARTING_ENERGY.getText());
-            animalEnergyPerMove = Integer.parseInt(ANIMAL_ENERGY_PER_MOVE.getText());
-            animalMinEnergyToReproduce = Integer.parseInt(ANIMAL_MIN_ENERGY_TO_REPRODUCE.getText());
-            animalEnergyToReproduceCost = Integer.parseInt(ANIMAL_ENERGY_TO_REPRODUCE_COST.getText());
-            animalGenesAmount = Integer.parseInt(ANIMAL_GENES_AMOUNT.getText());
-            selectedGenes = genesComboBox.getValue();
-            animalMinMutations = Integer.parseInt(ANIMAL_MIN_MUTATIONS.getText());
-            animalMaxMutations = Integer.parseInt(ANIMAL_MAX_MUTATIONS.getText());
-            foodStartingAmount = Integer.parseInt(FOOD_STARTING_AMOUNT.getText());
-            foodGrowthPerDay = Integer.parseInt(FOOD_GROWTH_PER_DAY.getText());
-            foodEnergy = Integer.parseInt(FOOD_ENERGY.getText());
-
-            if (mapWidth <= 0 || mapHeight <= 0 || animalStartingAmount <= 0 || animalStartingEnergy <= 0 || animalEnergyPerMove < 0 ||
-                    animalMinEnergyToReproduce <= 0 || animalEnergyToReproduceCost <= 0 || animalGenesAmount <= 0 || animalMinMutations < 0 ||
-                    animalMaxMutations < 0 || foodStartingAmount < 0 || foodGrowthPerDay < 0 || foodEnergy < 0){
-                System.out.println("Error: values <= 0.");
-                return false;
+    private void setLegendColor(LineChart<Number, Number> chart, Color... colors) {
+        Legend legend = (Legend) chart.lookup(".chart-legend");
+        if (legend != null) {
+            Legend.LegendItem[] legendItems = legend.getItems().toArray(new Legend.LegendItem[0]);
+            for (int i = 0; i < legendItems.length && i < colors.length; i++) {
+                Node legendNode = legendItems[i].getSymbol();
+                legendNode.setStyle("-fx-background-color: " + colors[i].toString().replace("0x", "#") + ";");
             }
-            if(animalEnergyToReproduceCost > animalMinEnergyToReproduce){
-                System.out.println("Error: animalMinEnergyToReproduce < animalEnergyToReproduceCost.");
-                return false;
-            }
-            if(animalMinMutations>animalMaxMutations || animalMaxMutations>animalGenesAmount){
-                System.out.println("Error: wrong min/max mutations amount.");
-                return false;
-            }
-
-            System.out.println("Input values are correct!");
-            return true;
-
-        } catch (NumberFormatException e) {
-            System.out.println("Error: input values have to be numbers!");
-            return false;
         }
+    }
+
+    private void updateChart() {
+        String[] stats = map.getCurrentStats();
+        XYChart.Series<Number, Number> series1 = lineChart.getData().get(0);
+        XYChart.Series<Number, Number> series2 = lineChart.getData().get(1);
+
+        series1.getData().add(new XYChart.Data<>(Integer.parseInt(stats[0]), Integer.parseInt(stats[1])));
+        series2.getData().add(new XYChart.Data<>(Integer.parseInt(stats[0]), Integer.parseInt(stats[2])));
     }
 }

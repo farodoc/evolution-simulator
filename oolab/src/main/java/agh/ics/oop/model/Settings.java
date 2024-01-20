@@ -17,8 +17,10 @@ public class Settings {
     private final int foodStartingAmount;
     private final int foodGrowthPerDay;
     private final int foodEnergy;
+    private final int refreshTime;
+    private final boolean saveStats;
 
-    public Settings(String[] config) throws IllegalArgumentException{
+    public Settings(String[] config){
         name = config[0];
         mapWidth = Integer.parseInt(config[1]);
         mapHeight = Integer.parseInt(config[2]);
@@ -33,45 +35,25 @@ public class Settings {
         foodStartingAmount = Integer.parseInt(config[11]);
         foodGrowthPerDay = Integer.parseInt(config[12]);
         foodEnergy = Integer.parseInt(config[13]);
+        refreshTime = Integer.parseInt(config[16]);
+        saveStats = Boolean.parseBoolean(config[17]);
 
-        checkConfigValues();
-
-        switch (config[14]){
-            case "Equator map" -> map = new EquatorMap(foodStartingAmount, mapWidth, mapHeight);
-            case "Poison map" -> map = new PoisonMap(foodStartingAmount, mapWidth, mapHeight);
-            default -> throw new IllegalArgumentException("Blad przy wyborze mapy");
+        if (config[14].equals("Poison map")) {
+            map = new PoisonMap(foodStartingAmount, mapWidth, mapHeight);
+        } else {
+            map = new EquatorMap(foodStartingAmount, mapWidth, mapHeight);
         }
 
-        switch (config[15]){
-            case "Default" -> genes = new StandardGenes(animalGenesAmount);
-            case "Looped" -> genes = new LoopedGenes(animalGenesAmount);
-            default -> throw new IllegalArgumentException("Blad przy wyborze zachowania zwierzaka");
+        if (config[15].equals("Looped")) {
+            genes = new LoopedGenes(animalGenesAmount);
+        } else {
+            genes = new StandardGenes(animalGenesAmount);
         }
     }
 
     public Settings(String[] config, AbstractWorldMap map) throws IllegalArgumentException{
         this(config);
         this.map = map;
-    }
-
-    private void checkConfigValues() throws IllegalArgumentException {
-        if (mapWidth <= 0 || mapHeight <= 0 || animalStartingAmount <= 0 || animalStartingEnergy <= 0 || animalEnergyPerMove < 0 ||
-                animalMinEnergyToReproduce <= 0 || animalEnergyToReproduce <= 0 || animalGenesAmount <= 0 || animalMinMutations < 0 ||
-                animalMaxMutations < 0 || foodStartingAmount < 0 || foodGrowthPerDay < 0 || foodEnergy < 0) {
-            throw new IllegalArgumentException("Blad: wartosci <=0");
-        }
-
-        if (foodStartingAmount > mapWidth * mapHeight) {
-            throw new IllegalArgumentException("Za duzo jedzenia jak na taka mape");
-        }
-
-        if (animalEnergyToReproduce > animalMinEnergyToReproduce) {
-            throw new IllegalArgumentException("Blad wartosci kosztu oraz minimalnej energii do reprodukcji");
-        }
-
-        if (animalMinMutations > animalMaxMutations || animalMaxMutations > animalGenesAmount) {
-            throw new IllegalArgumentException("Blad wartosci minimalnych/maksymalnych mutacji");
-        }
     }
 
     public String[] getAttributesAsArray() {
@@ -91,72 +73,25 @@ public class Settings {
                 String.valueOf(foodGrowthPerDay),
                 String.valueOf(foodEnergy),
                 map.getName(),
-                genes.getName()
+                genes.getName(),
+                String.valueOf(refreshTime),
+                String.valueOf(saveStats)
         };
     }
 
-
-    public String getName() {
-        return name;
-    }
-
-    public AbstractWorldMap getMap() {
-        return map;
-    }
-
-    public int getMapWidth() {
-        return mapWidth;
-    }
-
-    public int getMapHeight() {
-        return mapHeight;
-    }
-
-    public int getAnimalStartingAmount() {
-        return animalStartingAmount;
-    }
-
-    public int getAnimalStartingEnergy() {
-        return animalStartingEnergy;
-    }
-
-    public int getAnimalEnergyPerMove() {
-        return animalEnergyPerMove;
-    }
-
-    public int getAnimalMinEnergyToReproduce() {
-        return animalMinEnergyToReproduce;
-    }
-
-    public int getAnimalEnergyToReproduce() {
-        return animalEnergyToReproduce;
-    }
-
-    public int getAnimalGenesAmount() {
-        return animalGenesAmount;
-    }
-
-    public boolean getIsLoopedGenes() {
-        return genes.getName().equals("Looped");
-    }
-
-    public int getAnimalMinMutations() {
-        return animalMinMutations;
-    }
-
-    public int getAnimalMaxMutations() {
-        return animalMaxMutations;
-    }
-
-    public int getFoodStartingAmount() {
-        return foodStartingAmount;
-    }
-
-    public int getFoodGrowthPerDay() {
-        return foodGrowthPerDay;
-    }
-
-    public int getFoodEnergy() {
-        return foodEnergy;
-    }
+    public boolean getIsSaveStats() {return saveStats;}
+    public String getName() {return name;}
+    public AbstractWorldMap getMap() {return map;}
+    public int getAnimalStartingAmount() {return animalStartingAmount;}
+    public int getAnimalStartingEnergy() {return animalStartingEnergy;}
+    public int getAnimalEnergyPerMove() {return animalEnergyPerMove;}
+    public int getAnimalMinEnergyToReproduce() {return animalMinEnergyToReproduce;}
+    public int getAnimalEnergyToReproduce() {return animalEnergyToReproduce;}
+    public int getAnimalGenesAmount() {return animalGenesAmount;}
+    public boolean getIsLoopedGenes() {return genes.getName().equals("Looped");}
+    public int getAnimalMinMutations() {return animalMinMutations;}
+    public int getAnimalMaxMutations() {return animalMaxMutations;}
+    public int getFoodGrowthPerDay() {return foodGrowthPerDay;}
+    public int getFoodEnergy() {return foodEnergy;}
+    public int getRefreshTime(){return refreshTime;}
 }

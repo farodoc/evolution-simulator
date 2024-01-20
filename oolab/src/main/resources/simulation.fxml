@@ -1,111 +1,107 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import javafx.scene.control.Label?>
 <?import javafx.scene.layout.BorderPane?>
-<?import javafx.scene.layout.VBox?>
 <?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.VBox?>
 <?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
 <?import javafx.scene.layout.GridPane?>
-<?import javafx.scene.layout.StackPane?>
-
-<?import javafx.scene.control.TextField?>
-<?import javafx.scene.control.ComboBox?>
-<?import javafx.collections.FXCollections?>
-<?import java.lang.String?>
 <?import java.net.URL?>
+
 <BorderPane xmlns="http://javafx.com/javafx"
             xmlns:fx="http://javafx.com/fxml"
-            minHeight="550.0" minWidth="850.0"
+            minHeight="800" minWidth="1500"
             fx:controller="agh.ics.oop.presenter.SimulationPresenter">
 
-    <center>
-        <StackPane>
-            <VBox spacing="10" >
-                <HBox>
-                    <Label text="Configuration name:"/>
-                    <TextField fx:id="CONFIG_NAME" styleClass="configTextField"/>
-                </HBox>
-                <Label text="Map options" styleClass="labelOptions"/>
-                <HBox>
-                    <Label text="Map width:"/>
-                    <TextField fx:id="MAP_WIDTH"/>
-                    <Label text="Map height:"/>
-                    <TextField fx:id="MAP_HEIGHT"/>
-                    <Label text="Map variant:"/>
-                    <ComboBox fx:id="mapComboBox">
-                        <items>
-                            <FXCollections fx:factory="observableArrayList">
-                                <String fx:value="Equator map"/>
-                                <String fx:value="Poison map"/>
-                            </FXCollections>
-                        </items>
-                    </ComboBox>
-                </HBox>
-
-                <Label text="Animal options" styleClass="labelOptions"/>
-                <HBox>
-                    <Label text="Animal starting amount:"/>
-                    <TextField fx:id="ANIMAL_STARTING_AMOUNT"/>
-                    <Label text="Animal starting energy:"/>
-                    <TextField fx:id="ANIMAL_STARTING_ENERGY"/>
-                    <Label text="Energy per move:"/>
-                    <TextField fx:id="ANIMAL_ENERGY_PER_MOVE"/>
-                </HBox>
-                <HBox>
-                    <Label text="Min energy to reproduce:"/>
-                    <TextField fx:id="ANIMAL_MIN_ENERGY_TO_REPRODUCE"/>
-                    <Label text="Energy to repoduce:"/>
-                    <TextField fx:id="ANIMAL_ENERGY_TO_REPRODUCE_COST"/>
-                </HBox>
-                <HBox>
-                    <Label text="Genes amount:"/>
-                    <TextField fx:id="ANIMAL_GENES_AMOUNT"/>
-                    <Label text="Animal behavior variant:"/>
-                    <ComboBox fx:id="genesComboBox">
-                        <items>
-                            <FXCollections fx:factory="observableArrayList">
-                                <String fx:value="Default"/>
-                                <String fx:value="Looped"/>
-                            </FXCollections>
-                        </items>
-                    </ComboBox>
-                </HBox>
-                <HBox>
-                    <Label text="Min mutations:"/>
-                    <TextField fx:id="ANIMAL_MIN_MUTATIONS"/>
-                    <Label text="Max mutations:"/>
-                    <TextField fx:id="ANIMAL_MAX_MUTATIONS"/>
-                </HBox>
-
-                <Label text="Plant options" styleClass="labelOptions"/>
-                <HBox>
-                    <Label text="Plant starting amount:"/>
-                    <TextField fx:id="FOOD_STARTING_AMOUNT"/>
-                    <Label text="Plant growth per day:"/>
-                    <TextField fx:id="FOOD_GROWTH_PER_DAY"/>
-                    <Label text="Energy for eating plant:"/>
-                    <TextField fx:id="FOOD_ENERGY"/>
-                </HBox>
-            </VBox>
-
-        </StackPane>
-    </center>
-
-    <bottom>
-        <VBox spacing="10" alignment="CENTER">
-            <HBox fx:id="errorHBox">
-                <Label fx:id="errorLabel" style="-fx-font-size: 16px;"/>
-            </HBox>
-            <HBox spacing="10" alignment="CENTER">
-                <Button text="Start" onAction="#onSimulationStartClicked" style="-fx-min-width: 100px;"/>
-                <Button text="Save config" onAction="#onSimulationSaveClicked" style="-fx-min-width: 100px;"/>
-                <Button text="Load config" onAction="#onSimulationLoadClicked" style="-fx-min-width: 100px;"/>
-            </HBox>
+    <left>
+        <VBox spacing="10">
+            <GridPane fx:id="simulationGrid" />
         </VBox>
-    </bottom>
+    </left>
 
+    <right>
+        <BorderPane>
+            <top>
+                <VBox styleClass="stats-container">
+                    <HBox>
+                        <GridPane alignment="CENTER" styleClass="stats-table">
+                            <Label text="Day" GridPane.columnIndex="0" GridPane.rowIndex="0"/>
+                            <Label fx:id="STAT_1" GridPane.columnIndex="1" GridPane.rowIndex="0"/>
+
+                            <Label text="Current animal amount" GridPane.columnIndex="0" GridPane.rowIndex="1"/>
+                            <Label fx:id="STAT_2" GridPane.columnIndex="1" GridPane.rowIndex="1"/>
+
+                            <Label text="Overall animal amount" GridPane.columnIndex="0" GridPane.rowIndex="2"/>
+                            <Label fx:id="STAT_9" GridPane.columnIndex="1" GridPane.rowIndex="2"/>
+
+                            <Label text="Current plants amount" GridPane.columnIndex="0" GridPane.rowIndex="3"/>
+                            <Label fx:id="STAT_3" GridPane.columnIndex="1" GridPane.rowIndex="3"/>
+
+                            <Label text="Free tiles amount" GridPane.columnIndex="0" GridPane.rowIndex="4"/>
+                            <Label fx:id="STAT_4" GridPane.columnIndex="1" GridPane.rowIndex="4"/>
+
+                            <Label text="Most popular genotype" GridPane.columnIndex="0" GridPane.rowIndex="5"/>
+                            <Label fx:id="STAT_5" GridPane.columnIndex="1" GridPane.rowIndex="5"/>
+
+                            <Label text="Average energy level" GridPane.columnIndex="0" GridPane.rowIndex="6"/>
+                            <Label fx:id="STAT_6" GridPane.columnIndex="1" GridPane.rowIndex="6"/>
+
+                            <Label text="Average lifespan of dead animals" GridPane.columnIndex="0" GridPane.rowIndex="7"/>
+                            <Label fx:id="STAT_7" GridPane.columnIndex="1" GridPane.rowIndex="7"/>
+
+                            <Label text="Average children amount" GridPane.columnIndex="0" GridPane.rowIndex="8"/>
+                            <Label fx:id="STAT_8" GridPane.columnIndex="1" GridPane.rowIndex="8"/>
+                        </GridPane>
+
+                        <GridPane alignment="CENTER" styleClass="stats-table">
+                            <Label text="ID" GridPane.columnIndex="0" GridPane.rowIndex="0"/>
+                            <Label fx:id="STAT_A1" GridPane.columnIndex="1" GridPane.rowIndex="0"/>
+
+                            <Label text="Position" GridPane.columnIndex="0" GridPane.rowIndex="1"/>
+                            <Label fx:id="STAT_A2" GridPane.columnIndex="1" GridPane.rowIndex="1"/>
+
+                            <Label text="Genes" GridPane.columnIndex="0" GridPane.rowIndex="2"/>
+                            <Label fx:id="STAT_A3" GridPane.columnIndex="1" GridPane.rowIndex="2"/>
+
+                            <Label text="Active gene" GridPane.columnIndex="0" GridPane.rowIndex="3"/>
+                            <Label fx:id="STAT_A4" GridPane.columnIndex="1" GridPane.rowIndex="3"/>
+
+                            <Label text="Energy" GridPane.columnIndex="0" GridPane.rowIndex="4"/>
+                            <Label fx:id="STAT_A5" GridPane.columnIndex="1" GridPane.rowIndex="4"/>
+
+                            <Label text="Plants eaten" GridPane.columnIndex="0" GridPane.rowIndex="5"/>
+                            <Label fx:id="STAT_A6" GridPane.columnIndex="1" GridPane.rowIndex="5"/>
+
+                            <Label text="Children amount" GridPane.columnIndex="0" GridPane.rowIndex="6"/>
+                            <Label fx:id="STAT_A7" GridPane.columnIndex="1" GridPane.rowIndex="6"/>
+
+                            <Label text="Descendant amount" GridPane.columnIndex="0" GridPane.rowIndex="7"/>
+                            <Label fx:id="STAT_A8" GridPane.columnIndex="1" GridPane.rowIndex="7"/>
+
+                            <Label text="Days alive" GridPane.columnIndex="0" GridPane.rowIndex="8"/>
+                            <Label fx:id="STAT_A9" GridPane.columnIndex="1" GridPane.rowIndex="8"/>
+
+                            <Label text="Day of death" GridPane.columnIndex="0" GridPane.rowIndex="9"/>
+                            <Label fx:id="STAT_A10" GridPane.columnIndex="1" GridPane.rowIndex="9"/>
+                        </GridPane>
+                    </HBox>
+                    <VBox styleClass="divider"/>
+
+
+                    <HBox alignment="CENTER" fx:id="lineChartContainer"/>
+
+
+                    <VBox styleClass="divider"/>
+                    <HBox alignment="CENTER">
+                        <Button text="Pause/Resume" onAction="#onPauseResumeClicked" styleClass="pause-button"/>
+                    </HBox>
+                </VBox>
+            </top>
+        </BorderPane>
+    </right>
 
     <stylesheets>
-        <URL value="@menuStyle.css" />
+        <URL value="@simulationStyle.css" />
     </stylesheets>
+
 </BorderPane>

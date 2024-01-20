@@ -18,7 +18,7 @@ public class EquatorMap extends AbstractWorldMap{
         boolean generateUpper = true;
         int yModifier = 0;
 
-        while(jungleTilesCounter < jungleTilesAmount && isInMap(equator, yModifier)){
+        while(jungleTilesCounter < jungleTilesAmount){
             int x=0;
             while(x<mapWidth && jungleTilesCounter<jungleTilesAmount){
                 if(Math.random() < probabilityForRow){
@@ -29,7 +29,7 @@ public class EquatorMap extends AbstractWorldMap{
             }
 
             if(generateUpper){
-                yModifier +=1;
+                yModifier += 1;
                 yModifier *= (-1);
                 generateUpper = false;
             }
@@ -38,7 +38,12 @@ public class EquatorMap extends AbstractWorldMap{
                 generateUpper = true;
             }
 
-            probabilityForRow/=1.1;
+            if(!isInMap(equator, yModifier)){
+                yModifier = 0;
+                System.out.println(1);
+            }
+
+            probabilityForRow /= ((double) (mapHeight + 5) / mapHeight);
         }
     }
 

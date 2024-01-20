@@ -32,6 +32,10 @@ public abstract class AbstractGenes {
     }
 
     public int getActiveGene(){
+        return genes.get(geneIndex);
+    }
+
+    public int getActiveGeneAndUpdateGene(){
         int resultGene = genes.get(geneIndex);
         updateGeneIndex();
         return resultGene;
@@ -82,8 +86,9 @@ public abstract class AbstractGenes {
 
         Collections.shuffle(genesPositions);
 
-        for(int i = 0; i < genesToSwitchAmount; i++){
-            genes.set(i, (genes.get(i) + random.nextInt(1, genesAmount)) % genesAmount);
+        for (int i = 0; i < genesToSwitchAmount; i++) {
+            int randomPosition = genesPositions.get(i);
+            genes.set(randomPosition, (genes.get(randomPosition) + random.nextInt(7) + 1) % 8);
         }
     }
 

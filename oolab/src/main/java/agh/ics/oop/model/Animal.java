@@ -5,6 +5,8 @@ import java.util.List;
 import java.util.Map;
 
 public class Animal implements WorldElement{
+    private static int overallID = 0;
+    private final int ID;
     private MapDirection orientation;
     private Vector2d position;
     private AbstractGenes genes;
@@ -14,8 +16,11 @@ public class Animal implements WorldElement{
     private int descendantAmount = 0;
     private int maxEnergy;
     private final int genesAmount;
+    private int plantsEaten = 0;
+    private Integer deathDate = null;
     private final List<Animal> parents = new ArrayList<>(2);
     public Animal(Vector2d position, int startingEnergy, int genesAmount, boolean loopedGenesActive){
+        ID = overallID++;
         this.position = position;
         this.genesAmount = genesAmount;
         orientation = MapDirection.generateRandomMapDirection();
@@ -66,7 +71,7 @@ public class Animal implements WorldElement{
             return;
         }
 
-        int direction = genes.getActiveGene();
+        int direction = genes.getActiveGeneAndUpdateGene();
         changeOrientation(direction);
 
         Vector2d possiblePositionWithPoisonedFruit = map.getNewPositionForAnimal(this);
@@ -100,14 +105,16 @@ public class Animal implements WorldElement{
     public int getDescendantAmount() {return descendantAmount;}
     public int getGenesAmount() {return genesAmount;}
     public AbstractGenes getGenes() {return genes;}
-    public void eat(int energy){
-        this.energy = Math.min(maxEnergy, this.energy + energy);
-    }
     public void updateAge(){
         this.age++;
     }
-    public void updateDescendantAmount(){this.descendantAmount++;}
-
+    public void setDeathDate(int deathDate) {this.deathDate = deathDate;}
+    public String getDeathDate() {return deathDate == null ? "N/A" : String.valueOf(deathDate);}
+    private void updateDescendantAmount(){this.descendantAmount++;}
+    public void eat(int energy){
+        this.energy = Math.min(maxEnergy, this.energy + energy);
+        plantsEaten++;
+    }
     private void updateParentsRecursion(List<Animal> visitedAnimals){
         if(parents.isEmpty())
             return;
@@ -130,6 +137,21 @@ public class Animal implements WorldElement{
     public void updateAnimalAfterBreeding(int ANIMAL_ENERGY_TO_REPRODUCE){
         this.childrenAmount++;
         this.energy -= ANIMAL_ENERGY_TO_REPRODUCE;
-        updateParentsRecursion(new ArrayList<>());
+    }
+
+    public String[] getAnimalStats() {
+        String[] stats = new String[10];
+        stats[0] = String.valueOf(ID);
+        stats[1] = position.toString();
+        stats[2] = String.valueOf(genes.getGenesList());
+        stats[3] = String.valueOf(genes.getActiveGene());
+        stats[4] = String.valueOf(energy);
+        stats[5] = String.valueOf(plantsEaten);
+        stats[6] = String.valueOf(childrenAmount);
+        stats[7] = String.valueOf(descendantAmount);
+        stats[8] = String.valueOf(age);
+        stats[9] = getDeathDate();
+
+        return stats;
     }
 }

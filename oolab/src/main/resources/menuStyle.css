@@ -56,3 +56,7 @@ Button:pressed {
     -fx-padding: 20px;
     -fx-font-family: "Georgia";
 }
+
+#errorLabel {
+    -fx-text-fill: red;
+}

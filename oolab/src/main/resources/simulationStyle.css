@@ -1,0 +1,21 @@
+.stats-table {
+    -fx-padding: 10 0 10 20;
+    -fx-margin: 10;
+    -fx-grid-lines-visible: true;
+}
+
+.stats-table .label {
+    -fx-padding: 5;
+}
+
+.stats-container{
+    -fx-padding: 10 25 10 10;
+}
+
+.divider{
+    -fx-padding: 10 0 10 0;
+}
+
+.pause-button {
+    -fx-font-size: 15;
+}
