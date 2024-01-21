@@ -6,9 +6,9 @@ public abstract class AbstractWorldMap implements WorldMap{
     protected int mapWidth;
     protected int mapHeight;
     private final List<MapChangeListener> observers = new ArrayList<>();
-    protected final Map<Vector2d, List<Animal>> animals = new HashMap<>();
-    protected final Map<Vector2d, AbstractFood> foodTiles = new HashMap<>();
-    private final Map<List<Integer>, Integer> currentGenotypeCounts = new HashMap<>();
+    protected final Map<Vector2d, List<Animal>> animals = Collections.synchronizedMap(new HashMap<>());
+    protected final Map<Vector2d, AbstractFood> foodTiles = Collections.synchronizedMap(new HashMap<>());
+    private final Map<List<Integer>, Integer> currentGenotypeCounts = Collections.synchronizedMap(new HashMap<>());
     protected final UUID id;
     protected final Vector2d BOTTOM_LEFT_MAP_BORDER = new Vector2d(0,0);
     protected final Vector2d TOP_RIGHT_MAP_BORDER;
@@ -135,17 +135,24 @@ public abstract class AbstractWorldMap implements WorldMap{
 
     @Override
     public WorldElement objectAt(Vector2d position) {
-        List<Animal> animalList = animals.getOrDefault(position, null);
+        List<Animal> animalList;
+
+        synchronized (animals) {
+            animalList = animals.getOrDefault(position, null);
+        }
 
         if (animalList != null && !animalList.isEmpty()) {
             Animal animalToReturn = animalList.get(0);
-            for(Animal animal: animalList){
-                if(animal.getEnergy() > animalToReturn.getEnergy()){
-                    animalToReturn = animal;
+
+            synchronized (animals) {
+                for (Animal animal : animalList) {
+                    if (animal.getEnergy() > animalToReturn.getEnergy()) {
+                        animalToReturn = animal;
+                    }
                 }
             }
 
-            if(animalToReturn.getEnergy() <= 0)
+            if (animalToReturn.getEnergy() <= 0)
                 return foodTiles.getOrDefault(position, null);
 
             return animalToReturn;
@@ -153,6 +160,7 @@ public abstract class AbstractWorldMap implements WorldMap{
 
         return foodTiles.getOrDefault(position, null);
     }
+
 
     @Override
     public Boundary getCurrentBounds(){
@@ -298,8 +306,8 @@ public abstract class AbstractWorldMap implements WorldMap{
     }
 
     public void breedAnimals(int ANIMAL_MIN_ENERGY_TO_REPRODUCE, int ANIMAL_ENERGY_TO_REPRODUCE_COST,
-                              int ANIMAL_GENES_AMOUNT, boolean LOOPED_GENES_ACTIVE,
-                              int ANIMAL_MIN_MUTATIONS, int ANIMAL_MAX_MUTATIONS)
+                             int ANIMAL_GENES_AMOUNT, boolean LOOPED_GENES_ACTIVE,
+                             int ANIMAL_MIN_MUTATIONS, int ANIMAL_MAX_MUTATIONS)
     {
         Map<Vector2d, List<Animal>> animalsCopy = generateDeepCopyOfAnimalsMap();
 
@@ -337,11 +345,11 @@ public abstract class AbstractWorldMap implements WorldMap{
     }
 
     protected void combineAnimalsAndSpawnChild(Animal strongerAnimal, Animal weakerAnimal,
-                                             int ANIMAL_ENERGY_TO_REPRODUCE_COST,
-                                             int ANIMAL_GENES_AMOUNT,
-                                             boolean LOOPED_GENES_ACTIVE,
-                                             int ANIMAL_MIN_MUTATIONS,
-                                             int ANIMAL_MAX_MUTATIONS)
+                                               int ANIMAL_ENERGY_TO_REPRODUCE_COST,
+                                               int ANIMAL_GENES_AMOUNT,
+                                               boolean LOOPED_GENES_ACTIVE,
+                                               int ANIMAL_MIN_MUTATIONS,
+                                               int ANIMAL_MAX_MUTATIONS)
     {
         strongerAnimal.updateAnimalAfterBreeding(ANIMAL_ENERGY_TO_REPRODUCE_COST);
         weakerAnimal.updateAnimalAfterBreeding(ANIMAL_ENERGY_TO_REPRODUCE_COST);
@@ -368,11 +376,20 @@ public abstract class AbstractWorldMap implements WorldMap{
         return animals.isEmpty();
     }
 
-    public Set<Vector2d> getAllOccupiedPositions(){
-        Set<Vector2d> keys = new HashSet<>(animals.keySet());
-        keys.addAll(new HashSet<>(foodTiles.keySet()));
-        return keys;
+    public synchronized Set<Vector2d> getAllOccupiedPositions() {
+        Set<Vector2d> occupiedPositions = new HashSet<>();
+
+        synchronized (animals) {
+            occupiedPositions.addAll(animals.keySet());
+        }
+
+        synchronized (foodTiles) {
+            occupiedPositions.addAll(foodTiles.keySet());
+        }
+
+        return occupiedPositions;
     }
+
 
     public String[] getCurrentStats(){
         String[] stats = new String[9];
@@ -388,60 +405,76 @@ public abstract class AbstractWorldMap implements WorldMap{
         return stats;
     }
 
-    private int countFreeTilesAmount() {
+    private synchronized int countFreeTilesAmount() {
         Set<Vector2d> occupiedPositions = new HashSet<>();
-        occupiedPositions.addAll(animals.keySet());
-        occupiedPositions.addAll(foodTiles.keySet());
+
+        synchronized (animals) {
+            occupiedPositions.addAll(animals.keySet());
+        }
+
+        synchronized (foodTiles) {
+            occupiedPositions.addAll(foodTiles.keySet());
+        }
 
         Set<Vector2d> copyOfOccupiedPositions = new HashSet<>(occupiedPositions);
 
         return mapWidth * mapHeight - copyOfOccupiedPositions.size();
     }
 
-    private int countCurrentAnimals() {
+
+    private synchronized int countCurrentAnimals() {
         int currentAnimalCount = 0;
 
-        for (List<Animal> animalList : animals.values()) {
-            if (animalList != null) {
-                currentAnimalCount += animalList.size();
+        synchronized (animals) {
+            for (List<Animal> animalList : animals.values()) {
+                if (animalList != null) {
+                    currentAnimalCount += animalList.size();
+                }
             }
         }
 
         return currentAnimalCount;
     }
 
-    private String getMostFrequentGenotypeAsString() {
+
+    private synchronized String getMostFrequentGenotypeAsString() {
         List<Integer> mostFrequentGenotype = new ArrayList<>();
         int maxCount = 0;
 
-        for (Map.Entry<List<Integer>, Integer> entry : currentGenotypeCounts.entrySet()) {
-            if (entry.getValue() > maxCount) {
-                mostFrequentGenotype = entry.getKey();
-                maxCount = entry.getValue();
+        synchronized (currentGenotypeCounts) {
+            for (Map.Entry<List<Integer>, Integer> entry : currentGenotypeCounts.entrySet()) {
+                if (entry.getValue() > maxCount) {
+                    mostFrequentGenotype = entry.getKey();
+                    maxCount = entry.getValue();
+                }
             }
         }
 
         return mostFrequentGenotype + " x " + maxCount;
     }
 
-    public List<Animal> getCurrentMostFrequentGenotypeAnimalList() {
+    public synchronized List<Animal> getCurrentMostFrequentGenotypeAnimalList() {
         List<Integer> mostFrequentGenotype = new ArrayList<>();
         int maxCount = 0;
 
-        for (Map.Entry<List<Integer>, Integer> entry : currentGenotypeCounts.entrySet()) {
-            if (entry.getValue() > maxCount) {
-                mostFrequentGenotype = entry.getKey();
-                maxCount = entry.getValue();
+        synchronized (currentGenotypeCounts) {
+            for (Map.Entry<List<Integer>, Integer> entry : currentGenotypeCounts.entrySet()) {
+                if (entry.getValue() > maxCount) {
+                    mostFrequentGenotype = entry.getKey();
+                    maxCount = entry.getValue();
+                }
             }
         }
 
         List<Animal> animalListToReturn = new ArrayList<>();
 
-        for (List<Animal> animalsList : animals.values()) {
-            if (animalsList != null) {
-                for (Animal animal : animalsList) {
-                    if(animal.getGenes().getGenesList().equals(mostFrequentGenotype)){
-                        animalListToReturn.add(animal);
+        synchronized (animals) {
+            for (List<Animal> animalsList : animals.values()) {
+                if (animalsList != null) {
+                    for (Animal animal : animalsList) {
+                        if(animal.getGenes().getGenesList().equals(mostFrequentGenotype)){
+                            animalListToReturn.add(animal);
+                        }
                     }
                 }
             }
@@ -450,15 +483,17 @@ public abstract class AbstractWorldMap implements WorldMap{
         return animalListToReturn;
     }
 
-    private double getAverageEnergyForLivingAnimals(){
+    private synchronized double getAverageEnergyForLivingAnimals() {
         int energySum = 0;
         int animalCount = 0;
 
-        for (List<Animal> animalsList : animals.values()) {
-            if (animalsList != null) {
-                for (Animal animal : animalsList) {
-                    energySum += animal.getEnergy();
-                    animalCount++;
+        synchronized (animals) {
+            for (List<Animal> animalsList : animals.values()) {
+                if (animalsList != null) {
+                    for (Animal animal : animalsList) {
+                        energySum += animal.getEnergy();
+                        animalCount++;
+                    }
                 }
             }
         }
@@ -467,8 +502,9 @@ public abstract class AbstractWorldMap implements WorldMap{
         res *= 100;
         res = Math.round(res);
 
-        return res/100;
+        return res / 100;
     }
+
 
     private double getAverageLifespanForDeadAnimals(){
         double res = deadAnimalCount > 0 ? (double) deadAnimalSumAge/deadAnimalCount : 0;
@@ -478,15 +514,17 @@ public abstract class AbstractWorldMap implements WorldMap{
         return res/100;
     }
 
-    private double getAverageChildrenAmountForLivingAnimals(){
+    private synchronized double getAverageChildrenAmountForLivingAnimals() {
         int childrenSum = 0;
         int animalCount = 0;
 
-        for (List<Animal> animalsList : animals.values()) {
-            if (animalsList != null) {
-                for (Animal animal : animalsList) {
-                    childrenSum += animal.getChildrenAmount();
-                    animalCount++;
+        synchronized (animals) {
+            for (List<Animal> animalsList : animals.values()) {
+                if (animalsList != null) {
+                    for (Animal animal : animalsList) {
+                        childrenSum += animal.getChildrenAmount();
+                        animalCount++;
+                    }
                 }
             }
         }
@@ -495,6 +533,6 @@ public abstract class AbstractWorldMap implements WorldMap{
         res *= 100;
         res = Math.round(res);
 
-        return res/100;
+        return res / 100;
     }
 }
