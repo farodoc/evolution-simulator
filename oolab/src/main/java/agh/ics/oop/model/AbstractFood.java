@@ -1,4 +1,4 @@
-package agh.ics.oop.model;
+package agh.ics.oop.model; // trochę bałagan w tym pakiecie
 
 public abstract class AbstractFood implements WorldElement{
     protected final Vector2d position;

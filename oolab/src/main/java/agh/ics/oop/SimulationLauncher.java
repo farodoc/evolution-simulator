@@ -26,7 +26,7 @@ public class SimulationLauncher extends Application {
             primaryStage.setScene(scene);
             primaryStage.show();
         }
-        catch (Exception e) {
+        catch (Exception e) { // ?
             System.out.println(e);
         }
     }

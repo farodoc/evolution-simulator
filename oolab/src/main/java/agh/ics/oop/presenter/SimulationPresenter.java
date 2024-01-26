@@ -15,6 +15,7 @@ import javafx.scene.control.Label;
 import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
+
 import java.util.List;
 import java.util.Set;
 
@@ -22,16 +23,16 @@ public class SimulationPresenter implements MapChangeListener {
     @FXML
     private GridPane simulationGrid;
     @FXML
-    private Label STAT_1,STAT_2,STAT_3,STAT_4,STAT_5,STAT_6,STAT_7,STAT_8,STAT_9;
+    private Label STAT_1, STAT_2, STAT_3, STAT_4, STAT_5, STAT_6, STAT_7, STAT_8, STAT_9; // mało mówiące nazwy
     @FXML
-    private Label STAT_A1,STAT_A2,STAT_A3,STAT_A4,STAT_A5,STAT_A6,STAT_A7,STAT_A8,STAT_A9,STAT_A10;
+    private Label STAT_A1, STAT_A2, STAT_A3, STAT_A4, STAT_A5, STAT_A6, STAT_A7, STAT_A8, STAT_A9, STAT_A10; // jeszcze mniej mówiące nazwy
     @FXML
     private HBox lineChartContainer;
 
     private Simulation simulation;
     private List<Animal> mostFrequentGenesAnimals = null;
     private AbstractWorldMap map;
-    private int CELL_SIZE;
+    private int CELL_SIZE; // to nawet nie jest finalne, czemu wielkie litery?
     private Label[][] cellLabels;
     private Set<Vector2d> prevOccupiedPositions;
     private Label selectedCellLabel;
@@ -41,7 +42,8 @@ public class SimulationPresenter implements MapChangeListener {
     private Label[] statValues = new Label[numberOfStats];
     private Label[] trackedAnimalStats = new Label[10];
     private LineChart<Number, Number> lineChart;
-    public void initialize(Simulation simulation){
+
+    public void initialize(Simulation simulation) {
         this.simulation = simulation;
         this.map = simulation.getMap();
         CELL_SIZE = Math.min(
@@ -105,10 +107,9 @@ public class SimulationPresenter implements MapChangeListener {
                 cellLabel.setBorder(new Border(new BorderStroke(Color.BLACK, BorderStrokeStyle.DOTTED, null, new BorderWidths(0.4))));
                 cellLabel.setStyle("-fx-alignment: CENTER;");
 
-                if(tiles[y][x] == TileType.JUNG){
+                if (tiles[y][x] == TileType.JUNG) {
                     cellLabel.setBackground(new Background(new BackgroundFill(Color.rgb(18, 74, 13), CornerRadii.EMPTY, Insets.EMPTY)));
-                }
-                else{
+                } else {
                     cellLabel.setBackground(new Background(new BackgroundFill(Color.rgb(210, 180, 140), CornerRadii.EMPTY, Insets.EMPTY)));
                 }
 
@@ -119,8 +120,7 @@ public class SimulationPresenter implements MapChangeListener {
 
                     if (trackedAnimal != null && position.equals(trackedAnimal.getPosition()) && trackedAnimal.getEnergy() <= 0) {
                         untrackAnimal();
-                    }
-                    else if (map.objectAt(position) instanceof Animal) {
+                    } else if (map.objectAt(position) instanceof Animal) {
                         handleAnimalClick(new Vector2d(clickedX, clickedY));
                     }
                 });
@@ -158,7 +158,7 @@ public class SimulationPresenter implements MapChangeListener {
         }
     }
 
-    private void untrackAnimalAfterDeath(){
+    private void untrackAnimalAfterDeath() {
         if (selectedCellLabel != null) {
             selectedCellLabel.setBorder(new Border(new BorderStroke(Color.BLACK, BorderStrokeStyle.DOTTED, null, new BorderWidths(0.4))));
             selectedCellLabel = null;
@@ -167,13 +167,12 @@ public class SimulationPresenter implements MapChangeListener {
 
 
     private void showTrackedAnimalStats() {
-        if(trackedAnimal != null) {
+        if (trackedAnimal != null) {
             String[] stats = trackedAnimal.getAnimalStats();
 
-            for(int i = 0; i < stats.length; i++)
+            for (int i = 0; i < stats.length; i++)
                 trackedAnimalStats[i].setText(stats[i]);
-        }
-        else {
+        } else {
             for (Label trackedAnimalStat : trackedAnimalStats)
                 trackedAnimalStat.setText("N/A");
         }
@@ -193,18 +192,18 @@ public class SimulationPresenter implements MapChangeListener {
         Platform.runLater(this::drawMap);
     }
 
-    private void fillMap(){
+    private void fillMap() {
         clearGrid();
         prevOccupiedPositions = map.getAllOccupiedPositions();
-        int grassSize = (int)(1.75*CELL_SIZE);
+        int grassSize = (int) (1.75 * CELL_SIZE);
 
         for (Vector2d vec : prevOccupiedPositions) {
             int x = vec.x();
             int y = vec.y();
-            Object objectAtPosition = map.objectAt(new Vector2d(x,y));
+            Object objectAtPosition = map.objectAt(new Vector2d(x, y));
             Label cellLabel = cellLabels[y][x];
 
-            if (trackedAnimal != null && trackedAnimal.getPosition() == vec && trackedAnimal.getEnergy() <= 0){
+            if (trackedAnimal != null && trackedAnimal.getPosition() == vec && trackedAnimal.getEnergy() <= 0) {
                 prevTrackedAnimal = trackedAnimal;
                 untrackAnimalAfterDeath();
             }
@@ -212,31 +211,29 @@ public class SimulationPresenter implements MapChangeListener {
             if (objectAtPosition != null) {
                 if (objectAtPosition instanceof Animal) {
                     Animal animal = (Animal) objectAtPosition;
-                    if(trackedAnimal != null && animal.getPosition().equals(trackedAnimal.getPosition())){
+                    if (trackedAnimal != null && animal.getPosition().equals(trackedAnimal.getPosition())) {
                         continue;
                     }
 
-                    if(animal.getEnergy() > 0){
+                    if (animal.getEnergy() > 0) {
                         cellLabel.setGraphic(drawAnimal(animal));
                     }
-                }
-                else {
-                    if (objectAtPosition instanceof Grass){
+                } else {
+                    if (objectAtPosition instanceof Grass) {
                         cellLabel.setText(objectAtPosition.toString());
                         cellLabel.setTextFill(Color.rgb(0, 128, 0));
                         cellLabel.setStyle("-fx-alignment: CENTER;-fx-font-weight: bold;-fx-font-size: " + grassSize + "px;");
-                    }
-                    else{
+                    } else {
                         cellLabel.setText("?");
                         cellLabel.setTextFill(Color.rgb(255, 0, 255));
-                        cellLabel.setStyle("-fx-alignment: CENTER;-fx-font-weight: bold;-fx-font-size: " + grassSize/1.5 + "px;");
+                        cellLabel.setStyle("-fx-alignment: CENTER;-fx-font-weight: bold;-fx-font-size: " + grassSize / 1.5 + "px;");
                     }
                 }
             }
         }
 
-        if (mostFrequentGenesAnimals != null){
-            for(Animal animal : mostFrequentGenesAnimals){
+        if (mostFrequentGenesAnimals != null) {
+            for (Animal animal : mostFrequentGenesAnimals) {
                 int x = animal.getPosition().x();
                 int y = animal.getPosition().y();
                 Label cellLabel = cellLabels[y][x];
@@ -259,7 +256,7 @@ public class SimulationPresenter implements MapChangeListener {
     }
 
     private void clearGrid() {
-        if(prevTrackedAnimal != null){
+        if (prevTrackedAnimal != null) {
             Label cellLabel = cellLabels[prevTrackedAnimal.getPosition().y()][prevTrackedAnimal.getPosition().x()];
             cellLabel.setText(null);
             cellLabel.setGraphic(null);
@@ -277,7 +274,7 @@ public class SimulationPresenter implements MapChangeListener {
     }
 
     private Circle drawAnimal(Animal animal) {
-        double healthPercentage = (double) animal.getEnergy() /animal.getMaxEnergy();
+        double healthPercentage = (double) animal.getEnergy() / animal.getMaxEnergy();
         healthPercentage = Math.max(healthPercentage, 0);
         Circle redCircle = new Circle();
         redCircle.setRadius(CELL_SIZE * 0.3);
@@ -285,11 +282,11 @@ public class SimulationPresenter implements MapChangeListener {
         return redCircle;
     }
 
-    private Color getColorForAnimal(double healthPercentage){
+    private Color getColorForAnimal(double healthPercentage) {
         return Color.hsb(360, 1, healthPercentage, 1);
     }
 
-    public void drawMap(){
+    public void drawMap() {
         fillMap();
         showTrackedAnimalStats();
     }
@@ -305,17 +302,16 @@ public class SimulationPresenter implements MapChangeListener {
 
     private void updateStats() {
         String[] currentStats = map.getCurrentStats();
-        for(int i = 0; i < numberOfStats; i++){
+        for (int i = 0; i < numberOfStats; i++) {
             statValues[i].setText(currentStats[i]);
         }
     }
 
-    public void onPauseResumeClicked(javafx.event.ActionEvent actionEvent){
+    public void onPauseResumeClicked(javafx.event.ActionEvent actionEvent) {
         simulation.changeState();
-        if(!simulation.getIsActive()){
+        if (!simulation.getIsActive()) {
             mostFrequentGenesAnimals = map.getCurrentMostFrequentGenotypeAnimalList();
-        }
-        else{
+        } else {
             mostFrequentGenesAnimals = null;
         }
         drawMap();
@@ -364,4 +360,4 @@ public class SimulationPresenter implements MapChangeListener {
         series1.getData().add(new XYChart.Data<>(Integer.parseInt(stats[0]), Integer.parseInt(stats[1])));
         series2.getData().add(new XYChart.Data<>(Integer.parseInt(stats[0]), Integer.parseInt(stats[2])));
     }
-}
+} // duża ta klasa

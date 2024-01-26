@@ -12,7 +12,7 @@ public class MenuPresenter{
     @FXML
     private TextField MAP_WIDTH, MAP_HEIGHT, ANIMAL_STARTING_AMOUNT, ANIMAL_STARTING_ENERGY, ANIMAL_ENERGY_PER_MOVE,
     ANIMAL_MIN_ENERGY_TO_REPRODUCE, ANIMAL_ENERGY_TO_REPRODUCE_COST, ANIMAL_GENES_AMOUNT, ANIMAL_MIN_MUTATIONS,
-    ANIMAL_MAX_MUTATIONS, FOOD_STARTING_AMOUNT, FOOD_GROWTH_PER_DAY, FOOD_ENERGY, CONFIG_NAME, REFRESH_TIME;
+    ANIMAL_MAX_MUTATIONS, FOOD_STARTING_AMOUNT, FOOD_GROWTH_PER_DAY, FOOD_ENERGY, CONFIG_NAME, REFRESH_TIME; // zastanowiłbym się nad tymi wielkimi literami
 
     @FXML
     private ComboBox<String> mapComboBox, genesComboBox;
@@ -50,7 +50,7 @@ public class MenuPresenter{
 
     boolean saveStats;
 
-    String selectedMap, selectedGenes;
+    String selectedMap, selectedGenes; // String?
 
     public void onSimulationStartClicked(javafx.event.ActionEvent actionEvent) {
         if (!checkAndSetInputValues()) return;
@@ -78,7 +78,7 @@ public class MenuPresenter{
 
         AbstractWorldMap map;
         if (Objects.equals(selectedMap, "Poison map")) {
-            map = new PoisonMap(foodStartingAmount, mapWidth, mapHeight);
+            map = new PoisonMap(foodStartingAmount, mapWidth, mapHeight); // czy to dobrze, że presenter instancjonuje mapę?
         } else {
             map = new EquatorMap(foodStartingAmount, mapWidth, mapHeight);
         }

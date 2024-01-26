@@ -39,7 +39,7 @@ public class Settings {
         saveStats = Boolean.parseBoolean(config[17]);
 
         if (config[14].equals("Poison map")) {
-            map = new PoisonMap(foodStartingAmount, mapWidth, mapHeight);
+            map = new PoisonMap(foodStartingAmount, mapWidth, mapHeight); // czy to OK, że ustawienia instancjonują mapę?
         } else {
             map = new EquatorMap(foodStartingAmount, mapWidth, mapHeight);
         }

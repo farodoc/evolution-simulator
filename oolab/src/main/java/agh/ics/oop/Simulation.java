@@ -49,7 +49,7 @@ public class Simulation implements Runnable {
                 try {
                     Thread.sleep(s.getRefreshTime());
                     continue;
-                } catch (InterruptedException e) {
+                } catch (InterruptedException e) { // czy to jest dobre miejsce?
                     e.printStackTrace();
                 }
             }
