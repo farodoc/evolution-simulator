@@ -4,6 +4,14 @@ public record Vector2d(int x, int y) {
     public String toString() {return "(" + x + "," + y + ")";}
     public Vector2d add(Vector2d other) {return new Vector2d(this.x + other.x, this.y + other.y);}
 
+    public boolean precedes(Vector2d other) {
+        return this.x <= other.x && this.y <= other.y;
+    }
+
+    public boolean follows(Vector2d other) {
+        return this.x >= other.x && this.y >= other.y;
+    }
+
     public boolean equals(Object other) {
         if (this == other)
             return true;
@@ -14,3 +22,4 @@ public record Vector2d(int x, int y) {
         return this.x == that.x && this.y == that.y;
     }
 }
+

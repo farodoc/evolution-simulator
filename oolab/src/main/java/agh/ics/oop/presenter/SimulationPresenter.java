@@ -300,10 +300,17 @@ public class SimulationPresenter implements MapChangeListener {
     }
 
     private void updateStats() {
-        String[] currentStats = map.getCurrentStats();
-        for (int i = 0; i < numberOfStats; i++) {
-            statValues[i].setText(currentStats[i]);
-        }
+        MapStatsInString currentStats = map.getCurrentStats();
+
+        statValues[0].setText(currentStats.day());
+        statValues[1].setText(currentStats.currentAnimalCount());
+        statValues[2].setText(currentStats.foodTileCount());
+        statValues[3].setText(currentStats.freeTileCount());
+        statValues[4].setText(currentStats.mostFrequentGenotype());
+        statValues[5].setText(currentStats.averageEnergy());
+        statValues[6].setText(currentStats.averageLifespan());
+        statValues[7].setText(currentStats.averageChildrenAmount());
+        statValues[8].setText(currentStats.totalAnimalCount());
     }
 
     public void onPauseResumeClicked(javafx.event.ActionEvent actionEvent) {
@@ -332,11 +339,11 @@ public class SimulationPresenter implements MapChangeListener {
 
 
     private void updateChart() {
-        String[] stats = map.getCurrentStats();
+        MapStatsInString mapStats = map.getCurrentStats();
         XYChart.Series<Number, Number> series1 = lineChart.getData().get(0);
         XYChart.Series<Number, Number> series2 = lineChart.getData().get(1);
 
-        series1.getData().add(new XYChart.Data<>(Integer.parseInt(stats[0]), Integer.parseInt(stats[1])));
-        series2.getData().add(new XYChart.Data<>(Integer.parseInt(stats[0]), Integer.parseInt(stats[2])));
+        series1.getData().add(new XYChart.Data<>(Integer.parseInt(mapStats.day()), Integer.parseInt(mapStats.currentAnimalCount())));
+        series2.getData().add(new XYChart.Data<>(Integer.parseInt(mapStats.day()), Integer.parseInt(mapStats.foodTileCount())));
     }
 }

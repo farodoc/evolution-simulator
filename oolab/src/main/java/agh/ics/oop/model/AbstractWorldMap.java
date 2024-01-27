@@ -125,7 +125,13 @@ public abstract class AbstractWorldMap implements WorldMap {
     }
 
     public TileType[][] getTiles() {
-        return tiles; // dehermetyzacja
+        TileType[][] copy = new TileType[tiles.length][tiles[0].length];
+
+        for (int i = 0; i < tiles.length; i++) {
+            copy[i] = Arrays.copyOf(tiles[i], tiles[i].length);
+        }
+
+        return copy;
     }
 
     @Override
@@ -168,8 +174,7 @@ public abstract class AbstractWorldMap implements WorldMap {
     }
 
     protected boolean willAnimalBeOutOfBorder(Vector2d position) {
-        return position.x() < BOTTOM_LEFT_MAP_BORDER.x() || position.x() > TOP_RIGHT_MAP_BORDER.x() ||
-                position.y() < BOTTOM_LEFT_MAP_BORDER.y() || position.y() > TOP_RIGHT_MAP_BORDER.y(); // poziom abstrakcji - vector nie ma follows i precedes?
+        return !(position.follows(BOTTOM_LEFT_MAP_BORDER) && position.precedes(TOP_RIGHT_MAP_BORDER));
     }
 
     public Vector2d getNewPositionForAnimal(Animal animal) {
@@ -229,9 +234,7 @@ public abstract class AbstractWorldMap implements WorldMap {
         notifyObservers("");
     }
 
-    public String getName() { // czy ta metoda nie powinna być abstrakcyjna?
-        return "Abstract map";
-    }
+    public abstract String getName();
 
     //Metody z symulacji
     public void generateAnimals(int ANIMAL_STARTING_AMOUNT, int ANIMAL_STARTING_ENERGY, int ANIMAL_GENES_AMOUNT, boolean LOOPED_GENES_ACTIVE) {
@@ -287,7 +290,7 @@ public abstract class AbstractWorldMap implements WorldMap {
 
             if (foodTiles.containsKey(position)) {
                 AbstractFood food = foodTiles.get(position);
-                Animal animalThatEats = conflictManager(position);
+                Animal animalThatEats = findTheStrongestAnimal(position);
 
                 if (Objects.equals(food.toString(), "X"))
                     feedAnimal(animalThatEats, -FOOD_ENERGY);
@@ -298,7 +301,7 @@ public abstract class AbstractWorldMap implements WorldMap {
         }
     }
 
-    protected Animal conflictManager(Vector2d position) { // nazwa
+    protected Animal findTheStrongestAnimal(Vector2d position) {
         List<Animal> filteredAnimals = new ArrayList<>(animals.get(position));
 
         Comparator<Animal> animalComparator = Comparator
@@ -395,18 +398,12 @@ public abstract class AbstractWorldMap implements WorldMap {
     }
 
 
-    public String[] getCurrentStats() { // nie lepiej zwracać statystyki w rekordzie?
-        String[] stats = new String[9];
-        stats[0] = String.valueOf(day);
-        stats[1] = String.valueOf(countCurrentAnimals());
-        stats[2] = String.valueOf(foodTiles.size());
-        stats[3] = String.valueOf(countFreeTilesAmount());
-        stats[4] = getMostFrequentGenotypeAsString();
-        stats[5] = String.valueOf(getAverageEnergyForLivingAnimals());
-        stats[6] = String.valueOf(getAverageLifespanForDeadAnimals());
-        stats[7] = String.valueOf(getAverageChildrenAmountForLivingAnimals());
-        stats[8] = String.valueOf(totalAnimalAmount);
-        return stats;
+    public MapStatsInString getCurrentStats() {
+        return new MapStatsInString(String.valueOf(day), String.valueOf(countCurrentAnimals()), String.valueOf(foodTiles.size()),
+                                    String.valueOf(countFreeTilesAmount()), getMostFrequentGenotypeAsString(),
+                                    String.valueOf(getAverageEnergyForLivingAnimals()), String.valueOf(getAverageLifespanForDeadAnimals()),
+                                    String.valueOf(getAverageChildrenAmountForLivingAnimals()),
+                                    String.valueOf(totalAnimalAmount));
     }
 
     private synchronized int countFreeTilesAmount() {

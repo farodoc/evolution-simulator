@@ -127,12 +127,20 @@ public class Simulation implements Runnable {
     }
 
     private void saveStatsToFile() throws IOException {
-        String[] stats = map.getCurrentStats();
+        MapStatsInString mapStats = map.getCurrentStats();
 
         FileWriter writer = new FileWriter(CSV_FILE, true);
 
-        String line = String.join(";", stats);
-        line += "\n";
+        String line = mapStats.day() + ";" +
+                mapStats.currentAnimalCount() + ";" +
+                mapStats.foodTileCount() + ";" +
+                mapStats.freeTileCount() + ";" +
+                mapStats.mostFrequentGenotype() + ";" +
+                mapStats.averageEnergy() + ";" +
+                mapStats.averageLifespan() + ";" +
+                mapStats.averageChildrenAmount() + ";" +
+                mapStats.totalAnimalCount() + "\n";
+
         writer.write(line);
 
         writer.flush();
