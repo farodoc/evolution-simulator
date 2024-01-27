@@ -26,63 +26,63 @@
                     <HBox>
                         <GridPane alignment="CENTER" styleClass="stats-table">
                             <Label text="Day" GridPane.columnIndex="0" GridPane.rowIndex="0"/>
-                            <Label fx:id="STAT_1" GridPane.columnIndex="1" GridPane.rowIndex="0"/>
+                            <Label fx:id="statDay" GridPane.columnIndex="1" GridPane.rowIndex="0"/>
 
                             <Label text="Current animal amount" GridPane.columnIndex="0" GridPane.rowIndex="1"/>
-                            <Label fx:id="STAT_2" GridPane.columnIndex="1" GridPane.rowIndex="1"/>
+                            <Label fx:id="statCurrentAnimalAmount" GridPane.columnIndex="1" GridPane.rowIndex="1"/>
 
                             <Label text="Overall animal amount" GridPane.columnIndex="0" GridPane.rowIndex="2"/>
-                            <Label fx:id="STAT_9" GridPane.columnIndex="1" GridPane.rowIndex="2"/>
+                            <Label fx:id="statOverallAnimalAmount" GridPane.columnIndex="1" GridPane.rowIndex="2"/>
 
                             <Label text="Current plants amount" GridPane.columnIndex="0" GridPane.rowIndex="3"/>
-                            <Label fx:id="STAT_3" GridPane.columnIndex="1" GridPane.rowIndex="3"/>
+                            <Label fx:id="statCurrentPlantsAmount" GridPane.columnIndex="1" GridPane.rowIndex="3"/>
 
                             <Label text="Free tiles amount" GridPane.columnIndex="0" GridPane.rowIndex="4"/>
-                            <Label fx:id="STAT_4" GridPane.columnIndex="1" GridPane.rowIndex="4"/>
+                            <Label fx:id="statFreeTilesAmount" GridPane.columnIndex="1" GridPane.rowIndex="4"/>
 
                             <Label text="Most popular genotype" GridPane.columnIndex="0" GridPane.rowIndex="5"/>
-                            <Label fx:id="STAT_5" GridPane.columnIndex="1" GridPane.rowIndex="5"/>
+                            <Label fx:id="statMostPopularGenotype" GridPane.columnIndex="1" GridPane.rowIndex="5"/>
 
                             <Label text="Average energy level" GridPane.columnIndex="0" GridPane.rowIndex="6"/>
-                            <Label fx:id="STAT_6" GridPane.columnIndex="1" GridPane.rowIndex="6"/>
+                            <Label fx:id="statAverageEnergyLevel" GridPane.columnIndex="1" GridPane.rowIndex="6"/>
 
                             <Label text="Average lifespan of dead animals" GridPane.columnIndex="0" GridPane.rowIndex="7"/>
-                            <Label fx:id="STAT_7" GridPane.columnIndex="1" GridPane.rowIndex="7"/>
+                            <Label fx:id="stateAverageLifespanOfDeadAnimals" GridPane.columnIndex="1" GridPane.rowIndex="7"/>
 
                             <Label text="Average children amount" GridPane.columnIndex="0" GridPane.rowIndex="8"/>
-                            <Label fx:id="STAT_8" GridPane.columnIndex="1" GridPane.rowIndex="8"/>
+                            <Label fx:id="statAverageChildrenAmount" GridPane.columnIndex="1" GridPane.rowIndex="8"/>
                         </GridPane>
 
                         <GridPane alignment="CENTER" styleClass="stats-table">
                             <Label text="ID" GridPane.columnIndex="0" GridPane.rowIndex="0"/>
-                            <Label fx:id="STAT_A1" GridPane.columnIndex="1" GridPane.rowIndex="0"/>
+                            <Label fx:id="animalStatID" GridPane.columnIndex="1" GridPane.rowIndex="0"/>
 
                             <Label text="Position" GridPane.columnIndex="0" GridPane.rowIndex="1"/>
-                            <Label fx:id="STAT_A2" GridPane.columnIndex="1" GridPane.rowIndex="1"/>
+                            <Label fx:id="animalStatPosition" GridPane.columnIndex="1" GridPane.rowIndex="1"/>
 
                             <Label text="Genes" GridPane.columnIndex="0" GridPane.rowIndex="2"/>
-                            <Label fx:id="STAT_A3" GridPane.columnIndex="1" GridPane.rowIndex="2"/>
+                            <Label fx:id="animalStatGenes" GridPane.columnIndex="1" GridPane.rowIndex="2"/>
 
                             <Label text="Active gene" GridPane.columnIndex="0" GridPane.rowIndex="3"/>
-                            <Label fx:id="STAT_A4" GridPane.columnIndex="1" GridPane.rowIndex="3"/>
+                            <Label fx:id="animalStatActiveGene" GridPane.columnIndex="1" GridPane.rowIndex="3"/>
 
                             <Label text="Energy" GridPane.columnIndex="0" GridPane.rowIndex="4"/>
-                            <Label fx:id="STAT_A5" GridPane.columnIndex="1" GridPane.rowIndex="4"/>
+                            <Label fx:id="animalStatEnergy" GridPane.columnIndex="1" GridPane.rowIndex="4"/>
 
                             <Label text="Plants eaten" GridPane.columnIndex="0" GridPane.rowIndex="5"/>
-                            <Label fx:id="STAT_A6" GridPane.columnIndex="1" GridPane.rowIndex="5"/>
+                            <Label fx:id="animalStatPlantsEaten" GridPane.columnIndex="1" GridPane.rowIndex="5"/>
 
                             <Label text="Children amount" GridPane.columnIndex="0" GridPane.rowIndex="6"/>
-                            <Label fx:id="STAT_A7" GridPane.columnIndex="1" GridPane.rowIndex="6"/>
+                            <Label fx:id="animalStatChildrenAmount" GridPane.columnIndex="1" GridPane.rowIndex="6"/>
 
                             <Label text="Descendant amount" GridPane.columnIndex="0" GridPane.rowIndex="7"/>
-                            <Label fx:id="STAT_A8" GridPane.columnIndex="1" GridPane.rowIndex="7"/>
+                            <Label fx:id="animalStatDescendantAmount" GridPane.columnIndex="1" GridPane.rowIndex="7"/>
 
                             <Label text="Days alive" GridPane.columnIndex="0" GridPane.rowIndex="8"/>
-                            <Label fx:id="STAT_A9" GridPane.columnIndex="1" GridPane.rowIndex="8"/>
+                            <Label fx:id="animalStatDaysAlive" GridPane.columnIndex="1" GridPane.rowIndex="8"/>
 
                             <Label text="Day of death" GridPane.columnIndex="0" GridPane.rowIndex="9"/>
-                            <Label fx:id="STAT_A10" GridPane.columnIndex="1" GridPane.rowIndex="9"/>
+                            <Label fx:id="animalStatDayOfDeath" GridPane.columnIndex="1" GridPane.rowIndex="9"/>
                         </GridPane>
                     </HBox>
                     <VBox styleClass="divider"/>

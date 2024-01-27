@@ -52,12 +52,8 @@ public class Simulation implements Runnable {
 
         while (true) {
             if (!isActive) {
-                try {
-                    Thread.sleep(s.getRefreshTime());
-                    continue;
-                } catch (InterruptedException e) { // czy to jest dobre miejsce?
-                    e.printStackTrace();
-                }
+                freezeSimulation();
+                continue;
             }
 
             clearDeadAnimals();

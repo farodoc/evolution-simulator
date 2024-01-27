@@ -6,6 +6,8 @@ import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
 
+import java.io.IOException;
+
 public class SimulationLauncher extends Application {
     private Simulation simulation;
     public void run(Stage primaryStage, Simulation simulation) {
@@ -26,8 +28,8 @@ public class SimulationLauncher extends Application {
             primaryStage.setScene(scene);
             primaryStage.show();
         }
-        catch (Exception e) { // ?
-            System.out.println(e);
+        catch (IOException e) {
+            throw new RuntimeException(e);
         }
     }
 }

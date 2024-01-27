@@ -21,16 +21,18 @@ public class SimulationPresenter implements MapChangeListener {
     @FXML
     private GridPane simulationGrid;
     @FXML
-    private Label STAT_1, STAT_2, STAT_3, STAT_4, STAT_5, STAT_6, STAT_7, STAT_8, STAT_9; // mało mówiące nazwy
+    private Label statDay, statCurrentAnimalAmount, statCurrentPlantsAmount, statFreeTilesAmount, statMostPopularGenotype,
+            statAverageEnergyLevel, stateAverageLifespanOfDeadAnimals, statAverageChildrenAmount, statOverallAnimalAmount;
     @FXML
-    private Label STAT_A1, STAT_A2, STAT_A3, STAT_A4, STAT_A5, STAT_A6, STAT_A7, STAT_A8, STAT_A9, STAT_A10; // jeszcze mniej mówiące nazwy
+    private Label animalStatID, animalStatPosition, animalStatGenes, animalStatActiveGene, animalStatEnergy, animalStatPlantsEaten,
+            animalStatChildrenAmount, animalStatDescendantAmount, animalStatDaysAlive, animalStatDayOfDeath;
     @FXML
     private HBox lineChartContainer;
 
     private Simulation simulation;
     private List<Animal> mostFrequentGenesAnimals = null;
     private AbstractWorldMap map;
-    private int CELL_SIZE; // to nawet nie jest finalne, czemu wielkie litery?
+    private int cellSize;
     private Label[][] cellLabels;
     private Set<Vector2d> prevOccupiedPositions;
     private Label selectedCellLabel;
@@ -44,33 +46,33 @@ public class SimulationPresenter implements MapChangeListener {
     public void initialize(Simulation simulation) {
         this.simulation = simulation;
         this.map = simulation.getMap();
-        CELL_SIZE = Math.min(
+        cellSize = Math.min(
                 800 / (map.getMapHeight()),
                 800 / (map.getMapWidth()));
 
         cellLabels = new Label[map.getMapHeight()][map.getMapWidth()];
         initializeChart();
 
-        statValues[0] = STAT_1;
-        statValues[1] = STAT_2;
-        statValues[2] = STAT_3;
-        statValues[3] = STAT_4;
-        statValues[4] = STAT_5;
-        statValues[5] = STAT_6;
-        statValues[6] = STAT_7;
-        statValues[7] = STAT_8;
-        statValues[8] = STAT_9;
+        statValues[0] = statDay;
+        statValues[1] = statCurrentAnimalAmount;
+        statValues[2] = statCurrentPlantsAmount;
+        statValues[3] = statFreeTilesAmount;
+        statValues[4] = statMostPopularGenotype;
+        statValues[5] = statAverageEnergyLevel;
+        statValues[6] = stateAverageLifespanOfDeadAnimals;
+        statValues[7] = statAverageChildrenAmount;
+        statValues[8] = statOverallAnimalAmount;
 
-        trackedAnimalStats[0] = STAT_A1;
-        trackedAnimalStats[1] = STAT_A2;
-        trackedAnimalStats[2] = STAT_A3;
-        trackedAnimalStats[3] = STAT_A4;
-        trackedAnimalStats[4] = STAT_A5;
-        trackedAnimalStats[5] = STAT_A6;
-        trackedAnimalStats[6] = STAT_A7;
-        trackedAnimalStats[7] = STAT_A8;
-        trackedAnimalStats[8] = STAT_A9;
-        trackedAnimalStats[9] = STAT_A10;
+        trackedAnimalStats[0] = animalStatID;
+        trackedAnimalStats[1] = animalStatPosition;
+        trackedAnimalStats[2] = animalStatGenes;
+        trackedAnimalStats[3] = animalStatActiveGene;
+        trackedAnimalStats[4] = animalStatEnergy;
+        trackedAnimalStats[5] = animalStatPlantsEaten;
+        trackedAnimalStats[6] = animalStatChildrenAmount;
+        trackedAnimalStats[7] = animalStatDescendantAmount;
+        trackedAnimalStats[8] = animalStatDaysAlive;
+        trackedAnimalStats[9] = animalStatDayOfDeath;
 
         drawGrid();
     }
@@ -84,11 +86,11 @@ public class SimulationPresenter implements MapChangeListener {
         int height = boundaries.topRightCorner().y() - boundaries.bottomLeftCorner().y() + 1;
 
         for (int x = 0; x < width; x++) {
-            simulationGrid.getColumnConstraints().add(new ColumnConstraints(CELL_SIZE));
+            simulationGrid.getColumnConstraints().add(new ColumnConstraints(cellSize));
         }
 
         for (int y = 0; y < height; y++) {
-            simulationGrid.getRowConstraints().add(new RowConstraints(CELL_SIZE));
+            simulationGrid.getRowConstraints().add(new RowConstraints(cellSize));
         }
 
         colorGrid(height, width);
@@ -100,8 +102,8 @@ public class SimulationPresenter implements MapChangeListener {
         for (int y = height - 1; y >= 0; y--) {
             for (int x = 0; x < width; x++) {
                 Label cellLabel = new Label();
-                cellLabel.setMinWidth(CELL_SIZE);
-                cellLabel.setMinHeight(CELL_SIZE);
+                cellLabel.setMinWidth(cellSize);
+                cellLabel.setMinHeight(cellSize);
                 cellLabel.setBorder(new Border(new BorderStroke(Color.BLACK, BorderStrokeStyle.DOTTED, null, new BorderWidths(0.4))));
                 cellLabel.setStyle("-fx-alignment: CENTER;");
 
@@ -193,7 +195,7 @@ public class SimulationPresenter implements MapChangeListener {
     private void fillMap() {
         clearGrid();
         prevOccupiedPositions = map.getAllOccupiedPositions();
-        int grassSize = (int) (1.75 * CELL_SIZE);
+        int grassSize = (int) (1.75 * cellSize);
 
         for (Vector2d vec : prevOccupiedPositions) {
             int x = vec.x();
@@ -275,7 +277,7 @@ public class SimulationPresenter implements MapChangeListener {
         double healthPercentage = (double) animal.getEnergy() / animal.getMaxEnergy();
         healthPercentage = Math.max(healthPercentage, 0);
         Circle redCircle = new Circle();
-        redCircle.setRadius(CELL_SIZE * 0.3);
+        redCircle.setRadius(cellSize * 0.3);
         redCircle.setFill(getColorForAnimal(healthPercentage));
         return redCircle;
     }
