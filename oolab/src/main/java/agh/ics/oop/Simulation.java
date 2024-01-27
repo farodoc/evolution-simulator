@@ -21,7 +21,13 @@ public class Simulation implements Runnable {
 
     public Simulation(Settings s) {
         this.s = s;
-        this.map = s.getMap();
+
+        if(s.isDefaultMap()){
+            this.map = new EquatorMap(s.getFoodStartingAmount(), s.getMapWidth(), s.getMapHeight());
+        } else {
+            this.map = new PoisonMap(s.getFoodStartingAmount(), s.getMapWidth(), s.getMapHeight());
+        }
+
         this.CSV_FILE = CSV_FILE_PREFIX + simulationCount + ".csv";
         simulationCount++;
         generateAnimals();
@@ -29,7 +35,7 @@ public class Simulation implements Runnable {
 
     private void generateAnimals() {
         map.generateAnimals(s.getAnimalStartingAmount(), s.getAnimalStartingEnergy(),
-                s.getAnimalGenesAmount(), s.getIsLoopedGenes());
+                s.getAnimalGenesAmount(), s.isDefaultGenes());
     }
 
     public void run() {
@@ -87,7 +93,7 @@ public class Simulation implements Runnable {
 
     private void breedAnimals() {
         map.breedAnimals(s.getAnimalMinEnergyToReproduce(), s.getAnimalEnergyToReproduce(),
-                s.getAnimalGenesAmount(), s.getIsLoopedGenes(), s.getAnimalMinMutations(),
+                s.getAnimalGenesAmount(), s.isDefaultGenes(), s.getAnimalMinMutations(),
                 s.getAnimalMaxMutations());
     }
 

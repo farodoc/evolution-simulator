@@ -48,9 +48,7 @@ public class MenuPresenter{
     animalEnergyToReproduceCost, animalGenesAmount, animalMinMutations, animalMaxMutations, foodStartingAmount,
     foodGrowthPerDay, foodEnergy, refreshTime;
 
-    boolean saveStats;
-
-    String selectedMap, selectedGenes; // String?
+    boolean saveStats, isDefaultMapSelected, isDefaultGenesSelected;
 
     public void onSimulationStartClicked(javafx.event.ActionEvent actionEvent) {
         if (!checkAndSetInputValues()) return;
@@ -70,20 +68,13 @@ public class MenuPresenter{
                 String.valueOf(foodStartingAmount),
                 String.valueOf(foodGrowthPerDay),
                 String.valueOf(foodEnergy),
-                mapComboBox.getValue(),
-                genesComboBox.getValue(),
+                String.valueOf(isDefaultMapSelected),
+                String.valueOf(isDefaultGenesSelected),
                 String.valueOf(refreshTime),
                 String.valueOf(saveStats)
         };
 
-        AbstractWorldMap map;
-        if (Objects.equals(selectedMap, "Poison map")) {
-            map = new PoisonMap(foodStartingAmount, mapWidth, mapHeight); // czy to dobrze, że presenter instancjonuje mapę?
-        } else {
-            map = new EquatorMap(foodStartingAmount, mapWidth, mapHeight);
-        }
-
-        Settings settings = new Settings(attributesArray, map);
+        Settings settings = new Settings(attributesArray);
 
         SimulationEngine simulationEngine = new SimulationEngine();
         simulationEngine.start(settings);
@@ -190,14 +181,14 @@ public class MenuPresenter{
         try {
             mapWidth = Integer.parseInt(fxmlMapWidth.getText());
             mapHeight = Integer.parseInt(fxmlMapHeight.getText());
-            selectedMap = mapComboBox.getValue();
+            isDefaultMapSelected = mapComboBox.getValue().equals("Equator Map");
             animalStartingAmount = Integer.parseInt(fxmlAnimalStartingAmount.getText());
             animalStartingEnergy = Integer.parseInt(fxmlAnimalStartingEnergy.getText());
             animalEnergyPerMove = Integer.parseInt(fxmlAnimalEnergyPerMove.getText());
             animalMinEnergyToReproduce = Integer.parseInt(fxmlAnimalMinEnergyToReproduce.getText());
             animalEnergyToReproduceCost = Integer.parseInt(fxmlAnimalEnergyToReproduce.getText());
             animalGenesAmount = Integer.parseInt(fxmlAnimalGenesAmount.getText());
-            selectedGenes = genesComboBox.getValue();
+            isDefaultGenesSelected = genesComboBox.getValue().equals("Default");
             animalMinMutations = Integer.parseInt(fxmlAnimalMinMutations.getText());
             animalMaxMutations = Integer.parseInt(fxmlAnimalMaxMutations.getText());
             foodStartingAmount = Integer.parseInt(fxmlFoodStartingAmount.getText());

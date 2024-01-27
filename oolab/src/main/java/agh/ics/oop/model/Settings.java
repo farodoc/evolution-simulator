@@ -2,7 +2,8 @@ package agh.ics.oop.model;
 
 public class Settings {
     private final String name;
-    private AbstractWorldMap map;
+    private final boolean isDefaultMap;
+    private final boolean isDefaultGenes;
     private final int mapWidth;
     private final int mapHeight;
     private final int animalStartingAmount;
@@ -11,7 +12,6 @@ public class Settings {
     private final int animalMinEnergyToReproduce;
     private final int animalEnergyToReproduce;
     private final int animalGenesAmount;
-    private final AbstractGenes genes;
     private final int animalMinMutations;
     private final int animalMaxMutations;
     private final int foodStartingAmount;
@@ -35,25 +35,10 @@ public class Settings {
         foodStartingAmount = Integer.parseInt(config[11]);
         foodGrowthPerDay = Integer.parseInt(config[12]);
         foodEnergy = Integer.parseInt(config[13]);
+        isDefaultMap = Boolean.parseBoolean(config[14]);
+        isDefaultGenes = Boolean.parseBoolean(config[15]);
         refreshTime = Integer.parseInt(config[16]);
         saveStats = Boolean.parseBoolean(config[17]);
-
-        if (config[14].equals("Poison map")) {
-            map = new PoisonMap(foodStartingAmount, mapWidth, mapHeight); // czy to OK, że ustawienia instancjonują mapę?
-        } else {
-            map = new EquatorMap(foodStartingAmount, mapWidth, mapHeight);
-        }
-
-        if (config[15].equals("Looped")) {
-            genes = new LoopedGenes(animalGenesAmount);
-        } else {
-            genes = new StandardGenes(animalGenesAmount);
-        }
-    }
-
-    public Settings(String[] config, AbstractWorldMap map) throws IllegalArgumentException{
-        this(config);
-        this.map = map;
     }
 
     public String[] getAttributesAsArray() {
@@ -72,26 +57,35 @@ public class Settings {
                 String.valueOf(foodStartingAmount),
                 String.valueOf(foodGrowthPerDay),
                 String.valueOf(foodEnergy),
-                map.getName(),
-                genes.getName(),
+                String.valueOf(isDefaultMap),
+                String.valueOf(isDefaultGenes),
                 String.valueOf(refreshTime),
                 String.valueOf(saveStats)
         };
     }
 
+    public int getMapWidth() {
+        return mapWidth;
+    }
+
+    public int getMapHeight() {
+        return mapHeight;
+    }
+
     public boolean getIsSaveStats() {return saveStats;}
     public String getName() {return name;}
-    public AbstractWorldMap getMap() {return map;}
+    public boolean isDefaultMap() {return isDefaultMap;}
     public int getAnimalStartingAmount() {return animalStartingAmount;}
     public int getAnimalStartingEnergy() {return animalStartingEnergy;}
     public int getAnimalEnergyPerMove() {return animalEnergyPerMove;}
     public int getAnimalMinEnergyToReproduce() {return animalMinEnergyToReproduce;}
     public int getAnimalEnergyToReproduce() {return animalEnergyToReproduce;}
     public int getAnimalGenesAmount() {return animalGenesAmount;}
-    public boolean getIsLoopedGenes() {return genes.getName().equals("Looped");}
+    public boolean isDefaultGenes() {return isDefaultGenes;}
     public int getAnimalMinMutations() {return animalMinMutations;}
     public int getAnimalMaxMutations() {return animalMaxMutations;}
     public int getFoodGrowthPerDay() {return foodGrowthPerDay;}
     public int getFoodEnergy() {return foodEnergy;}
     public int getRefreshTime(){return refreshTime;}
+    public int getFoodStartingAmount(){return foodStartingAmount;}
 }

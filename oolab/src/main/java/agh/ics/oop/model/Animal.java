@@ -19,7 +19,7 @@ public class Animal implements WorldElement{
     private int plantsEaten = 0;
     private Integer deathDate = null;
     private final List<Animal> parents = new ArrayList<>(2);
-    public Animal(Vector2d position, int startingEnergy, int genesAmount, boolean loopedGenesActive){
+    public Animal(Vector2d position, int startingEnergy, int genesAmount, boolean defaultGenesActive){
         ID = overallID++;
         this.position = position;
         this.genesAmount = genesAmount;
@@ -27,18 +27,18 @@ public class Animal implements WorldElement{
         energy = startingEnergy;
         maxEnergy = (int) (1.33*energy);
 
-        if(loopedGenesActive) genes = new LoopedGenes(genesAmount);
-        else                  genes = new StandardGenes(genesAmount);
+        if(defaultGenesActive) genes = new StandardGenes(genesAmount);
+        else                  genes = new LoopedGenes(genesAmount);
     }
 
-    public Animal(Vector2d position, int energy, int genesAmount, boolean loopedGenesActive, Animal parent1, Animal parent2, int animalMinMutations, int animalMaxMutations){
-        this(position, energy, genesAmount, loopedGenesActive);
+    public Animal(Vector2d position, int energy, int genesAmount, boolean defaultGenesActive, Animal parent1, Animal parent2, int animalMinMutations, int animalMaxMutations){
+        this(position, energy, genesAmount, defaultGenesActive);
         parents.add(0, parent1);
         parents.add(1, parent2);
         maxEnergy = parent1.getMaxEnergy();
 
-        if(loopedGenesActive) genes = new LoopedGenes(parent1, parent2, animalMinMutations, animalMaxMutations);
-        else                  genes = new StandardGenes(parent1, parent2, animalMinMutations, animalMaxMutations);
+        if(defaultGenesActive) genes = new StandardGenes(parent1, parent2, animalMinMutations, animalMaxMutations);
+        else                  genes = new LoopedGenes(parent1, parent2, animalMinMutations, animalMaxMutations);
 
         updateParentsRecursion(new ArrayList<>());
     }

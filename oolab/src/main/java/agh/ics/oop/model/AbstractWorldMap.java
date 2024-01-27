@@ -237,11 +237,11 @@ public abstract class AbstractWorldMap implements WorldMap {
     public abstract String getName();
 
     //Metody z symulacji
-    public void generateAnimals(int ANIMAL_STARTING_AMOUNT, int ANIMAL_STARTING_ENERGY, int ANIMAL_GENES_AMOUNT, boolean LOOPED_GENES_ACTIVE) {
+    public void generateAnimals(int ANIMAL_STARTING_AMOUNT, int ANIMAL_STARTING_ENERGY, int ANIMAL_GENES_AMOUNT, boolean DEFAULT_GENES_ACTIVE) {
         for (int i = 0; i < ANIMAL_STARTING_AMOUNT; i++) {
             int x = (int) (Math.random() * mapWidth);
             int y = (int) (Math.random() * mapHeight);
-            Animal animal = new Animal(new Vector2d(x, y), ANIMAL_STARTING_ENERGY, ANIMAL_GENES_AMOUNT, LOOPED_GENES_ACTIVE);
+            Animal animal = new Animal(new Vector2d(x, y), ANIMAL_STARTING_ENERGY, ANIMAL_GENES_AMOUNT, DEFAULT_GENES_ACTIVE);
             place(animal);
         }
     }
@@ -316,7 +316,7 @@ public abstract class AbstractWorldMap implements WorldMap {
     }
 
     public void breedAnimals(int ANIMAL_MIN_ENERGY_TO_REPRODUCE, int ANIMAL_ENERGY_TO_REPRODUCE_COST,
-                             int ANIMAL_GENES_AMOUNT, boolean LOOPED_GENES_ACTIVE,
+                             int ANIMAL_GENES_AMOUNT, boolean DEFAULT_GENES_ACTIVE,
                              int ANIMAL_MIN_MUTATIONS, int ANIMAL_MAX_MUTATIONS) {
         Map<Vector2d, List<Animal>> animalsCopy = generateDeepCopyOfAnimalsMap();
 
@@ -326,7 +326,7 @@ public abstract class AbstractWorldMap implements WorldMap {
                 List<Animal> filteredAnimals = findAnimalsToBreed(animalList, ANIMAL_MIN_ENERGY_TO_REPRODUCE);
                 if (filteredAnimals.size() >= 2) {
                     combineAnimalsAndSpawnChild(filteredAnimals.get(0), filteredAnimals.get(1),
-                            ANIMAL_ENERGY_TO_REPRODUCE_COST, ANIMAL_GENES_AMOUNT, LOOPED_GENES_ACTIVE,
+                            ANIMAL_ENERGY_TO_REPRODUCE_COST, ANIMAL_GENES_AMOUNT, DEFAULT_GENES_ACTIVE,
                             ANIMAL_MIN_MUTATIONS, ANIMAL_MAX_MUTATIONS);
                 }
             }
@@ -356,13 +356,13 @@ public abstract class AbstractWorldMap implements WorldMap {
     protected void combineAnimalsAndSpawnChild(Animal strongerAnimal, Animal weakerAnimal,
                                                int ANIMAL_ENERGY_TO_REPRODUCE_COST,
                                                int ANIMAL_GENES_AMOUNT,
-                                               boolean LOOPED_GENES_ACTIVE,
+                                               boolean DEFAULT_GENES_ACTIVE,
                                                int ANIMAL_MIN_MUTATIONS,
                                                int ANIMAL_MAX_MUTATIONS) {
         strongerAnimal.updateAnimalAfterBreeding(ANIMAL_ENERGY_TO_REPRODUCE_COST);
         weakerAnimal.updateAnimalAfterBreeding(ANIMAL_ENERGY_TO_REPRODUCE_COST);
 
-        Animal child = new Animal(strongerAnimal.getPosition(), 2 * ANIMAL_ENERGY_TO_REPRODUCE_COST, ANIMAL_GENES_AMOUNT, LOOPED_GENES_ACTIVE,
+        Animal child = new Animal(strongerAnimal.getPosition(), 2 * ANIMAL_ENERGY_TO_REPRODUCE_COST, ANIMAL_GENES_AMOUNT, DEFAULT_GENES_ACTIVE,
                 strongerAnimal, weakerAnimal, ANIMAL_MIN_MUTATIONS, ANIMAL_MAX_MUTATIONS);
         place(child);
     }
