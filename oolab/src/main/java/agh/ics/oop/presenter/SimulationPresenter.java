@@ -2,7 +2,6 @@ package agh.ics.oop.presenter;
 
 import agh.ics.oop.Simulation;
 import agh.ics.oop.model.*;
-import com.sun.javafx.charts.Legend;
 import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.geometry.HPos;
@@ -328,29 +327,9 @@ public class SimulationPresenter implements MapChangeListener {
 
         lineChart.getData().addAll(series1, series2);
 
-        setSeriesColor(series1, Color.ORANGE);
-        setSeriesColor(series2, Color.GREEN);
-
-        setLegendColor(lineChart, Color.ORANGE, Color.GREEN);
-
         lineChartContainer.getChildren().add(lineChart);
     }
 
-    private void setSeriesColor(XYChart.Series<Number, Number> series, Color color) {
-        Node seriesNode = series.getNode().lookup(".chart-series-line");
-        seriesNode.setStyle("-fx-stroke: " + color.toString().replace("0x", "#") + ";");
-    }
-
-    private void setLegendColor(LineChart<Number, Number> chart, Color... colors) {
-        Legend legend = (Legend) chart.lookup(".chart-legend");
-        if (legend != null) {
-            Legend.LegendItem[] legendItems = legend.getItems().toArray(new Legend.LegendItem[0]);
-            for (int i = 0; i < legendItems.length && i < colors.length; i++) {
-                Node legendNode = legendItems[i].getSymbol();
-                legendNode.setStyle("-fx-background-color: " + colors[i].toString().replace("0x", "#") + ";");
-            }
-        }
-    }
 
     private void updateChart() {
         String[] stats = map.getCurrentStats();
@@ -360,4 +339,4 @@ public class SimulationPresenter implements MapChangeListener {
         series1.getData().add(new XYChart.Data<>(Integer.parseInt(stats[0]), Integer.parseInt(stats[1])));
         series2.getData().add(new XYChart.Data<>(Integer.parseInt(stats[0]), Integer.parseInt(stats[2])));
     }
-} // duża ta klasa
+}
