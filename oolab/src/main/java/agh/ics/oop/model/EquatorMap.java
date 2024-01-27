@@ -21,9 +21,9 @@ public class EquatorMap extends AbstractWorldMap{
         while(jungleTilesCounter < jungleTilesAmount){
             int x=0;
             while(x<mapWidth && jungleTilesCounter<jungleTilesAmount){
-                if(Math.random() < probabilityForRow && tiles[equator + yModifier][x] != TileType.JUNG){
+                if(Math.random() < probabilityForRow && tiles[equator + yModifier][x] != TileType.JUNGLE){
                     jungleTilesCounter++;
-                    tiles[equator + yModifier][x] = TileType.JUNG;
+                    tiles[equator + yModifier][x] = TileType.JUNGLE;
                 }
                 x++;
             }

@@ -89,7 +89,7 @@ public abstract class AbstractWorldMap implements WorldMap {
 
         for (int x = 0; x < mapWidth; x++) {
             for (int y = 0; y < mapHeight; y++) {
-                if (tiles[y][x] != TileType.JUNG) {
+                if (tiles[y][x] != TileType.JUNGLE) {
                     tiles[y][x] = TileType.DIRT;
                     dirtTilesPositions.add(new Vector2d(x, y));
                 } else {

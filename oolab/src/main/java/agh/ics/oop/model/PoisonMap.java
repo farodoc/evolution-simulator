@@ -42,7 +42,7 @@ public class PoisonMap extends AbstractWorldMap {
 
         for(int y=startingY; y<startingY+a; y++){
             for(int x=startingX; x<startingX+a; x++){
-                tiles[y][x] = TileType.JUNG;
+                tiles[y][x] = TileType.JUNGLE;
             }
         }
     }
