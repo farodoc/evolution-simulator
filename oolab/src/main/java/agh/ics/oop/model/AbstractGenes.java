@@ -8,9 +8,8 @@ import java.util.Random;
 public abstract class AbstractGenes {
     protected List<Integer> genes = new ArrayList<>();
     protected int geneIndex;
-
+    protected Random random = new Random();
     public AbstractGenes(int genesAmount){
-        Random random = new Random();
         geneIndex = random.nextInt(genesAmount);
         generateGenesOnStart(genesAmount);
     }
@@ -42,10 +41,10 @@ public abstract class AbstractGenes {
     }
 
     public List<Integer> getGenesList(){
-        return genes;
+        return Collections.unmodifiableList(genes);
     }
 
-    protected List<Integer> combineGenes(Animal strongerAnimal, Animal weakerAnimal){
+    protected List<Integer> combineGenes(Animal strongerAnimal, Animal weakerAnimal){ // ta metoda potrzebuje genotypu i dwóch zwierząt, a zwraca listę
         List<Integer> strongerGenes = strongerAnimal.getGenes().getGenesList();
         List<Integer> weakerGenes = weakerAnimal.getGenes().getGenesList();
         List<Integer> newGenes = new ArrayList<>();
@@ -76,7 +75,6 @@ public abstract class AbstractGenes {
 
     protected void switchRandomGenes(List<Integer> genes, int ANIMAL_MIN_MUTATIONS, int ANIMAL_MAX_MUTATIONS){
         int genesAmount = genes.size();
-        Random random = new Random();
         int genesToSwitchAmount = ANIMAL_MIN_MUTATIONS + random.nextInt(ANIMAL_MAX_MUTATIONS - ANIMAL_MIN_MUTATIONS + 1);
         List<Integer> genesPositions = new ArrayList<>();
 

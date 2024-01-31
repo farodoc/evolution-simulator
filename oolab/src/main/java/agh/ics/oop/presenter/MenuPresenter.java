@@ -10,9 +10,9 @@ import java.util.Optional;
 
 public class MenuPresenter{
     @FXML
-    private TextField MAP_WIDTH, MAP_HEIGHT, ANIMAL_STARTING_AMOUNT, ANIMAL_STARTING_ENERGY, ANIMAL_ENERGY_PER_MOVE,
-    ANIMAL_MIN_ENERGY_TO_REPRODUCE, ANIMAL_ENERGY_TO_REPRODUCE_COST, ANIMAL_GENES_AMOUNT, ANIMAL_MIN_MUTATIONS,
-    ANIMAL_MAX_MUTATIONS, FOOD_STARTING_AMOUNT, FOOD_GROWTH_PER_DAY, FOOD_ENERGY, CONFIG_NAME, REFRESH_TIME;
+    private TextField fxmlMapWidth, fxmlMapHeight, fxmlAnimalStartingAmount, fxmlAnimalStartingEnergy, fxmlAnimalEnergyPerMove,
+            fxmlAnimalMinEnergyToReproduce, fxmlAnimalEnergyToReproduce, fxmlAnimalGenesAmount, fxmlAnimalMinMutations,
+            fxmlAnimalMaxMutations, fxmlFoodStartingAmount, fxmlFoodGrowthPerDay, fxmlFoodEnergy, fxmlConfigName, fxmlRefreshTime;
 
     @FXML
     private ComboBox<String> mapComboBox, genesComboBox;
@@ -21,42 +21,40 @@ public class MenuPresenter{
     private Label errorLabel;
 
     @FXML
-    private CheckBox SAVE_STATS;
+    private CheckBox fxmlSaveStats;
 
     @FXML
     private void initialize(){
-        CONFIG_NAME.setText("Example config");
-        MAP_WIDTH.setText("20");
-        MAP_HEIGHT.setText("20");
+        fxmlConfigName.setText("Example config");
+        fxmlMapWidth.setText("20");
+        fxmlMapHeight.setText("20");
         mapComboBox.setValue("Poison map");
-        ANIMAL_STARTING_AMOUNT.setText("30");
-        ANIMAL_STARTING_ENERGY.setText("100");
-        ANIMAL_ENERGY_PER_MOVE.setText("5");
-        ANIMAL_MIN_ENERGY_TO_REPRODUCE.setText("30");
-        ANIMAL_ENERGY_TO_REPRODUCE_COST.setText("10");
-        ANIMAL_GENES_AMOUNT.setText("10");
+        fxmlAnimalStartingAmount.setText("30");
+        fxmlAnimalStartingEnergy.setText("100");
+        fxmlAnimalEnergyPerMove.setText("5");
+        fxmlAnimalMinEnergyToReproduce.setText("30");
+        fxmlAnimalEnergyToReproduce.setText("10");
+        fxmlAnimalGenesAmount.setText("10");
         genesComboBox.setValue("Looped");
-        ANIMAL_MIN_MUTATIONS.setText("1");
-        ANIMAL_MAX_MUTATIONS.setText("5");
-        FOOD_STARTING_AMOUNT.setText("50");
-        FOOD_GROWTH_PER_DAY.setText("15");
-        FOOD_ENERGY.setText("25");
-        REFRESH_TIME.setText("1000");
+        fxmlAnimalMinMutations.setText("1");
+        fxmlAnimalMaxMutations.setText("5");
+        fxmlFoodStartingAmount.setText("50");
+        fxmlFoodGrowthPerDay.setText("15");
+        fxmlFoodEnergy.setText("25");
+        fxmlRefreshTime.setText("1000");
     }
 
     int mapWidth, mapHeight, animalStartingAmount, animalStartingEnergy, animalEnergyPerMove, animalMinEnergyToReproduce,
     animalEnergyToReproduceCost, animalGenesAmount, animalMinMutations, animalMaxMutations, foodStartingAmount,
     foodGrowthPerDay, foodEnergy, refreshTime;
 
-    boolean saveStats;
-
-    String selectedMap, selectedGenes;
+    boolean saveStats, isDefaultMapSelected, isDefaultGenesSelected;
 
     public void onSimulationStartClicked(javafx.event.ActionEvent actionEvent) {
         if (!checkAndSetInputValues()) return;
 
         String[] attributesArray = {
-                CONFIG_NAME.getText(),
+                fxmlConfigName.getText(),
                 String.valueOf(mapWidth),
                 String.valueOf(mapHeight),
                 String.valueOf(animalStartingAmount),
@@ -70,20 +68,13 @@ public class MenuPresenter{
                 String.valueOf(foodStartingAmount),
                 String.valueOf(foodGrowthPerDay),
                 String.valueOf(foodEnergy),
-                mapComboBox.getValue(),
-                genesComboBox.getValue(),
+                String.valueOf(isDefaultMapSelected),
+                String.valueOf(isDefaultGenesSelected),
                 String.valueOf(refreshTime),
                 String.valueOf(saveStats)
         };
 
-        AbstractWorldMap map;
-        if (Objects.equals(selectedMap, "Poison map")) {
-            map = new PoisonMap(foodStartingAmount, mapWidth, mapHeight);
-        } else {
-            map = new EquatorMap(foodStartingAmount, mapWidth, mapHeight);
-        }
-
-        Settings settings = new Settings(attributesArray, map);
+        Settings settings = new Settings(attributesArray);
 
         SimulationEngine simulationEngine = new SimulationEngine();
         simulationEngine.start(settings);
@@ -121,20 +112,20 @@ public class MenuPresenter{
         if(!checkAndSetInputValues()){
             return;
         }
-        CONFIG_NAME.setText(config[0]);
-        MAP_WIDTH.setText(config[1]);
-        MAP_HEIGHT.setText(config[2]);
-        ANIMAL_STARTING_AMOUNT.setText(config[3]);
-        ANIMAL_STARTING_ENERGY.setText(config[4]);
-        ANIMAL_ENERGY_PER_MOVE.setText(config[5]);
-        ANIMAL_MIN_ENERGY_TO_REPRODUCE.setText(config[6]);
-        ANIMAL_ENERGY_TO_REPRODUCE_COST.setText(config[7]);
-        ANIMAL_GENES_AMOUNT.setText(config[8]);
-        ANIMAL_MIN_MUTATIONS.setText(config[9]);
-        ANIMAL_MAX_MUTATIONS.setText(config[10]);
-        FOOD_STARTING_AMOUNT.setText(config[11]);
-        FOOD_GROWTH_PER_DAY.setText(config[12]);
-        FOOD_ENERGY.setText(config[13]);
+        fxmlConfigName.setText(config[0]);
+        fxmlMapWidth.setText(config[1]);
+        fxmlMapHeight.setText(config[2]);
+        fxmlAnimalStartingAmount.setText(config[3]);
+        fxmlAnimalStartingEnergy.setText(config[4]);
+        fxmlAnimalEnergyPerMove.setText(config[5]);
+        fxmlAnimalMinEnergyToReproduce.setText(config[6]);
+        fxmlAnimalEnergyToReproduce.setText(config[7]);
+        fxmlAnimalGenesAmount.setText(config[8]);
+        fxmlAnimalMinMutations.setText(config[9]);
+        fxmlAnimalMaxMutations.setText(config[10]);
+        fxmlFoodStartingAmount.setText(config[11]);
+        fxmlFoodGrowthPerDay.setText(config[12]);
+        fxmlFoodEnergy.setText(config[13]);
         mapComboBox.setValue(config[14]);
         genesComboBox.setValue(config[15]);
     }
@@ -144,7 +135,7 @@ public class MenuPresenter{
         try {
             checkAndSetInputValues();
             String[] attributesArray = {
-                    CONFIG_NAME.getText(),
+                    fxmlConfigName.getText(),
                     String.valueOf(mapWidth),
                     String.valueOf(mapHeight),
                     String.valueOf(animalStartingAmount),
@@ -188,23 +179,23 @@ public class MenuPresenter{
 
     private boolean checkAndSetInputValues(){
         try {
-            mapWidth = Integer.parseInt(MAP_WIDTH.getText());
-            mapHeight = Integer.parseInt(MAP_HEIGHT.getText());
-            selectedMap = mapComboBox.getValue();
-            animalStartingAmount = Integer.parseInt(ANIMAL_STARTING_AMOUNT.getText());
-            animalStartingEnergy = Integer.parseInt(ANIMAL_STARTING_ENERGY.getText());
-            animalEnergyPerMove = Integer.parseInt(ANIMAL_ENERGY_PER_MOVE.getText());
-            animalMinEnergyToReproduce = Integer.parseInt(ANIMAL_MIN_ENERGY_TO_REPRODUCE.getText());
-            animalEnergyToReproduceCost = Integer.parseInt(ANIMAL_ENERGY_TO_REPRODUCE_COST.getText());
-            animalGenesAmount = Integer.parseInt(ANIMAL_GENES_AMOUNT.getText());
-            selectedGenes = genesComboBox.getValue();
-            animalMinMutations = Integer.parseInt(ANIMAL_MIN_MUTATIONS.getText());
-            animalMaxMutations = Integer.parseInt(ANIMAL_MAX_MUTATIONS.getText());
-            foodStartingAmount = Integer.parseInt(FOOD_STARTING_AMOUNT.getText());
-            foodGrowthPerDay = Integer.parseInt(FOOD_GROWTH_PER_DAY.getText());
-            foodEnergy = Integer.parseInt(FOOD_ENERGY.getText());
-            refreshTime = Integer.parseInt(REFRESH_TIME.getText());
-            saveStats = SAVE_STATS.isSelected();
+            mapWidth = Integer.parseInt(fxmlMapWidth.getText());
+            mapHeight = Integer.parseInt(fxmlMapHeight.getText());
+            isDefaultMapSelected = mapComboBox.getValue().equals("Equator Map");
+            animalStartingAmount = Integer.parseInt(fxmlAnimalStartingAmount.getText());
+            animalStartingEnergy = Integer.parseInt(fxmlAnimalStartingEnergy.getText());
+            animalEnergyPerMove = Integer.parseInt(fxmlAnimalEnergyPerMove.getText());
+            animalMinEnergyToReproduce = Integer.parseInt(fxmlAnimalMinEnergyToReproduce.getText());
+            animalEnergyToReproduceCost = Integer.parseInt(fxmlAnimalEnergyToReproduce.getText());
+            animalGenesAmount = Integer.parseInt(fxmlAnimalGenesAmount.getText());
+            isDefaultGenesSelected = genesComboBox.getValue().equals("Default");
+            animalMinMutations = Integer.parseInt(fxmlAnimalMinMutations.getText());
+            animalMaxMutations = Integer.parseInt(fxmlAnimalMaxMutations.getText());
+            foodStartingAmount = Integer.parseInt(fxmlFoodStartingAmount.getText());
+            foodGrowthPerDay = Integer.parseInt(fxmlFoodGrowthPerDay.getText());
+            foodEnergy = Integer.parseInt(fxmlFoodEnergy.getText());
+            refreshTime = Integer.parseInt(fxmlRefreshTime.getText());
+            saveStats = fxmlSaveStats.isSelected();
 
             if (mapWidth <= 0 || mapHeight <= 0 || animalStartingAmount <= 0 || animalStartingEnergy <= 0 || animalEnergyPerMove < 0 ||
                     animalMinEnergyToReproduce <= 0 || animalEnergyToReproduceCost <= 0 || animalGenesAmount <= 0 || animalMinMutations < 0 ||

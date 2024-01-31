@@ -12,8 +12,6 @@
 <?import javafx.collections.FXCollections?>
 <?import java.lang.String?>
 <?import java.net.URL?>
-<?import javafx.scene.control.RadioButton?>
-<?import javafx.scene.control.ToggleButton?>
 <?import javafx.scene.control.CheckBox?>
 <BorderPane xmlns="http://javafx.com/javafx"
             xmlns:fx="http://javafx.com/fxml"
@@ -25,14 +23,14 @@
             <VBox spacing="10" >
                 <HBox>
                     <Label text="Configuration name:"/>
-                    <TextField fx:id="CONFIG_NAME" styleClass="configTextField"/>
+                    <TextField fx:id="fxmlConfigName" styleClass="configTextField"/>
                 </HBox>
                 <Label text="Map options" styleClass="labelOptions"/>
                 <HBox>
                     <Label text="Map width:"/>
-                    <TextField fx:id="MAP_WIDTH"/>
+                    <TextField fx:id="fxmlMapWidth"/>
                     <Label text="Map height:"/>
-                    <TextField fx:id="MAP_HEIGHT"/>
+                    <TextField fx:id="fxmlMapHeight"/>
                     <Label text="Map variant:"/>
                     <ComboBox fx:id="mapComboBox">
                         <items>
@@ -47,21 +45,21 @@
                 <Label text="Animal options" styleClass="labelOptions"/>
                 <HBox>
                     <Label text="Animal starting amount:"/>
-                    <TextField fx:id="ANIMAL_STARTING_AMOUNT"/>
+                    <TextField fx:id="fxmlAnimalStartingAmount"/>
                     <Label text="Animal starting energy:"/>
-                    <TextField fx:id="ANIMAL_STARTING_ENERGY"/>
+                    <TextField fx:id="fxmlAnimalStartingEnergy"/>
                     <Label text="Energy per move:"/>
-                    <TextField fx:id="ANIMAL_ENERGY_PER_MOVE"/>
+                    <TextField fx:id="fxmlAnimalEnergyPerMove"/>
                 </HBox>
                 <HBox>
                     <Label text="Min energy to reproduce:"/>
-                    <TextField fx:id="ANIMAL_MIN_ENERGY_TO_REPRODUCE"/>
+                    <TextField fx:id="fxmlAnimalMinEnergyToReproduce"/>
                     <Label text="Energy to repoduce:"/>
-                    <TextField fx:id="ANIMAL_ENERGY_TO_REPRODUCE_COST"/>
+                    <TextField fx:id="fxmlAnimalEnergyToReproduce"/>
                 </HBox>
                 <HBox>
                     <Label text="Genes amount:"/>
-                    <TextField fx:id="ANIMAL_GENES_AMOUNT"/>
+                    <TextField fx:id="fxmlAnimalGenesAmount"/>
                     <Label text="Animal behavior variant:"/>
                     <ComboBox fx:id="genesComboBox">
                         <items>
@@ -74,27 +72,27 @@
                 </HBox>
                 <HBox>
                     <Label text="Min mutations:"/>
-                    <TextField fx:id="ANIMAL_MIN_MUTATIONS"/>
+                    <TextField fx:id="fxmlAnimalMinMutations"/>
                     <Label text="Max mutations:"/>
-                    <TextField fx:id="ANIMAL_MAX_MUTATIONS"/>
+                    <TextField fx:id="fxmlAnimalMaxMutations"/>
                 </HBox>
 
                 <Label text="Plant options" styleClass="labelOptions"/>
                 <HBox>
                     <Label text="Plant starting amount:"/>
-                    <TextField fx:id="FOOD_STARTING_AMOUNT"/>
+                    <TextField fx:id="fxmlFoodStartingAmount"/>
                     <Label text="Plant growth per day:"/>
-                    <TextField fx:id="FOOD_GROWTH_PER_DAY"/>
+                    <TextField fx:id="fxmlFoodGrowthPerDay"/>
                     <Label text="Energy for eating plant:"/>
-                    <TextField fx:id="FOOD_ENERGY"/>
+                    <TextField fx:id="fxmlFoodEnergy"/>
                 </HBox>
                 <Label text="Additional options" styleClass="labelOptions"/>
                 <HBox>
                         <Label text="Refresh time:"/>
-                        <TextField fx:id="REFRESH_TIME"/>
+                        <TextField fx:id="fxmlRefreshTime"/>
 
                         <Label text="Save stats to CSV:"/>
-                        <CheckBox fx:id="SAVE_STATS"/>
+                        <CheckBox fx:id="fxmlSaveStats"/>
                 </HBox>
             </VBox>
 
