@@ -28,14 +28,14 @@ public class MenuPresenter{
         fxmlConfigName.setText("Example config");
         fxmlMapWidth.setText("20");
         fxmlMapHeight.setText("20");
-        mapComboBox.setValue("Poison map");
+        mapComboBox.setValue("Equator map");
         fxmlAnimalStartingAmount.setText("30");
         fxmlAnimalStartingEnergy.setText("100");
         fxmlAnimalEnergyPerMove.setText("5");
         fxmlAnimalMinEnergyToReproduce.setText("30");
         fxmlAnimalEnergyToReproduce.setText("10");
         fxmlAnimalGenesAmount.setText("10");
-        genesComboBox.setValue("Looped");
+        genesComboBox.setValue("Default");
         fxmlAnimalMinMutations.setText("1");
         fxmlAnimalMaxMutations.setText("5");
         fxmlFoodStartingAmount.setText("50");
@@ -126,8 +126,10 @@ public class MenuPresenter{
         fxmlFoodStartingAmount.setText(config[11]);
         fxmlFoodGrowthPerDay.setText(config[12]);
         fxmlFoodEnergy.setText(config[13]);
-        mapComboBox.setValue(config[14]);
-        genesComboBox.setValue(config[15]);
+        mapComboBox.setValue(config[14].equals("true") ? "Equator map" : "Poison map");
+        genesComboBox.setValue(config[15].equals("true") ? "Default" : "Looped");
+        fxmlRefreshTime.setText(config[16]);
+        fxmlSaveStats.setSelected(config[17].equals("true"));
     }
 
     public void onSimulationSaveClicked(javafx.event.ActionEvent actionEvent) throws Exception {
@@ -149,11 +151,12 @@ public class MenuPresenter{
                     String.valueOf(foodStartingAmount),
                     String.valueOf(foodGrowthPerDay),
                     String.valueOf(foodEnergy),
-                    mapComboBox.getValue(),
-                    genesComboBox.getValue(),
+                    String.valueOf(mapComboBox.getValue().equals("Equator map")),
+                    String.valueOf(genesComboBox.getValue().equals("Default")),
                     String.valueOf(refreshTime),
                     String.valueOf(saveStats)
             };
+
             settings = new Settings(attributesArray);
         } catch (Exception e) {
             errorLabel.setText("Wrong input values!");
@@ -181,7 +184,7 @@ public class MenuPresenter{
         try {
             mapWidth = Integer.parseInt(fxmlMapWidth.getText());
             mapHeight = Integer.parseInt(fxmlMapHeight.getText());
-            isDefaultMapSelected = mapComboBox.getValue().equals("Equator Map");
+            isDefaultMapSelected = mapComboBox.getValue().equals("Equator map");
             animalStartingAmount = Integer.parseInt(fxmlAnimalStartingAmount.getText());
             animalStartingEnergy = Integer.parseInt(fxmlAnimalStartingEnergy.getText());
             animalEnergyPerMove = Integer.parseInt(fxmlAnimalEnergyPerMove.getText());
