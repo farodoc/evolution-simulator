@@ -1,8 +1,5 @@
-Example config 1,20,20,15,50,5,35,15,10,1,5,20,5,15,Equator map,Looped
-Example config 2,40,40,30,100,5,75,20,10,1,5,50,10,25,Equator map,Looped
-Example config,30,30,15,50,5,35,15,10,1,5,20,5,15,Equator map,Looped
-Example config 3,20,20,15,50,5,35,15,10,1,5,20,5,15,Poison map,Looped
-sigma map,20,20,30,100,5,30,10,10,1,5,50,15,25,Poison map,Looped
-mapa pod rozmnazanie,5,5,3,100,1,75,30,10,1,5,5,3,50,Equator map,Looped
-sigma mapdfsgsdfgsdfgsdf,20,20,30,100,5,30,10,10,1,5,50,15,25,Poison map,Looped,1000
-Optymalne staty,30,30,10,40,1,15,10,5,0,5,60,4,15,Equator map,Default,100,false
+Small poison map,10,10,15,50,3,30,10,5,1,5,25,5,15,false,false,1000,false
+Large poison map,40,40,100,50,3,30,10,5,1,5,300,25,15,false,false,500,true
+Small equator map,10,10,15,50,3,30,10,5,1,5,25,5,15,true,false,1000,false
+Large equator map,40,40,100,50,3,30,10,5,1,5,300,25,15,true,true,500,true
+Example config,20,20,30,100,5,30,10,10,1,5,50,15,25,true,true,1000,false
