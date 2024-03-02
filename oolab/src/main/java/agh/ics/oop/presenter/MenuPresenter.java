@@ -5,7 +5,6 @@ import agh.ics.oop.model.*;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
 import java.io.FileNotFoundException;
-import java.util.Objects;
 import java.util.Optional;
 
 public class MenuPresenter{

@@ -2,3 +2,4 @@ Small poison map,10,10,15,50,3,30,10,5,1,5,25,5,15,false,false,1000,false
 Large poison map,40,40,100,50,3,30,10,5,1,5,300,25,15,false,false,500,true
 Small equator map,10,10,15,50,3,30,10,5,1,5,25,5,15,true,false,1000,false
 Large equator map,40,40,100,50,3,30,10,5,1,5,300,25,15,true,true,500,true
+Example config,20,20,30,100,5,30,10,10,1,5,50,15,25,true,true,1000,false
