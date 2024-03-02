@@ -2,6 +2,8 @@
 
 ### Simple simulator made for Object Oriented Programming course (PO) at AGH 2023/24.
 
+<img src="screenshots/simulation_preview.gif">
+
 ### Concept
 You can find detailed description for this project on [GitHub](https://github.com/Soamid/obiektowe-lab/tree/master/proj)
 
